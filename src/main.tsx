@@ -1,6 +1,8 @@
+import './index.css';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Volume2, VolumeX } from 'lucide-react';
+
 import { CarCanvas } from './components/CarCanvas';
 import { VideoBackground } from './components/VideoBackground';
 import { ProductScrollytelling } from './components/ProductScrollytelling';

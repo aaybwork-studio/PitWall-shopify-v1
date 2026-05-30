@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Brutalist Text Selection */
+::selection {
+  background-color: var(--accent);
+  color: var(--fg);
+}
+
+/* Custom styles for layout and scrolling integration */
+html, body {
+  overscroll-behavior-y: auto !important;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .font-display-strict {
+    font-family: var(--font-display), sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.88;
+  }
+
+  .font-body-strict {
+    font-family: var(--font-body), sans-serif;
+    font-weight: 300;
+    letter-spacing: 0;
+    line-height: 1.65;
+  }
+
+  .font-technical-strict {
+    font-family: var(--font-mono), monospace;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+  }
+}
