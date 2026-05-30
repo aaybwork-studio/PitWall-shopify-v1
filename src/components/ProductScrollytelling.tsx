@@ -224,8 +224,7 @@ export function ProductScrollytelling({
     return 'mclaren';
   };
 
-  const initialTeam = getInitialTeam();
-  const [activeTeam, setActiveTeam] = useState<keyof typeof TEAMS_DATA>(initialTeam);
+  const activeTeam = getInitialTeam();
   const [activeScale, setActiveScale] = useState<keyof typeof SCALES_DATA>('L');
   
   const [justAdded, setJustAdded] = useState<boolean>(false);
@@ -244,7 +243,7 @@ export function ProductScrollytelling({
 
   // Dynamic calculations based on team and scale
   const getDisplayPrice = () => {
-    if (activeTeam === initialTeam && parsedVariants.length > 0) {
+    if (parsedVariants.length > 0) {
       const activeVariant = parsedVariants.find(v => {
         const title = v.title.toLowerCase();
         if (activeScale === 'S') return title.includes('43') || title.includes('1:2') || title.includes('half');
@@ -422,13 +421,19 @@ export function ProductScrollytelling({
     return mclarenUrl;
   };
 
-  // Handle zero-lag switcher button click syncing both state and browser URL handle
+  // Handle switcher button click taking the user to their own page URL directly
   const handleTeamSwitch = (targetTeam: keyof typeof TEAMS_DATA) => {
-    setActiveTeam(targetTeam);
-    const targetHandle = teamButtonLabels[targetTeam].toLowerCase();
-    
-    // Smoothly update browser URL using History API to resolve D-01/D-02
-    window.history.pushState(null, '', '/products/' + targetHandle);
+    const handleMap: Record<keyof typeof TEAMS_DATA, string> = {
+      mclaren: 'mclaren-mcl39',
+      redbull: 'red-bull-rb19',
+      ferrari: 'ferrari-sf23',
+      mercedes: 'mercedes-w14',
+      'lando-norris-helmet': 'lando-norris-helmet',
+      'schumacher-helmet': 'schumacher-helmet',
+      'verstappen-helmet': 'verstappen-helmet',
+    };
+    const targetHandle = handleMap[targetTeam];
+    window.location.href = '/products/' + targetHandle;
   };
 
   // Restrict switcher button scope to contextual context (D-03)
