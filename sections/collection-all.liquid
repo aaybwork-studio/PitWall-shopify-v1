@@ -276,183 +276,179 @@
   </div>
 
   <div class="pw-catalog-grid">
-    <!-- Read collection products or all products -->
-    {% assign active_collection = collection | default: collections.all %}
-    {% if active_collection.products.size > 0 %}
-      
-      {% for product in active_collection.products limit: section.settings.products_limit %}
-        <!-- Cycle staggered styles A, B, C, D -->
-        {% assign cycle_class = 'a' %}
-        {% capture modulo_val %}{{ forloop.index0 | modulo: 4 }}{% endcapture %}
-        {% if modulo_val == '1' %}
-          {% assign cycle_class = 'b' %}
-        {% elsif modulo_val == '2' %}
-          {% assign cycle_class = 'c' %}
-        {% elsif modulo_val == '3' %}
-          {% assign cycle_class = 'd' %}
-        {% endif %}
 
-        <!-- Pre-order check -->
-        {% assign is_pre_order = false %}
-        {% for tag in product.tags %}
-          {% assign downcase_tag = tag | downcase %}
-          {% if downcase_tag == 'pre-order' %}
-            {% assign is_pre_order = true %}
-          {% endif %}
-        {% endfor %}
-
-        <a href="{{ product.url }}" class="pw-catalog-card pw-catalog-card-{{ cycle_class }} cursor-pointer">
-          <div class="pw-catalog-img-container">
-            {% if product.featured_image != blank %}
-              <img 
-                class="pw-catalog-img-element" 
-                src="{{ product.featured_image | image_url: width: 1000 }}" 
-                alt="{{ product.title | escape }}"
-                loading="lazy"
-              >
-            {% else %}
-              <div class="pw-catalog-sketch-overlay">
-                <!-- Custom sketch placeholder according to index -->
-                {% if cycle_class == 'a' %}
-                  <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-                    <path d="M 40 120 L 360 120 M 100 80 L 180 100 L 300 100 L 330 135" stroke-dasharray="3,3" />
-                    <rect x="50" y="60" width="10" height="110" stroke-width="2" opacity="0.4" />
-                    <circle cx="120" cy="120" r="32" stroke-width="2" />
-                    <circle cx="280" cy="120" r="35" stroke-width="2" />
-                  </svg>
-                {% elsif cycle_class == 'b' %}
-                  <svg viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-                    <circle cx="150" cy="120" r="60" stroke-width="2" />
-                    <path d="M 150 60 C 210 60 210 180 150 180 Z" stroke-width="2" />
-                  </svg>
-                {% elsif cycle_class == 'c' %}
-                  <svg viewBox="0 0 300 240" style="width: 70%; height: 70%; stroke: var(--fg); fill: none; stroke-width: 2.5">
-                    <path d="M 50 50 L 250 50 L 250 120 L 200 150 L 150 120 L 100 190 L 50 120 Z" stroke-linejoin="bevel" />
-                  </svg>
-                {% else %}
-                  <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-                    <circle cx="200" cy="120" r="60" stroke="#F6C917" stroke-width="3" />
-                    <path d="M 120 120 H 280 M 200 40 V 200" stroke-dasharray="3,3" />
-                  </svg>
-                {% endif %}
-              </div>
-            {% endif %}
-
-            <!-- Detail Slide-Up overlay -->
-            <div class="pw-catalog-hover-info">
-              <span class="pw-catalog-hover-title">{{ product.title }}</span>
-              <div class="pw-catalog-hover-meta">
-                <span class="pw-catalog-hover-specs">{{ product.type | default: 'TECHNICAL ACCS' | upcase }}</span>
-                <div class="pw-catalog-price-container">
-                  {% if is_pre_order %}
-                    <span class="pw-catalog-preorder-tag">[ PRE-ORDER ]</span>
-                  {% endif %}
-                  <span class="pw-catalog-hover-price">{{ product.price | money }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </a>
-      {% endfor %}
-
-    {% else %}
-      <!-- D-09 Static Mock Fallback items in staggered grids -->
-      
-      <!-- Mock 1: CAR MODELS (Staggered A, Pre-order Active) -->
-      <a href="/products/mclaren-mcl39" class="pw-catalog-card pw-catalog-card-a cursor-pointer">
-        <div class="pw-catalog-img-container">
-          <div class="pw-catalog-sketch-overlay">
-            <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-              <path d="M 40 120 L 360 120 M 100 80 L 180 100 L 300 100 L 330 135" stroke-dasharray="3,3" />
-              <rect x="50" y="60" width="10" height="110" stroke-width="2" opacity="0.4" />
-              <circle cx="120" cy="120" r="32" stroke-width="2" />
-              <circle cx="280" cy="120" r="35" stroke-width="2" />
-              <path d="M 190 70 L 220 30 H 260 L 280 70 Z" fill="rgba(12,12,12,0.03)" />
-            </svg>
-          </div>
-          <div class="pw-catalog-hover-info">
-            <span class="pw-catalog-hover-title">CAR MODELS // MOCK-01</span>
-            <div class="pw-catalog-hover-meta">
-              <span class="pw-catalog-hover-specs">1:18 SCALE / RESIN COMPOSITE</span>
-              <div class="pw-catalog-price-container">
-                <span class="pw-catalog-preorder-tag">[ PRE-ORDER ]</span>
-                <span class="pw-catalog-hover-price">₹12,499</span>
-              </div>
-            </div>
-          </div>
+    <!-- CAR 1: McLaren MCL39 -->
+    <a href="/products/mclaren-mcl39" class="pw-catalog-card pw-catalog-card-a cursor-pointer">
+      <div class="pw-catalog-img-container">
+        <div class="pw-catalog-sketch-overlay">
+          <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+            <path d="M 40 120 L 360 120 M 100 80 L 180 100 L 300 100 L 330 135" stroke-dasharray="3,3" />
+            <rect x="50" y="60" width="10" height="110" stroke-width="2" opacity="0.4" />
+            <circle cx="120" cy="120" r="32" stroke-width="2" />
+            <circle cx="280" cy="120" r="35" stroke-width="2" />
+            <path d="M 190 70 L 220 30 H 260 L 280 70 Z" fill="rgba(255,128,0,0.08)" />
+            <path d="M 180 100 L 200 80 L 310 80 L 330 100" stroke="#FF8000" stroke-width="1.5" />
+          </svg>
         </div>
-      </a>
-
-      <!-- Mock 2: HELMET REPLICAS (Staggered B) -->
-      <div class="pw-catalog-card pw-catalog-card-b">
-        <div class="pw-catalog-img-container">
-          <div class="pw-catalog-sketch-overlay">
-            <svg viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-              <circle cx="150" cy="120" r="60" stroke-width="2" />
-              <path d="M 150 60 C 210 60 210 180 150 180 Z" stroke-width="2" />
-              <rect x="145" y="90" width="60" height="24" fill="rgba(12,12,12,0.08)" />
-              <path d="M 90 120 H 150" stroke-dasharray="4,4" />
-            </svg>
-          </div>
-          <div class="pw-catalog-hover-info">
-            <span class="pw-catalog-hover-title">HELMET REPLICAS // MOCK-02</span>
-            <div class="pw-catalog-hover-meta">
-              <span class="pw-catalog-hover-specs">1:2 SCALE / MATTE CARBON FIBER</span>
-              <div class="pw-catalog-price-container">
-                <span class="pw-catalog-hover-price">₹7,999</span>
-              </div>
+        <div class="pw-catalog-hover-info">
+          <span class="pw-catalog-hover-title">McLaren MCL39</span>
+          <div class="pw-catalog-hover-meta">
+            <span class="pw-catalog-hover-specs">1:18 SCALE / PRE-PREG CARBON</span>
+            <div class="pw-catalog-price-container">
+              <span class="pw-catalog-hover-price">₹12,499</span>
             </div>
           </div>
         </div>
       </div>
+    </a>
 
-      <!-- Mock 3: TRACK SILHOUETTES (Staggered C) -->
-      <div class="pw-catalog-card pw-catalog-card-c">
-        <div class="pw-catalog-img-container">
-          <div class="pw-catalog-sketch-overlay">
-            <svg viewBox="0 0 300 240" style="width: 70%; height: 70%; stroke: var(--fg); fill: none; stroke-width: 2.5">
-              <path d="M 50 50 L 250 50 L 250 120 L 200 150 L 150 120 L 100 190 L 50 120 Z" stroke-linejoin="bevel" />
-              <circle cx="50" cy="50" r="4" fill="#F6C917" stroke="none" />
-            </svg>
-          </div>
-          <div class="pw-catalog-hover-info">
-            <span class="pw-catalog-hover-title">TRACK SILHOUETTES // MOCK-03</span>
-            <div class="pw-catalog-hover-meta">
-              <span class="pw-catalog-hover-specs">3D TOPOGRAPHIC WOOD / STEEL</span>
-              <div class="pw-catalog-price-container">
-                <span class="pw-catalog-hover-price">₹4,499</span>
-              </div>
+    <!-- CAR 2: Red Bull RB19 -->
+    <a href="/products/red-bull-rb19" class="pw-catalog-card pw-catalog-card-b cursor-pointer">
+      <div class="pw-catalog-img-container">
+        <div class="pw-catalog-sketch-overlay">
+          <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+            <path d="M 40 120 L 360 120 M 80 90 L 200 95 L 320 90 L 340 130" stroke-dasharray="3,3" />
+            <circle cx="110" cy="120" r="30" stroke-width="2" />
+            <circle cx="285" cy="120" r="33" stroke-width="2" />
+            <path d="M 185 65 L 210 35 H 250 L 268 65 Z" fill="rgba(252,213,0,0.1)" />
+            <path d="M 160 95 L 185 65 L 268 65 L 290 90" stroke="#FCD500" stroke-width="1.5" />
+          </svg>
+        </div>
+        <div class="pw-catalog-hover-info">
+          <span class="pw-catalog-hover-title">Red Bull RB19</span>
+          <div class="pw-catalog-hover-meta">
+            <span class="pw-catalog-hover-specs">1:18 SCALE / ANODIZED ALLOY</span>
+            <div class="pw-catalog-price-container">
+              <span class="pw-catalog-hover-price">₹12,499</span>
             </div>
           </div>
         </div>
       </div>
+    </a>
 
-      <!-- Mock 4: DECOR LIGHTS (Staggered D, Pre-Order Active) -->
-      <div class="pw-catalog-card pw-catalog-card-d">
-        <div class="pw-catalog-img-container">
-          <div class="pw-catalog-sketch-overlay">
-            <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-              <circle cx="200" cy="120" r="60" stroke="#F6C917" stroke-width="3" />
-              <path d="M 120 120 H 280 M 200 40 V 200" stroke-dasharray="3,3" />
-              <rect x="180" y="100" width="40" height="40" fill="rgba(246,201,23,0.05)" />
-            </svg>
-          </div>
-          <div class="pw-catalog-hover-info">
-            <span class="pw-catalog-hover-title">DECOR LIGHTS // MOCK-04</span>
-            <div class="pw-catalog-hover-meta">
-              <span class="pw-catalog-hover-specs">USB-C POWERED DUAL LED</span>
-              <div class="pw-catalog-price-container">
-                <span class="pw-catalog-preorder-tag">[ PRE-ORDER ]</span>
-                <span class="pw-catalog-hover-price">₹6,899</span>
-              </div>
+    <!-- CAR 3: Ferrari SF-23 -->
+    <a href="/products/ferrari-sf23" class="pw-catalog-card pw-catalog-card-c cursor-pointer">
+      <div class="pw-catalog-img-container">
+        <div class="pw-catalog-sketch-overlay">
+          <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+            <path d="M 50 120 L 350 120 M 90 85 L 190 92 L 310 88 L 335 128" stroke-dasharray="3,3" />
+            <circle cx="115" cy="120" r="31" stroke-width="2" />
+            <circle cx="275" cy="120" r="34" stroke-width="2" />
+            <path d="M 175 68 L 200 38 H 240 L 258 68 Z" fill="rgba(225,6,0,0.08)" />
+            <path d="M 150 92 L 180 68 L 258 68 L 280 88" stroke="#E10600" stroke-width="1.5" />
+          </svg>
+        </div>
+        <div class="pw-catalog-hover-info">
+          <span class="pw-catalog-hover-title">Ferrari SF-23</span>
+          <div class="pw-catalog-hover-meta">
+            <span class="pw-catalog-hover-specs">1:18 SCALE / PRECISION DIE-CAST</span>
+            <div class="pw-catalog-price-container">
+              <span class="pw-catalog-hover-price">₹12,499</span>
             </div>
           </div>
         </div>
       </div>
+    </a>
 
-    {% endif %}
+    <!-- CAR 4: Mercedes W14 -->
+    <a href="/products/mercedes-w14" class="pw-catalog-card pw-catalog-card-d cursor-pointer">
+      <div class="pw-catalog-img-container">
+        <div class="pw-catalog-sketch-overlay">
+          <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+            <path d="M 45 120 L 355 120 M 85 88 L 195 94 L 315 90 L 338 132" stroke-dasharray="3,3" />
+            <circle cx="112" cy="120" r="31" stroke-width="2" />
+            <circle cx="278" cy="120" r="34" stroke-width="2" />
+            <path d="M 178 70 L 202 40 H 244 L 260 70 Z" fill="rgba(0,161,155,0.08)" />
+            <path d="M 155 94 L 182 70 L 260 70 L 282 90" stroke="#00A19B" stroke-width="1.5" />
+          </svg>
+        </div>
+        <div class="pw-catalog-hover-info">
+          <span class="pw-catalog-hover-title">Mercedes W14</span>
+          <div class="pw-catalog-hover-meta">
+            <span class="pw-catalog-hover-specs">1:18 SCALE / EXPOSED CARBON</span>
+            <div class="pw-catalog-price-container">
+              <span class="pw-catalog-hover-price">₹12,499</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- HELMET 1: Lando Norris -->
+    <a href="/products/lando-norris-helmet" class="pw-catalog-card pw-catalog-card-a cursor-pointer">
+      <div class="pw-catalog-img-container">
+        <div class="pw-catalog-sketch-overlay">
+          <svg viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+            <circle cx="150" cy="115" r="65" stroke-width="2" />
+            <path d="M 150 50 C 215 50 215 180 150 180 Z" stroke-width="2" />
+            <rect x="148" y="88" width="65" height="26" fill="rgba(255,128,0,0.1)" />
+            <path d="M 85 115 H 150" stroke-dasharray="4,4" />
+            <path d="M 150 98 L 198 106" stroke="#FF8000" stroke-width="1.5" />
+          </svg>
+        </div>
+        <div class="pw-catalog-hover-info">
+          <span class="pw-catalog-hover-title">Norris Replica Helmet</span>
+          <div class="pw-catalog-hover-meta">
+            <span class="pw-catalog-hover-specs">1:2 SCALE / MATTE CARBON</span>
+            <div class="pw-catalog-price-container">
+              <span class="pw-catalog-hover-price">₹7,999</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- HELMET 2: Schumacher 2002 -->
+    <a href="/products/schumacher-helmet" class="pw-catalog-card pw-catalog-card-b cursor-pointer">
+      <div class="pw-catalog-img-container">
+        <div class="pw-catalog-sketch-overlay">
+          <svg viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+            <circle cx="150" cy="115" r="65" stroke-width="2" />
+            <path d="M 150 50 C 215 50 215 180 150 180 Z" stroke-width="2" />
+            <rect x="148" y="88" width="65" height="26" fill="rgba(225,6,0,0.1)" />
+            <path d="M 85 115 H 150" stroke-dasharray="4,4" />
+            <path d="M 150 98 L 198 106" stroke="#E10600" stroke-width="1.5" />
+          </svg>
+        </div>
+        <div class="pw-catalog-hover-info">
+          <span class="pw-catalog-hover-title">Schumacher Replica Helmet</span>
+          <div class="pw-catalog-hover-meta">
+            <span class="pw-catalog-hover-specs">1:2 SCALE / GLOSS CARBON</span>
+            <div class="pw-catalog-price-container">
+              <span class="pw-catalog-hover-price">₹7,999</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- HELMET 3: Verstappen 2023 -->
+    <a href="/products/verstappen-helmet" class="pw-catalog-card pw-catalog-card-c cursor-pointer">
+      <div class="pw-catalog-img-container">
+        <div class="pw-catalog-sketch-overlay">
+          <svg viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+            <circle cx="150" cy="115" r="65" stroke-width="2" />
+            <path d="M 150 50 C 215 50 215 180 150 180 Z" stroke-width="2" />
+            <rect x="148" y="88" width="65" height="26" fill="rgba(252,213,0,0.1)" />
+            <path d="M 85 115 H 150" stroke-dasharray="4,4" />
+            <path d="M 150 98 L 198 106" stroke="#FCD500" stroke-width="1.5" />
+          </svg>
+        </div>
+        <div class="pw-catalog-hover-info">
+          <span class="pw-catalog-hover-title">Verstappen Replica Helmet</span>
+          <div class="pw-catalog-hover-meta">
+            <span class="pw-catalog-hover-specs">1:2 SCALE / MATTE CARBON</span>
+            <div class="pw-catalog-price-container">
+              <span class="pw-catalog-hover-price">₹7,999</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
   </div>
 </section>
+
 
 {% schema %}
 {
