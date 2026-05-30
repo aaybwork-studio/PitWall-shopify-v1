@@ -9,7 +9,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: About Page** — Deliver a complete, shippable `/pages/about` page in Pitwall brand identity, wired to the existing ABOUT nav link, including all shared foundation constraints (tokens, responsiveness, grain overlay)
+- [x] **Phase 1: About Page** — Deliver a complete, shippable `/pages/about` page in Pitwall brand identity, wired to the existing ABOUT nav link, including all shared foundation constraints (tokens, responsiveness, grain overlay)
 - [ ] **Phase 2: All Products Page** — Deliver a complete, shippable `/collections/all` page in Pitwall brand identity, wired to the existing SHOP nav links, with a placeholder product grid
 
 ---
@@ -52,7 +52,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. About Page | 0/? | Not started | - |
+| 1. About Page | 1/1 | Completed | 2026-05-31 |
 | 2. All Products Page | 0/? | Not started | - |
 
 ---
