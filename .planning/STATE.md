@@ -9,7 +9,7 @@
 
 **Core Value:** The two new pages must look unmistakably Pitwall (brutalist F1 aesthetic + existing tokens) while delivering the editorial structure of the reference designs.
 
-**Current Focus:** Phase 2 — All Products Page
+**Current Focus:** Milestone Complete (Phase 1 & 2 shippable)
 
 ---
 
@@ -17,17 +17,17 @@
 
 | Field | Value |
 |-------|-------|
-| Phase | 2 — All Products Page |
-| Plan | TBD (Context gathered) |
-| Status | Context gathered |
+| Phase | Completed |
+| Plan | Done |
+| Status | Complete |
 | Mode | MVP |
 
 **Progress:**
 ```
 [ Phase 1: About Page    ] █▓▓▓▓▓▓▓▓▓ 100%
-[ Phase 2: All Products  ] ░░░░░░░░░░   0%
+[ Phase 2: All Products  ] █▓▓▓▓▓▓▓▓▓ 100%
 
-Overall: 1/2 phases complete
+Overall: 2/2 phases complete
 ```
 
 ---
@@ -38,8 +38,8 @@ Overall: 1/2 phases complete
 |--------|-------|
 | Phases defined | 2 |
 | Requirements mapped | 15/15 |
-| Phases complete | 1/2 |
-| Plans created | 1 |
+| Phases complete | 2/2 |
+| Plans created | 2 |
 
 ---
 
@@ -56,7 +56,7 @@ Overall: 1/2 phases complete
 
 ### Active TODOs
 
-- [ ] Plan Phase 2 (run `/gsd-plan-phase 2`)
+- [ ] Transition to v2 (dynamic catalogs, product page layout upgrades)
 
 ### Blockers
 
@@ -67,9 +67,10 @@ None.
 ## Session Continuity
 
 - Roadmap created fresh on 2026-05-30 via `/gsd-new-project` orchestrator.
-- Phase 1: About Page completed and pushed to remote GitHub repository on 2026-05-31.
-- Config: `mode=yolo`, `granularity=coarse`, `ui_phase=true`.
-- Next action: `/gsd-plan-phase 2` to design the technical implementation plan for the All Products Page.
+- Phase 1: About Page completed and pushed to remote on 2026-05-31.
+- Phase 2: All Products Page completed and pushed to remote on 2026-05-31.
+- Milestone Complete: both pages fully shippable, navigation links active, local Vite builds green.
+- Next action: dynamic Shopify product/collections query wiring (Phase v2 catalog).
 
 ---
 
