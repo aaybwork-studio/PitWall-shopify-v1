@@ -48,9 +48,9 @@
     id="hero-video-root" 
     class="hero-video-container"
     data-video-playlist="[
-      {%- if section.settings.video_1 != blank -%}'{{ section.settings.video_1 }}'{%- endif -%},
-      {%- if section.settings.video_2 != blank -%}'{{ section.settings.video_2 }}'{%- endif -%},
-      {%- if section.settings.video_3 != blank -%}'{{ section.settings.video_3 }}'{%- endif -%}
+      {%- if section.settings.video_1 != blank -%}'{{ section.settings.video_1 }}'{%- else -%}'{{ 'F1_helmet_orbiting_white_void_202605251628.mp4' | asset_url }}'{%- endif -%},
+      {%- if section.settings.video_2 != blank -%}'{{ section.settings.video_2 }}'{%- else -%}'{{ 'F1_helmet_orbiting_white_void_202605251636.mp4' | asset_url }}'{%- endif -%},
+      {%- if section.settings.video_3 != blank -%}'{{ section.settings.video_3 }}'{%- else -%}'{{ 'Formula_1_car_accelerates_white_202605251629.mp4' | asset_url }}'{%- endif -%}
     ]"
   >
     <div class="hero-video-fallback"></div>

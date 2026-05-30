@@ -1,3 +1,19 @@
+@font-face {
+  font-family: 'btseps2';
+  src: url('{{ "btseps2.ttf" | asset_url }}') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Petit Formal Script';
+  src: url('{{ "PetitFormalScript-Regular.ttf" | asset_url }}') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600&family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@700;800&family=Space+Grotesk:wght@700&display=swap');
 
 /* Inverted Color Tokens */
@@ -28,7 +44,6 @@
 }
 
 html, body {
-  overscroll-behavior-y: none;
   background-color: var(--bg);
   color: var(--fg);
   font-family: var(--font-body);
