@@ -11,7 +11,7 @@ export default defineConfig({
   },
   build: {
     // Output directly to Shopify theme's assets directory
-    outDir: path.resolve(__dirname, './theme/assets'),
+    outDir: path.resolve(__dirname, './assets'),
     emptyOutDir: false, // Don't wipe other manual assets like css or fonts
     rollupOptions: {
       input: {
