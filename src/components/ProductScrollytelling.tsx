@@ -3,8 +3,6 @@ import { Loader2, ArrowLeft, Check } from 'lucide-react';
 import { CarCanvas } from './CarCanvas';
 import { TechSpecTable } from './TechSpecTable';
 import { FeaturedCarousel } from './FeaturedCarousel';
-import { Footer } from './Footer';
-import { Navbar } from './Navbar';
 
 interface ShopifyVariant {
   id: number;
@@ -23,7 +21,6 @@ interface ProductScrollytellingProps {
   redbullUrl: string;
   ferrariUrl: string;
   mercedesUrl: string;
-  logoUrl?: string;
 }
 
 const TEAMS_DATA = {
@@ -120,7 +117,6 @@ export function ProductScrollytelling({
   redbullUrl,
   ferrariUrl,
   mercedesUrl,
-  logoUrl = '',
 }: ProductScrollytellingProps) {
   // Parse dynamic shopify variants
   console.log('PDP calibration initialized for product:', productTitle, 'basePrice:', productPrice);
@@ -171,7 +167,6 @@ export function ProductScrollytelling({
   const leftCardRef = useRef<HTMLDivElement>(null);
   const rightCardRef = useRef<HTMLDivElement>(null);
   const ctaBlockRef = useRef<HTMLDivElement>(null);
-  const footerRef = useRef<HTMLDivElement>(null);
   const showButtonsRef = useRef<boolean>(true);
 
   const teamInfo = TEAMS_DATA[activeTeam];
@@ -297,7 +292,7 @@ export function ProductScrollytelling({
       }
     );
 
-    const currentFooter = footerRef.current;
+    const currentFooter = document.getElementById('footer');
     if (currentFooter) {
       observer.observe(currentFooter);
     }
@@ -367,11 +362,8 @@ export function ProductScrollytelling({
         '--team-accent-text': '#FFFFFF'
       } as React.CSSProperties}
     >
-      {/* Universal Navbar */}
-      <Navbar logoUrl={logoUrl} />
-      
       {/* 1. Scrollytelling Product Showcase Track */}
-      <div ref={trackRef} className="relative w-full product-track product-track-wrapper" style={{ height: '300vh' }}>
+      <div ref={trackRef} className="relative w-full product-track" style={{ height: '300vh' }}>
         <div className="sticky top-0 w-full h-screen overflow-hidden">
           
           {/* Background Wordmark */}
@@ -558,10 +550,6 @@ export function ProductScrollytelling({
       {/* Featured Products Carousel */}
       <FeaturedCarousel />
 
-      {/* Universal Footer Component */}
-      <div ref={footerRef} className="relative z-30 w-full pointer-events-auto">
-        <Footer />
-      </div>
 
     </div>
   );

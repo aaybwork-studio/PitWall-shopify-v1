@@ -379,7 +379,7 @@ html, body {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 28px;
   padding: 0;
   margin: 0;
 }
@@ -401,13 +401,12 @@ html, body {
   font-family: var(--font-display, 'Syne', sans-serif);
   font-weight: 800;
   font-size: 64px;
-  line-height: 1.1;
+  line-height: 1.25;
   text-transform: uppercase;
   color: var(--fg, #0C0C0C);
   text-decoration: none;
-  transition: color 200ms ease;
-  display: flex;
-  align-items: center;
+  transition: color 200ms ease, transform 200ms ease;
+  display: inline-block;
 }
 
 .pw-menu-link-item.is-active .pw-menu-link {
@@ -419,6 +418,7 @@ html, body {
 
 .pw-menu-link:hover {
   color: var(--accent, #F6C917);
+  transform: translateX(8px);
 }
 
 .pw-menu-contact-col {

@@ -227,7 +227,7 @@ html, body {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 28px;
 }
 
 .menu-link-item {
@@ -240,14 +240,16 @@ html, body {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 64px;
-  line-height: 1.1;
+  line-height: 1.25;
   text-transform: uppercase;
   color: var(--fg);
   text-decoration: none;
-  transition: color 200ms ease;
+  transition: color 200ms ease, transform 200ms ease;
+  display: inline-block;
 }
 .menu-link:hover {
   color: var(--accent);
+  transform: translateX(8px);
 }
 
 .menu-contact-col {
@@ -615,7 +617,7 @@ html, body {
   position: relative;
   width: 100%;
   overflow: hidden;
-  background-color: transparent !important;
+  background-color: transparent;
   border: 1px solid var(--border);
 }
 
