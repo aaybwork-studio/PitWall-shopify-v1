@@ -1,0 +1,102 @@
+<!-- Navigation Header -->
+<header class="nav-header nav-visible">
+  <div class="nav-grid">
+    <button id="menu-trigger-btn" class="nav-menu-btn" aria-label="Toggle menu">MENU</button>
+    <a href="/" class="nav-logo-link">
+      <span style="font-family: var(--font-mono); font-weight: 600; color: var(--bg); font-size: 14px; letter-spacing: 0.15em;">PITWALL</span>
+    </a>
+    <button class="nav-cart-btn" onclick="location.href='/cart'" aria-label="View cart">
+      CART <span class="nav-cart-badge">[ <span id="cart-counter-display">0</span> ]</span>
+    </button>
+  </div>
+</header>
+
+<!-- Takeover Menu Overlay -->
+<div id="full-menu-overlay" class="menu-overlay">
+  <div class="menu-content">
+    <ul class="menu-links-list">
+      <li class="menu-link-item is-active">
+        <a href="/" class="menu-link">HOME</a>
+      </li>
+      <li class="menu-link-item">
+        <a href="/collections/all" class="menu-link">SHOP</a>
+      </li>
+      <li class="menu-link-item">
+        <a href="/pages/about" class="menu-link">ABOUT</a>
+      </li>
+    </ul>
+    <div class="menu-contact-col">
+      <span class="menu-contact-label">COMMUNICATIONS</span>
+      <div class="menu-contact-details">
+        INFO@PITWALL.STUDIO<br>
+        @PITWALL.STUDIO
+      </div>
+    </div>
+    <div class="menu-images-col">
+      <div class="menu-image-panel">
+        <div class="menu-img-placeholder"></div>
+        <span class="menu-img-caption">CHASSIS PREVIEW // DEV-01</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hero Section Container -->
+<section class="hero-section">
+  <!-- Video background container (React/Vite Mount point for playlist & mute state) -->
+  <div 
+    id="hero-video-root" 
+    class="hero-video-container"
+    data-video-playlist="[
+      {%- if section.settings.video_1 != blank -%}'{{ section.settings.video_1 }}'{%- else -%}'/video/F1_helmet_orbiting_white_void_202605251628.mp4'{%- endif -%},
+      {%- if section.settings.video_2 != blank -%}'{{ section.settings.video_2 }}'{%- else -%}'/video/F1_helmet_orbiting_white_void_202605251636.mp4'{%- endif -%},
+      {%- if section.settings.video_3 != blank -%}'{{ section.settings.video_3 }}'{%- else -%}'/video/Formula_1_car_accelerates_white_202605251629.mp4'{%- endif -%}
+    ]"
+  >
+    <div class="hero-video-fallback"></div>
+  </div>
+
+  <div class="hero-overlay"></div>
+
+  <!-- Hero Logo Text -->
+  <div class="hero-logo-wrapper">
+    <h1 class="hero-title">{{ section.settings.title_text }}</h1>
+  </div>
+
+  <!-- Interactive React Mute Mount Point -->
+  <div id="mute-button-root"></div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero WebGL Canvas",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title_text",
+      "label": "Hero Title",
+      "default": "Pitwall"
+    },
+    {
+      "type": "text",
+      "id": "video_1",
+      "label": "Video Playlist URL 1 (mp4)"
+    },
+    {
+      "type": "text",
+      "id": "video_2",
+      "label": "Video Playlist URL 2 (mp4)"
+    },
+    {
+      "type": "text",
+      "id": "video_3",
+      "label": "Video Playlist URL 3 (mp4)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero WebGL Canvas"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-canvas",
+      "settings": {
+        "title_text": "Pitwall"
+      }
+    }
+  },
+  "order": [
+    "hero"
+  ]
+}

@@ -1,0 +1,51 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    {{ content_for_header }}
+
+    <!-- Pitwall Custom brutalist CSS -->
+    {{ 'pitwall-style.css' | asset_url | stylesheet_tag }}
+  </head>
+
+  <body>
+    <!-- Global Noise Overlay (Tactile Digital Paper Grain) -->
+    <div class="pitwall-grain-container" aria-hidden="true">
+      <svg class="pitwall-grain-svg" xmlns="http://www.w3.org/2000/svg">
+        <filter id="pitwall-noise">
+          <feTurbulence 
+            type="fractalNoise" 
+            baseFrequency="0.85" 
+            numOctaves="4" 
+            stitchTiles="stitch" 
+          />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#pitwall-noise)" />
+      </svg>
+    </div>
+
+    <!-- Shopify Core Layout Mount -->
+    <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    <!-- Bundled React + Three.js components -->
+    {{ 'pitwall-interactive.js' | asset_url | script_tag }}
+  </body>
+</html>

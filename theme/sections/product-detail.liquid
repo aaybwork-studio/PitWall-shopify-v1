@@ -1,0 +1,91 @@
+{% assign model_name = product.handle | default: 'mclaren' %}
+{% capture model_filename %}{{ model_name }}.glb{% endcapture %}
+
+<div class="product-track-wrapper">
+  <!-- Immersive Three.js 3D Viewer Container (React/Three.js Mount Point) -->
+  <div class="product-canvas-container">
+    <div 
+      id="car-canvas-root" 
+      class="product-canvas-mount"
+      data-model-name="{{ model_name }}"
+      data-model-url="{{ model_filename | asset_url }}"
+    >
+      <!-- Fallback or dynamic loader is rendered inside React -->
+    </div>
+  </div>
+
+  <!-- Dynamic Product Content -->
+  <div class="product-details-container">
+    <span class="technical-label">CHASSIS CONFIGURATION</span>
+    <h1 class="display-title">{{ product.title | default: 'MCLAREN MCL39 — WOKING SPECIAL' }}</h1>
+    
+    <div class="product-description">
+      <p>{{ product.description | default: "Obsessive engineering from Woking's wind tunnel. The pinnacle of aerodynamic efficiency." }}</p>
+    </div>
+
+    <!-- Shopify Product Form -->
+    {% form 'product', product, class: 'product-checkout-form' %}
+      <!-- Variant Selectors -->
+      <div class="product-variants-box">
+        <label class="technical-label" for="ProductSelect-{{ section.id }}">SCALE SELECTION</label>
+        <select name="id" id="ProductSelect-{{ section.id }}" class="variant-select">
+          {% for variant in product.variants %}
+            <option 
+              value="{{ variant.id }}"
+              {% if variant == product.selected_or_first_available_variant %}selected="selected"{% endif %}
+              {% unless variant.available %}disabled="disabled"{% endunless %}
+            >
+              {{ variant.title }} - {{ variant.price | money }}
+            </option>
+          {% else %}
+            <option value="mock_variant_1">1:43 Scale - ₹1,499.00</option>
+            <option value="mock_variant_2">1:24 Scale - ₹2,999.00</option>
+            <option value="mock_variant_3">1:18 Scale - ₹4,999.00</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Specs Table -->
+      <table class="specs-table">
+        <tr>
+          <td class="technical-label">MATERIAL</td>
+          <td>Pre-preg Carbon &amp; Zinc Alloy</td>
+        </tr>
+        <tr>
+          <td class="technical-label">DIMENSIONS</td>
+          <td>261mm x 118mm x 58mm</td>
+        </tr>
+        <tr>
+          <td class="technical-label">REFERENCE CODE</td>
+          <td>PW-{{ model_name | upcase }}</td>
+        </tr>
+      </table>
+
+      <!-- Checkout Action Button -->
+      <button 
+        type="submit" 
+        name="add" 
+        class="product-add-trigger btn-primary"
+        {% unless product.available or product == blank %}disabled="disabled"{% endunless %}
+      >
+        {% if product.available or product == blank %}
+          ADD TO CHASSIS / CART
+        {% else %}
+          SOLD OUT
+        {% endif %}
+      </button>
+    {% endform %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product Immersive Detail",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Product Immersive Detail"
+    }
+  ]
+}
+{% endschema %}
