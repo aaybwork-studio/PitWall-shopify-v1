@@ -138,28 +138,10 @@ export function ProductScrollytelling({
 
   const initialTeam = getInitialTeam();
   const [activeTeam, setActiveTeam] = useState<keyof typeof TEAMS_DATA>(initialTeam);
-  const [displayTeam, setDisplayTeam] = useState<keyof typeof TEAMS_DATA>(initialTeam);
-  const [isWordmarkFading, setIsWordmarkFading] = useState<boolean>(false);
   const [activeScale, setActiveScale] = useState<keyof typeof SCALES_DATA>('L');
   
   const [justAdded, setJustAdded] = useState<boolean>(false);
   const [isCheckingOut, setIsCheckingOut] = useState<boolean>(false);
-
-  // Trigger smooth cross-fade transition of background wordmarks
-  useEffect(() => {
-    if (activeTeam === displayTeam) return;
-    setIsWordmarkFading(true);
-    const timeoutSwap = setTimeout(() => {
-      setDisplayTeam(activeTeam);
-    }, 180);
-    const timeoutFadeIn = setTimeout(() => {
-      setIsWordmarkFading(false);
-    }, 240);
-    return () => {
-      clearTimeout(timeoutSwap);
-      clearTimeout(timeoutFadeIn);
-    };
-  }, [activeTeam, displayTeam]);
 
   const trackRef = useRef<HTMLDivElement>(null);
   const wordmarkRef = useRef<HTMLDivElement>(null);
@@ -372,15 +354,15 @@ export function ProductScrollytelling({
             className="absolute top-[12vh] left-0 right-0 flex flex-col items-center z-[5] pointer-events-none select-none transition-opacity duration-300"
             style={{ opacity: 0.85 }}
           >
-            <div className={`text-center transition-opacity duration-200 ${isWordmarkFading ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="text-center transition-all duration-300">
               <h1 className="text-[8.5vw] font-display-strict uppercase tracking-tighter leading-[0.85] text-[#0C0C0C]/85 font-extrabold">
-                {teamTitles[displayTeam].line1}
+                {teamTitles[activeTeam].line1}
               </h1>
               <h1 className="text-[8.5vw] font-display-strict uppercase tracking-tighter leading-[0.85] text-[#0C0C0C]/85 font-extrabold">
-                {teamTitles[displayTeam].line2}
+                {teamTitles[activeTeam].line2}
               </h1>
               <p className="mt-3 font-body-strict text-sm md:text-base text-[#0C0C0C]/55 max-w-md mx-auto">
-                {TEAMS_DATA[displayTeam].subtitle}
+                {TEAMS_DATA[activeTeam].subtitle}
               </p>
             </div>
           </div>
@@ -390,6 +372,10 @@ export function ProductScrollytelling({
             <CarCanvas 
               modelName={activeTeam} 
               modelUrl={getActiveModelUrl()}
+              mclarenUrl={mclarenUrl}
+              redbullUrl={redbullUrl}
+              ferrariUrl={ferrariUrl}
+              mercedesUrl={mercedesUrl}
             />
           </div>
 

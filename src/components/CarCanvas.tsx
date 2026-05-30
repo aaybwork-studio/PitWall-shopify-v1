@@ -4,13 +4,27 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 interface CarCanvasProps {
   modelName: 'mclaren' | 'redbull' | 'ferrari' | 'mercedes' | string;
-  modelUrl: string; // Resolved Shopify CDN url
+  modelUrl: string;
+  mclarenUrl?: string;
+  redbullUrl?: string;
+  ferrariUrl?: string;
+  mercedesUrl?: string;
   scrollProgress?: number;
   onLoadProgress?: (progress: number) => void;
   className?: string;
 }
 
-export function CarCanvas({ modelName, modelUrl, scrollProgress = 0, onLoadProgress, className = '' }: CarCanvasProps) {
+export function CarCanvas({ 
+  modelName, 
+  modelUrl, 
+  mclarenUrl, 
+  redbullUrl, 
+  ferrariUrl, 
+  mercedesUrl, 
+  scrollProgress = 0, 
+  onLoadProgress, 
+  className = '' 
+}: CarCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -217,23 +231,127 @@ export function CarCanvas({ modelName, modelUrl, scrollProgress = 0, onLoadProgr
     };
   }, []);
 
-  // ─── 2. Model Swapping Effect ────────────────────────────────────────────────
+  // ─── 2. Background Model Preloading Effect ─────────────────────────────────
   useEffect(() => {
     const scene = sceneRef.current;
     const pivot = pivotRef.current;
-    if (!scene || !pivot || !modelUrl) return;
+    if (!scene || !pivot) return;
+
+    const urls: Record<string, string> = {
+      mclaren: mclarenUrl || (modelName === 'mclaren' ? modelUrl : ''),
+      redbull: redbullUrl || (modelName === 'redbull' ? modelUrl : ''),
+      ferrari: ferrariUrl || (modelName === 'ferrari' ? modelUrl : ''),
+      mercedes: mercedesUrl || (modelName === 'mercedes' ? modelUrl : ''),
+    };
+
+    const loader = new GLTFLoader();
+
+    Object.entries(urls).forEach(([name, url]) => {
+      if (!url || loadedModelsRef.current.has(name)) return;
+
+      loader.load(
+        url,
+        (gltf) => {
+          try {
+            const model = gltf.scene;
+            model.name = `car-${name}`;
+
+            model.traverse((node) => {
+              if ((node as THREE.Mesh).isMesh) {
+                const mesh = node as THREE.Mesh;
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                if (mesh.material instanceof THREE.MeshStandardMaterial) {
+                  mesh.material.envMapIntensity = 1.5;
+                  mesh.material.roughness = Math.max(mesh.material.roughness, 0.05);
+                }
+              }
+            });
+
+            // Autocenter and scale chassis
+            const box = new THREE.Box3();
+            box.makeEmpty();
+            model.traverse((node) => {
+              if ((node as THREE.Mesh).isMesh) {
+                const lowerName = node.name.toLowerCase();
+                if (
+                  !node.visible ||
+                  lowerName.includes('shadow') ||
+                  lowerName.includes('floor') ||
+                  lowerName.includes('ground') ||
+                  lowerName.includes('plane') ||
+                  lowerName.includes('light') ||
+                  lowerName.includes('camera') ||
+                  lowerName.includes('backdrop') ||
+                  lowerName.includes('helper')
+                ) {
+                  return;
+                }
+
+                node.updateWorldMatrix(true, true);
+                const geometry = (node as THREE.Mesh).geometry;
+                if (geometry) {
+                  if (!geometry.boundingBox) geometry.computeBoundingBox();
+                  const meshBox = geometry.boundingBox!.clone();
+                  meshBox.applyMatrix4(node.matrixWorld);
+                  box.union(meshBox);
+                }
+              }
+            });
+
+            const center = new THREE.Vector3();
+            box.getCenter(center);
+            const size = new THREE.Vector3();
+            box.getSize(size);
+
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const targetSize = 3.2;
+            const scaleFactor = targetSize / maxDim;
+            model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+            model.position.x = -center.x * scaleFactor;
+            model.position.y = -center.y * scaleFactor;
+            model.position.z = -center.z * scaleFactor;
+
+            pivot.add(model);
+            loadedModelsRef.current.set(name, model);
+
+            // Synchronize visibility instantly based on active model name ref
+            model.visible = (modelNameRef.current === name);
+            if (modelNameRef.current === name && onLoadProgressRef.current) {
+              onLoadProgressRef.current(100);
+            }
+          } catch {
+            setError('Scene parsing error: chassis is structurally invalid.');
+          }
+        },
+        undefined,
+        () => {
+          setError(`Failed to retrieve model chassis.`);
+        }
+      );
+    });
+  }, [mclarenUrl, redbullUrl, ferrariUrl, mercedesUrl]);
+
+  // ─── 3. Instant Model Visibility & Snapping Rotation Effect ─────────────────
+  useEffect(() => {
+    const pivot = pivotRef.current;
+    if (!pivot) return;
 
     const previousModelName = activeModelNameRef.current;
     activeModelNameRef.current = modelName;
 
-    if (previousModelName && loadedModelsRef.current.has(previousModelName)) {
-      const prevModel = loadedModelsRef.current.get(previousModelName);
-      if (prevModel) {
-        prevModel.visible = false;
-      }
+    // Toggle preloaded model visibility instantly in memory
+    loadedModelsRef.current.forEach((model, name) => {
+      model.visible = (name === modelName);
+    });
+
+    if (onLoadProgressRef.current) {
+      onLoadProgressRef.current(100);
     }
 
-    if (pivotRef.current && previousModelName !== modelName) {
+    // Instantly snap rotation to avoid visual lag when switching
+    if (previousModelName !== modelName) {
       const TEAM_Y_ROTATIONS: Record<string, number> = {
         mclaren: Math.PI / 2,
         redbull: Math.PI / 2,
@@ -245,133 +363,9 @@ export function CarCanvas({ modelName, modelUrl, scrollProgress = 0, onLoadProgr
       const startY = baseY - Math.PI / 2;
       const endY   = baseY + 2 * Math.PI;
       const snapY  = startY + sp * (endY - startY);
-      pivotRef.current.rotation.y = snapY;
-      pivotRef.current.rotation.x = sp > 0 ? (sp - 0.5) * 0.04 : 0;
+      pivot.rotation.y = snapY;
+      pivot.rotation.x = sp > 0 ? (sp - 0.5) * 0.04 : 0;
     }
-
-    if (loadedModelsRef.current.has(modelName)) {
-      const activeModel = loadedModelsRef.current.get(modelName);
-      if (activeModel) {
-        activeModel.visible = true;
-        if (onLoadProgressRef.current) onLoadProgressRef.current(100);
-      }
-      return;
-    }
-
-    setError(null);
-    if (onLoadProgressRef.current) onLoadProgressRef.current(5);
-
-    const loader = new GLTFLoader();
-
-    loader.load(
-      modelUrl,
-      (gltf) => {
-        try {
-          if (activeModelNameRef.current !== modelName) {
-            gltf.scene.traverse((obj) => {
-              if ((obj as THREE.Mesh).isMesh) {
-                const mesh = obj as THREE.Mesh;
-                if (mesh.geometry) mesh.geometry.dispose();
-              }
-            });
-            return;
-          }
-
-          const model = gltf.scene;
-          model.name = `car-${modelName}`;
-
-          const staleModel = loadedModelsRef.current.get(modelName);
-          if (staleModel && staleModel !== model) {
-            pivot.remove(staleModel);
-            staleModel.traverse((obj) => {
-              if ((obj as THREE.Mesh).isMesh) {
-                const mesh = obj as THREE.Mesh;
-                if (mesh.geometry) mesh.geometry.dispose();
-                if (Array.isArray(mesh.material)) {
-                  mesh.material.forEach((m) => m.dispose());
-                } else if (mesh.material) {
-                  (mesh.material as THREE.Material).dispose();
-                }
-              }
-            });
-            loadedModelsRef.current.delete(modelName);
-          }
-
-          model.traverse((node) => {
-            if ((node as THREE.Mesh).isMesh) {
-              const mesh = node as THREE.Mesh;
-              mesh.castShadow = true;
-              mesh.receiveShadow = true;
-              if (mesh.material instanceof THREE.MeshStandardMaterial) {
-                mesh.material.envMapIntensity = 1.5;
-                mesh.material.roughness = Math.max(mesh.material.roughness, 0.05);
-              }
-            }
-          });
-
-          const box = new THREE.Box3();
-          box.makeEmpty();
-          model.traverse((node) => {
-            if ((node as THREE.Mesh).isMesh) {
-              const lowerName = node.name.toLowerCase();
-              if (
-                !node.visible ||
-                lowerName.includes('shadow') ||
-                lowerName.includes('floor') ||
-                lowerName.includes('ground') ||
-                lowerName.includes('plane') ||
-                lowerName.includes('light') ||
-                lowerName.includes('camera') ||
-                lowerName.includes('backdrop') ||
-                lowerName.includes('helper')
-              ) {
-                return;
-              }
-
-              node.updateWorldMatrix(true, true);
-              const geometry = (node as THREE.Mesh).geometry;
-              if (geometry) {
-                if (!geometry.boundingBox) geometry.computeBoundingBox();
-                const meshBox = geometry.boundingBox!.clone();
-                meshBox.applyMatrix4(node.matrixWorld);
-                box.union(meshBox);
-              }
-            }
-          });
-
-          const center = new THREE.Vector3();
-          box.getCenter(center);
-          const size = new THREE.Vector3();
-          box.getSize(size);
-
-          const maxDim = Math.max(size.x, size.y, size.z);
-          const targetSize = 3.2;
-          const scaleFactor = targetSize / maxDim;
-          model.scale.set(scaleFactor, scaleFactor, scaleFactor);
-
-          model.position.x = -center.x * scaleFactor;
-          model.position.y = -center.y * scaleFactor;
-          model.position.z = -center.z * scaleFactor;
-
-          pivot.add(model);
-          loadedModelsRef.current.set(modelName, model);
-
-          model.visible = true;
-          if (onLoadProgressRef.current) onLoadProgressRef.current(100);
-        } catch {
-          setError('Scene parsing error: chassis is structurally invalid.');
-        }
-      },
-      (xhr) => {
-        if (activeModelNameRef.current === modelName && xhr.total > 0 && onLoadProgressRef.current) {
-          const percent = Math.round((xhr.loaded / xhr.total) * 100);
-          onLoadProgressRef.current(percent);
-        }
-      },
-      () => {
-        setError(`Failed to retrieve model chassis.`);
-      }
-    );
   }, [modelName, modelUrl]);
 
   if (error) {
