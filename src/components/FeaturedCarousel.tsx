@@ -152,9 +152,8 @@ export function FeaturedCarousel() {
             </div>
           </div>
 
-          {/* Yellow Slide-Over Details Card */}
           <div 
-            className={`absolute top-0 right-0 h-full bg-[#F6C917] border-l border-brand-black/20 flex flex-col justify-between p-8 md:p-12 transition-all duration-500 ease-out z-10 ${
+            className={`absolute top-0 right-0 h-full bg-[#F6C917] border-l border-brand-black/20 flex flex-col justify-between p-8 pr-20 md:p-12 md:pr-28 transition-all duration-500 ease-out z-10 ${
               hoveredCard === activeIndex 
                 ? 'w-full md:w-1/2 translate-x-0 opacity-100' 
                 : 'w-full md:w-1/2 translate-x-full opacity-0 pointer-events-none'
