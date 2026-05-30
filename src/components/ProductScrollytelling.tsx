@@ -195,14 +195,25 @@ export function ProductScrollytelling({
     parsedVariants = [];
   }
 
-  // Detect product handle context (helmet vs car)
+  // Detect product handle context (helmet vs car) — also checks URL ?model= param
+  const urlModelParam = new URLSearchParams(window.location.search).get('model') || '';
   const isHelmet = productHandle.toLowerCase().includes('helmet') || 
                    productHandle.toLowerCase().includes('schumacher') || 
                    productHandle.toLowerCase().includes('norris') ||
-                   productHandle.toLowerCase().includes('verstappen');
+                   productHandle.toLowerCase().includes('verstappen') ||
+                   urlModelParam.includes('helmet') ||
+                   urlModelParam.includes('schumacher') ||
+                   urlModelParam.includes('norris') ||
+                   urlModelParam.includes('verstappen');
 
-  // Determine initial active team based on product handle keyword
+  // Determine initial active team based on URL ?model= param (priority) or product handle keyword
   const getInitialTeam = (): keyof typeof TEAMS_DATA => {
+    // 1. Check URL query param first — allows catalog cards to deep-link to any model
+    const urlModel = new URLSearchParams(window.location.search).get('model');
+    if (urlModel && urlModel in TEAMS_DATA) {
+      return urlModel as keyof typeof TEAMS_DATA;
+    }
+    // 2. Fall back to product handle keyword detection
     const handle = productHandle.toLowerCase();
     if (handle.includes('norris')) return 'lando-norris-helmet';
     if (handle.includes('schumacher')) return 'schumacher-helmet';

@@ -39,14 +39,19 @@
   </div>
 </section>
 
-<!-- 3. Product Showcase Section -->
+<!-- 3. Product Showcase Section
+     NOTE: background-color is transparent so the hero video bleeds through.
+     All non-McLaren links use ?model= param — the PDP reads this via URL query to
+     set the initial active model without requiring separate Shopify products. -->
 <section class="showcase-section" id="showcase">
   <div class="showcase-header scroll-reveal">
     <span class="showcase-label">THE COLLECTION</span>
     <div class="showcase-divider"></div>
   </div>
 
-    <!-- CAR MODEL 1: McLaren MCL39 -->
+  <div class="product-grid">
+
+    <!-- CAR 1: McLaren MCL39 — grid-a -->
     <a href="/products/mclaren-mcl39" class="product-card product-a scroll-reveal cursor-pointer">
       <div class="product-image-container">
         <div class="product-sketch-overlay">
@@ -69,8 +74,8 @@
       </div>
     </a>
 
-    <!-- CAR MODEL 2: Red Bull RB19 -->
-    <a href="/products/red-bull-rb19" class="product-card product-b scroll-reveal cursor-pointer">
+    <!-- CAR 2: Red Bull RB19 — grid-b -->
+    <a href="/products/mclaren-mcl39?model=redbull" class="product-card product-b scroll-reveal cursor-pointer">
       <div class="product-image-container">
         <div class="product-sketch-overlay">
           <svg class="product-sketch-svg" viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
@@ -91,8 +96,8 @@
       </div>
     </a>
 
-    <!-- CAR MODEL 3: Ferrari SF-23 -->
-    <a href="/products/ferrari-sf23" class="product-card product-c scroll-reveal cursor-pointer">
+    <!-- CAR 3: Ferrari SF-23 — grid-c -->
+    <a href="/products/mclaren-mcl39?model=ferrari" class="product-card product-c scroll-reveal cursor-pointer">
       <div class="product-image-container">
         <div class="product-sketch-overlay">
           <svg class="product-sketch-svg" viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
@@ -113,8 +118,8 @@
       </div>
     </a>
 
-    <!-- CAR MODEL 4: Mercedes W14 -->
-    <a href="/products/mercedes-w14" class="product-card product-d scroll-reveal cursor-pointer">
+    <!-- CAR 4: Mercedes W14 — grid-d -->
+    <a href="/products/mclaren-mcl39?model=mercedes" class="product-card product-d scroll-reveal cursor-pointer">
       <div class="product-image-container">
         <div class="product-sketch-overlay">
           <svg class="product-sketch-svg" viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
@@ -135,8 +140,8 @@
       </div>
     </a>
 
-    <!-- HELMET 1: Lando Norris -->
-    <a href="/products/lando-norris-helmet" class="product-card product-e scroll-reveal cursor-pointer">
+    <!-- HELMET 1: Norris — grid-a (cycle restart) -->
+    <a href="/products/mclaren-mcl39?model=lando-norris-helmet" class="product-card product-a scroll-reveal cursor-pointer">
       <div class="product-image-container">
         <div class="product-sketch-overlay">
           <svg class="product-sketch-svg" viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
@@ -157,8 +162,8 @@
       </div>
     </a>
 
-    <!-- HELMET 2: Schumacher 2002 -->
-    <a href="/products/schumacher-helmet" class="product-card product-f scroll-reveal cursor-pointer">
+    <!-- HELMET 2: Schumacher — grid-b -->
+    <a href="/products/mclaren-mcl39?model=schumacher-helmet" class="product-card product-b scroll-reveal cursor-pointer">
       <div class="product-image-container">
         <div class="product-sketch-overlay">
           <svg class="product-sketch-svg" viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
@@ -179,8 +184,8 @@
       </div>
     </a>
 
-    <!-- HELMET 3: Verstappen 2023 -->
-    <a href="/products/verstappen-helmet" class="product-card product-g scroll-reveal cursor-pointer">
+    <!-- HELMET 3: Verstappen — grid-c -->
+    <a href="/products/mclaren-mcl39?model=verstappen-helmet" class="product-card product-c scroll-reveal cursor-pointer">
       <div class="product-image-container">
         <div class="product-sketch-overlay">
           <svg class="product-sketch-svg" viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
@@ -200,6 +205,7 @@
         </div>
       </div>
     </a>
+
   </div>
 </section>
 
