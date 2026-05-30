@@ -1,0 +1,86 @@
+# Roadmap: Pitwall Shopify Theme — About & All Products Pages
+
+**Milestone:** About & All Products pages
+**Granularity:** Coarse
+**Mode:** MVP (each phase delivers a complete, shippable page)
+**Generated:** 2026-05-30
+
+---
+
+## Phases
+
+- [ ] **Phase 1: About Page** — Deliver a complete, shippable `/pages/about` page in Pitwall brand identity, wired to the existing ABOUT nav link, including all shared foundation constraints (tokens, responsiveness, grain overlay)
+- [ ] **Phase 2: All Products Page** — Deliver a complete, shippable `/collections/all` page in Pitwall brand identity, wired to the existing SHOP nav links, with a placeholder product grid
+
+---
+
+## Phase Details
+
+### Phase 1: About Page
+**Goal**: Users visiting `/pages/about` see a fully-designed About page that looks unmistakably Pitwall and delivers the editorial reference composition
+**Mode:** mvp
+**Depends on**: Nothing (first phase; FND requirements are embedded here as constraints on implementation)
+**Requirements**: FND-01, FND-02, FND-03, ABT-01, ABT-02, ABT-03, ABT-04, ABT-05, NAV-02
+**Success Criteria** (what must be TRUE):
+  1. Visiting `/pages/about` renders the About page using the new `sections/page-about.liquid` section and `templates/page.about.json` template — no 404, no blank page
+  2. The page shows a large feature image on the left and labelled text columns (About / Credits / Contact) on the right, with a large faded background brand wordmark, matching the editorial reference composition
+  3. The layout uses only Pitwall design tokens (no raw hex, no new colors, zero border-radius, grain overlay preserved, correct Syne/Barlow/IBM Plex Mono fonts)
+  4. Contact links (email, social) render with accent-yellow hover states consistent with the rest of the brand
+  5. The page is single-column on mobile (below 767px), with 100px desktop / 20px mobile horizontal padding; text and image content is editable via section schema settings
+**Plans**: TBD
+**UI hint**: yes
+
+---
+
+### Phase 2: All Products Page
+**Goal**: Users visiting `/collections/all` see a fully-designed All Products page in Pitwall style with a working placeholder product grid, wired to the existing SHOP and SHOP NOW buttons
+**Mode:** mvp
+**Depends on**: Phase 1 (FND constraints already validated; brand conventions established)
+**Requirements**: APL-01, APL-02, APL-03, APL-04, APL-05, NAV-01
+**Success Criteria** (what must be TRUE):
+  1. Visiting `/collections/all` renders the All Products page using the new `sections/collection-all.liquid` section and `templates/collection.json` (or alternate collection template) — no 404, no blank page
+  2. The page shows a top label row ("ALL PRODUCTS" + season/collection label) above a multi-column responsive product grid, matching the shop-all reference composition in Pitwall style
+  3. Each product card shows a product image, product name, and price beneath it; cards with a PRE-ORDER tag render the badge in Pitwall style (accent yellow, technical-label font)
+  4. The grid renders correctly without a live catalog using the `collections.all.products`-with-static-fallback pattern (at least 4 placeholder cards visible)
+  5. Clicking the SHOP button in the nav overlay and the SHOP NOW button in the footer both land on this page at `/collections/all`
+**Plans**: TBD
+**UI hint**: yes
+
+---
+
+## Progress Table
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. About Page | 0/? | Not started | - |
+| 2. All Products Page | 0/? | Not started | - |
+
+---
+
+## Requirement Coverage
+
+| Requirement | Phase |
+|-------------|-------|
+| FND-01 | Phase 1 |
+| FND-02 | Phase 1 |
+| FND-03 | Phase 1 |
+| ABT-01 | Phase 1 |
+| ABT-02 | Phase 1 |
+| ABT-03 | Phase 1 |
+| ABT-04 | Phase 1 |
+| ABT-05 | Phase 1 |
+| NAV-02 | Phase 1 |
+| APL-01 | Phase 2 |
+| APL-02 | Phase 2 |
+| APL-03 | Phase 2 |
+| APL-04 | Phase 2 |
+| APL-05 | Phase 2 |
+| NAV-01 | Phase 2 |
+
+**Coverage: 15/16 v1 requirements mapped.**
+
+> Note: NAV-01 and NAV-02 are confirmation/validation requirements — NAV-02 is assigned to Phase 1 (About nav lands on the new page) and NAV-01 to Phase 2 (SHOP nav lands on the new page), since each is verified as part of delivering the respective page. There are 15 distinct requirement IDs across 16 slots in the requirements list because the instructions list 16 total (FND x3, ABT x5, APL x5, NAV x2 = 15 unique IDs). All 15 IDs are mapped.
+
+---
+
+*Roadmap generated: 2026-05-30*

@@ -53,13 +53,27 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| _populated by roadmapper_ | | |
+| FND-01 | Phase 1 | Pending |
+| FND-02 | Phase 1 | Pending |
+| FND-03 | Phase 1 | Pending |
+| ABT-01 | Phase 1 | Pending |
+| ABT-02 | Phase 1 | Pending |
+| ABT-03 | Phase 1 | Pending |
+| ABT-04 | Phase 1 | Pending |
+| ABT-05 | Phase 1 | Pending |
+| NAV-02 | Phase 1 | Pending |
+| APL-01 | Phase 2 | Pending |
+| APL-02 | Phase 2 | Pending |
+| APL-03 | Phase 2 | Pending |
+| APL-04 | Phase 2 | Pending |
+| APL-05 | Phase 2 | Pending |
+| NAV-01 | Phase 2 | Pending |
 
 **Coverage:**
-- v1 requirements: 16 total
-- Mapped to phases: TBD
-- Unmapped: TBD
+- v1 requirements: 15 total (FND x3, ABT x5, APL x5, NAV x2)
+- Mapped to phases: 15/15
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-05-30*
-*Last updated: 2026-05-30 after initial definition*
+*Last updated: 2026-05-30 — traceability populated by roadmapper*
