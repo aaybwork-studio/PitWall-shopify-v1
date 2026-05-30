@@ -11,6 +11,7 @@
 
 - [x] **Phase 1: About Page** — Deliver a complete, shippable `/pages/about` page in Pitwall brand identity, wired to the existing ABOUT nav link, including all shared foundation constraints (tokens, responsiveness, grain overlay)
 - [x] **Phase 2: All Products Page** — Deliver a complete, shippable `/collections/all` page in Pitwall brand identity, wired to the existing SHOP nav links, with a placeholder product grid
+- [ ] **Phase 3: Helmets PDP & Dynamic Routing** — Deliver a complete, shippable helmets product page with autocalibrated WebGL helmet models, zero-lag browser URL state switches via HTML5 History API, and separate catalog listings in `/collections/all`
 
 ---
 
@@ -48,12 +49,29 @@
 
 ---
 
+### Phase 3: Helmets PDP & Dynamic Routing
+**Goal**: Integrate two F1 Helmet WebGL models (`f1_helmet_lando_norris.glb` and `michael_schumacher_2002_helmet.glb`) into a dedicated Helmet Product page, with zero-lag URL switches using HTML5 History API and separated grid items in `/collections/all`
+**Mode:** mvp
+**Depends on**: Phase 2 (all layout and tokens validated; catalog grids set up)
+**Requirements**: HEL-01, HEL-02, HEL-03, HEL-04, NAV-03
+**Success Criteria** (what must be TRUE):
+  1. Visiting `/products/lando-norris-helmet` or `/products/schumacher-helmet` renders a dedicated Helmet PDP using the custom scrollytelling canvas supporting helmet GLB models.
+  2. Switcher configurator buttons on the Helmet PDP allow users to switch context dynamically using HTML5 History API (`window.history.pushState`) without reloading the page, instantly updating the canvas and specs.
+  3. The switcher scope is contextual: Car pages only switch between cars, Helmet pages only switch between helmets.
+  4. The `/collections/all` page renders every single car model and helmet model separately in the staggered editorial layout instead of grouping them.
+  5. Pre-order parameters (like for the helmets or MCL39 models) are rendered as clean inline monospace annotations `[ PRE-ORDER ]` next to the price tag in high-contrast Racing Yellow.
+**Plans**: TBD
+**UI hint**: yes
+
+---
+
 ## Progress Table
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. About Page | 1/1 | Completed | 2026-05-31 |
 | 2. All Products Page | 1/1 | Completed | 2026-05-31 |
+| 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
 ---
 

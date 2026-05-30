@@ -9,7 +9,7 @@
 
 **Core Value:** The two new pages must look unmistakably Pitwall (brutalist F1 aesthetic + existing tokens) while delivering the editorial structure of the reference designs.
 
-**Current Focus:** Milestone Complete (Phase 1 & 2 shippable)
+**Current Focus:** Phase 3 — Helmets PDP & Dynamic Routing
 
 ---
 
@@ -17,17 +17,18 @@
 
 | Field | Value |
 |-------|-------|
-| Phase | Completed |
-| Plan | Done |
-| Status | Complete |
+| Phase | 3 — Helmets PDP & Dynamic Routing |
+| Plan | TBD (Context gathered) |
+| Status | Context gathered |
 | Mode | MVP |
 
 **Progress:**
 ```
 [ Phase 1: About Page    ] █▓▓▓▓▓▓▓▓▓ 100%
 [ Phase 2: All Products  ] █▓▓▓▓▓▓▓▓▓ 100%
+[ Phase 3: Helmets PDP   ] ░░░░░░░░░░   0%
 
-Overall: 2/2 phases complete
+Overall: 2/3 phases complete
 ```
 
 ---
@@ -56,7 +57,7 @@ Overall: 2/2 phases complete
 
 ### Active TODOs
 
-- [ ] Transition to v2 (dynamic catalogs, product page layout upgrades)
+- [ ] Plan Phase 3 (run `/gsd-plan-phase 3`)
 
 ### Blockers
 
@@ -69,8 +70,8 @@ None.
 - Roadmap created fresh on 2026-05-30 via `/gsd-new-project` orchestrator.
 - Phase 1: About Page completed and pushed to remote on 2026-05-31.
 - Phase 2: All Products Page completed and pushed to remote on 2026-05-31.
-- Milestone Complete: both pages fully shippable, navigation links active, local Vite builds green.
-- Next action: dynamic Shopify product/collections query wiring (Phase v2 catalog).
+- Phase 3: Helmets PDP & Dynamic Routing context gathered on 2026-05-31.
+- Next action: `/gsd-plan-phase 3` to design the technical implementation plan for Helmets.
 
 ---
 
