@@ -3,12 +3,15 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 interface CarCanvasProps {
-  modelName: 'mclaren' | 'redbull' | 'ferrari' | 'mercedes' | string;
+  modelName: string;
   modelUrl: string;
   mclarenUrl?: string;
   redbullUrl?: string;
   ferrariUrl?: string;
   mercedesUrl?: string;
+  norrisHelmetUrl?: string;
+  schumacherHelmetUrl?: string;
+  verstappenHelmetUrl?: string;
   scrollProgress?: number;
   onLoadProgress?: (progress: number) => void;
   className?: string;
@@ -21,6 +24,9 @@ export function CarCanvas({
   redbullUrl, 
   ferrariUrl, 
   mercedesUrl, 
+  norrisHelmetUrl,
+  schumacherHelmetUrl,
+  verstappenHelmetUrl,
   scrollProgress = 0, 
   onLoadProgress, 
   className = '' 
@@ -75,8 +81,9 @@ export function CarCanvas({
     const aspect = width / height;
     const camera = new THREE.PerspectiveCamera(40, aspect, 0.1, 100);
     
-    let distance = 3.5;
-    if (aspect < 1.6) {
+    const isHelmet = modelNameRef.current.includes('helmet') || modelNameRef.current.includes('schumacher') || modelNameRef.current.includes('norris');
+    let distance = isHelmet ? 2.4 : 3.5;
+    if (!isHelmet && aspect < 1.6) {
       distance = 3.5 * (1.6 / aspect);
     }
     
@@ -98,11 +105,11 @@ export function CarCanvas({
     rendererRef.current = renderer;
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight('#ffffff', 0.7);
+    const ambientLight = new THREE.AmbientLight('#ffffff', 0.85);
     scene.add(ambientLight);
 
     // Studio directional lighting
-    const frontLight = new THREE.DirectionalLight('#ffffff', 1.8);
+    const frontLight = new THREE.DirectionalLight('#ffffff', 2.0);
     frontLight.position.set(5, 10, 8);
     frontLight.castShadow = true;
     frontLight.shadow.mapSize.width = 2048;
@@ -110,11 +117,11 @@ export function CarCanvas({
     frontLight.shadow.bias = -0.0001;
     scene.add(frontLight);
 
-    const rimLight = new THREE.DirectionalLight('#ffffff', 1.0);
+    const rimLight = new THREE.DirectionalLight('#ffffff', 1.25);
     rimLight.position.set(-5, 6, -8);
     scene.add(rimLight);
 
-    const fillLight = new THREE.DirectionalLight('#ffffff', 0.4);
+    const fillLight = new THREE.DirectionalLight('#ffffff', 0.5);
     fillLight.position.set(-3, -2, 4);
     scene.add(fillLight);
 
@@ -152,8 +159,9 @@ export function CarCanvas({
       const asp = w / h;
       cameraRef.current.aspect = asp;
 
-      let dist = 3.5;
-      if (asp < 1.6) {
+      const isCurrentHelmet = modelNameRef.current.includes('helmet') || modelNameRef.current.includes('schumacher') || modelNameRef.current.includes('norris');
+      let dist = isCurrentHelmet ? 2.4 : 3.5;
+      if (!isCurrentHelmet && asp < 1.6) {
         dist = 3.5 * (1.6 / asp);
       }
       cameraRef.current.position.set(dist, 0, 0);
@@ -176,6 +184,8 @@ export function CarCanvas({
           redbull: Math.PI / 2,
           ferrari: Math.PI / 2,
           mercedes: Math.PI / 2,
+          'lando-norris-helmet': Math.PI / 2,
+          'schumacher-helmet': Math.PI / 2,
         };
 
         const currentActive = modelNameRef.current;
@@ -242,6 +252,9 @@ export function CarCanvas({
       redbull: redbullUrl || (modelName === 'redbull' ? modelUrl : ''),
       ferrari: ferrariUrl || (modelName === 'ferrari' ? modelUrl : ''),
       mercedes: mercedesUrl || (modelName === 'mercedes' ? modelUrl : ''),
+      'lando-norris-helmet': norrisHelmetUrl || (modelName === 'lando-norris-helmet' ? modelUrl : ''),
+      'schumacher-helmet': schumacherHelmetUrl || (modelName === 'schumacher-helmet' ? modelUrl : ''),
+      'verstappen-helmet': verstappenHelmetUrl || (modelName === 'verstappen-helmet' ? modelUrl : ''),
     };
 
     const loader = new GLTFLoader();
@@ -254,7 +267,8 @@ export function CarCanvas({
         (gltf) => {
           try {
             const model = gltf.scene;
-            model.name = `car-${name}`;
+            const isHelmet = name.includes('helmet') || name.includes('schumacher') || name.includes('norris');
+            model.name = isHelmet ? `helmet-${name}` : `car-${name}`;
 
             model.traverse((node) => {
               if ((node as THREE.Mesh).isMesh) {
@@ -262,13 +276,13 @@ export function CarCanvas({
                 mesh.castShadow = true;
                 mesh.receiveShadow = true;
                 if (mesh.material instanceof THREE.MeshStandardMaterial) {
-                  mesh.material.envMapIntensity = 1.5;
+                  mesh.material.envMapIntensity = isHelmet ? 2.0 : 1.5;
                   mesh.material.roughness = Math.max(mesh.material.roughness, 0.05);
                 }
               }
             });
 
-            // Autocenter and scale chassis
+            // Autocenter and scale model
             const box = new THREE.Box3();
             box.makeEmpty();
             model.traverse((node) => {
@@ -305,13 +319,18 @@ export function CarCanvas({
             box.getSize(size);
 
             const maxDim = Math.max(size.x, size.y, size.z);
-            const targetSize = 3.2;
+            const targetSize = isHelmet ? 1.7 : 3.2;
             const scaleFactor = targetSize / maxDim;
             model.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
             model.position.x = -center.x * scaleFactor;
             model.position.y = -center.y * scaleFactor;
             model.position.z = -center.z * scaleFactor;
+            
+            // Adjust position offsets for perfect centering of helmets
+            if (isHelmet) {
+              model.position.y += 0.15;
+            }
 
             pivot.add(model);
             loadedModelsRef.current.set(name, model);
@@ -322,16 +341,16 @@ export function CarCanvas({
               onLoadProgressRef.current(100);
             }
           } catch {
-            setError('Scene parsing error: chassis is structurally invalid.');
+            setError('Scene parsing error: asset is structurally invalid.');
           }
         },
         undefined,
         () => {
-          setError(`Failed to retrieve model chassis.`);
+          setError(`Failed to retrieve model asset.`);
         }
       );
     });
-  }, [mclarenUrl, redbullUrl, ferrariUrl, mercedesUrl]);
+  }, [mclarenUrl, redbullUrl, ferrariUrl, mercedesUrl, norrisHelmetUrl, schumacherHelmetUrl, verstappenHelmetUrl]);
 
   // ─── 3. Instant Model Visibility & Snapping Rotation Effect ─────────────────
   useEffect(() => {
@@ -350,6 +369,19 @@ export function CarCanvas({
       onLoadProgressRef.current(100);
     }
 
+    // Dynamic Camera Distance Calibration
+    if (cameraRef.current) {
+      const isHelmet = modelName.includes('helmet') || modelName.includes('schumacher') || modelName.includes('norris');
+      const aspect = cameraRef.current.aspect;
+      let dist = isHelmet ? 2.4 : 3.5;
+      if (!isHelmet && aspect < 1.6) {
+        dist = 3.5 * (1.6 / aspect);
+      }
+      cameraRef.current.position.set(dist, 0, 0);
+      cameraRef.current.lookAt(0, 0, 0);
+      cameraRef.current.updateProjectionMatrix();
+    }
+
     // Instantly snap rotation to avoid visual lag when switching
     if (previousModelName !== modelName) {
       const TEAM_Y_ROTATIONS: Record<string, number> = {
@@ -357,6 +389,8 @@ export function CarCanvas({
         redbull: Math.PI / 2,
         ferrari: Math.PI / 2,
         mercedes: Math.PI / 2,
+        'lando-norris-helmet': Math.PI / 2,
+        'schumacher-helmet': Math.PI / 2,
       };
       const baseY = TEAM_Y_ROTATIONS[modelName] ?? Math.PI / 2;
       const sp = scrollProgressRef.current;

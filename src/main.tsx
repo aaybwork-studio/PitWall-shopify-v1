@@ -59,6 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const redbullUrl = pdpRoot.getAttribute('data-redbull-url') || '';
     const ferrariUrl = pdpRoot.getAttribute('data-ferrari-url') || '';
     const mercedesUrl = pdpRoot.getAttribute('data-mercedes-url') || '';
+    const norrisHelmetUrl = pdpRoot.getAttribute('data-norris-helmet-url') || '';
+    const schumacherHelmetUrl = pdpRoot.getAttribute('data-schumacher-helmet-url') || '';
+    const verstappenHelmetUrl = pdpRoot.getAttribute('data-verstappen-helmet-url') || '';
 
     const root = ReactDOM.createRoot(pdpRoot);
     root.render(
@@ -72,6 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
           redbullUrl={redbullUrl}
           ferrariUrl={ferrariUrl}
           mercedesUrl={mercedesUrl}
+          norrisHelmetUrl={norrisHelmetUrl}
+          schumacherHelmetUrl={schumacherHelmetUrl}
+          verstappenHelmetUrl={verstappenHelmetUrl}
         />
       </React.StrictMode>
     );

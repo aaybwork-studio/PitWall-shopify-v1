@@ -21,6 +21,9 @@ interface ProductScrollytellingProps {
   redbullUrl: string;
   ferrariUrl: string;
   mercedesUrl: string;
+  norrisHelmetUrl?: string;
+  schumacherHelmetUrl?: string;
+  verstappenHelmetUrl?: string;
 }
 
 const TEAMS_DATA = {
@@ -68,6 +71,39 @@ const TEAMS_DATA = {
     },
     subtitle: "Brackley's aggressive, uncompromising structural thesis.",
   },
+  'lando-norris-helmet': {
+    name: 'McLaren F1 Helmet — Lando Norris Replica',
+    basePrice: 7999,
+    referenceCode: 'PW-LN-2025',
+    accentColor: '#FF8000',
+    specs: {
+      parts: '110 pieces',
+      material: 'Autoclaved Carbon & Vacuum Visor',
+    },
+    subtitle: "Autocalibrated 1:2 scale replica of McLaren's top technical talent.",
+  },
+  'schumacher-helmet': {
+    name: 'Ferrari F1 Helmet — Schumacher 2002 Edition',
+    basePrice: 7999,
+    referenceCode: 'PW-MS-2002',
+    accentColor: '#E10600',
+    specs: {
+      parts: '118 pieces',
+      material: 'Composite Carbon & Autographed Visor',
+    },
+    subtitle: "Legendary championship replica commemorating the Maranello era.",
+  },
+  'verstappen-helmet': {
+    name: 'Red Bull F1 Helmet — Max Verstappen 2023',
+    basePrice: 7999,
+    referenceCode: 'PW-MV1-2023',
+    accentColor: '#FCD500',
+    specs: {
+      parts: '112 pieces',
+      material: 'Matte Carbon Fiber & Anti-Scratch Visor',
+    },
+    subtitle: 'The most dominant driver of a generation, in collector-grade carbon.',
+  },
 };
 
 const SCALES_DATA = {
@@ -94,11 +130,38 @@ const SCALES_DATA = {
   },
 };
 
+const HELMET_SCALES = {
+  S: {
+    label: '1:2 Scale (Half Scale)',
+    multiplier: 1.0,
+    dimensions: '130mm x 165mm x 125mm',
+    weight: '480g',
+    partsOffset: 0,
+  },
+  M: {
+    label: '1:2 Scale (Collector Ed.)',
+    multiplier: 1.5,
+    dimensions: '130mm x 165mm x 125mm',
+    weight: '520g',
+    partsOffset: 15,
+  },
+  L: {
+    label: '1:1 Scale (Full Scale)',
+    multiplier: 5.75, // 7999 * 5.75 = 45999
+    dimensions: '260mm x 330mm x 250mm',
+    weight: '1,600g',
+    partsOffset: 45,
+  },
+};
+
 const teamTitles: Record<string, { line1: string; line2: string }> = {
   mclaren: { line1: 'MCLAREN', line2: 'MCL39' },
   redbull: { line1: 'RED BULL', line2: 'RB19' },
   ferrari: { line1: 'FERRARI', line2: 'SF-23' },
   mercedes: { line1: 'MERCEDES', line2: 'W14' },
+  'lando-norris-helmet': { line1: 'LANDO NORRIS', line2: 'LN-F1' },
+  'schumacher-helmet': { line1: 'SCHUMACHER', line2: 'MS-2002' },
+  'verstappen-helmet': { line1: 'VERSTAPPEN', line2: 'MV1-2023' },
 };
 
 const teamButtonLabels: Record<string, string> = {
@@ -106,20 +169,25 @@ const teamButtonLabels: Record<string, string> = {
   redbull: 'Redbull-RB19',
   ferrari: 'Ferrari-SF23',
   mercedes: 'Mercedes-W14',
+  'lando-norris-helmet': 'Norris-Helmet',
+  'schumacher-helmet': 'Schumacher-Helmet',
+  'verstappen-helmet': 'Verstappen-Helmet',
 };
 
 export function ProductScrollytelling({
-  productTitle,
+  productTitle: _productTitle,
   productHandle,
-  productPrice,
+  productPrice: _productPrice,
   variantsJson,
   mclarenUrl,
   redbullUrl,
   ferrariUrl,
   mercedesUrl,
+  norrisHelmetUrl,
+  schumacherHelmetUrl,
+  verstappenHelmetUrl,
 }: ProductScrollytellingProps) {
   // Parse dynamic shopify variants
-  console.log('PDP calibration initialized for product:', productTitle, 'basePrice:', productPrice);
   let parsedVariants: ShopifyVariant[] = [];
   try {
     parsedVariants = JSON.parse(variantsJson);
@@ -127,9 +195,18 @@ export function ProductScrollytelling({
     parsedVariants = [];
   }
 
+  // Detect product handle context (helmet vs car)
+  const isHelmet = productHandle.toLowerCase().includes('helmet') || 
+                   productHandle.toLowerCase().includes('schumacher') || 
+                   productHandle.toLowerCase().includes('norris') ||
+                   productHandle.toLowerCase().includes('verstappen');
+
   // Determine initial active team based on product handle keyword
   const getInitialTeam = (): keyof typeof TEAMS_DATA => {
     const handle = productHandle.toLowerCase();
+    if (handle.includes('norris')) return 'lando-norris-helmet';
+    if (handle.includes('schumacher')) return 'schumacher-helmet';
+    if (handle.includes('verstappen')) return 'verstappen-helmet';
     if (handle.includes('redbull') || handle.includes('red-bull')) return 'redbull';
     if (handle.includes('ferrari')) return 'ferrari';
     if (handle.includes('mercedes')) return 'mercedes';
@@ -152,17 +229,16 @@ export function ProductScrollytelling({
   const showButtonsRef = useRef<boolean>(true);
 
   const teamInfo = TEAMS_DATA[activeTeam];
-  const scaleInfo = SCALES_DATA[activeScale];
+  const scaleInfo = isHelmet ? HELMET_SCALES[activeScale as keyof typeof HELMET_SCALES] : SCALES_DATA[activeScale];
 
   // Dynamic calculations based on team and scale
-  // Fall back to Shopify prices if team matches primary product
   const getDisplayPrice = () => {
     if (activeTeam === initialTeam && parsedVariants.length > 0) {
       const activeVariant = parsedVariants.find(v => {
         const title = v.title.toLowerCase();
-        if (activeScale === 'S') return title.includes('43');
-        if (activeScale === 'M') return title.includes('24');
-        return title.includes('18');
+        if (activeScale === 'S') return title.includes('43') || title.includes('1:2') || title.includes('half');
+        if (activeScale === 'M') return title.includes('24') || title.includes('collector');
+        return title.includes('18') || title.includes('1:1') || title.includes('full');
       });
       if (activeVariant) {
         return (activeVariant.price / 100).toLocaleString('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 });
@@ -180,9 +256,9 @@ export function ProductScrollytelling({
     if (parsedVariants.length === 0) return null;
     const activeVariant = parsedVariants.find(v => {
       const title = v.title.toLowerCase();
-      if (activeScale === 'S') return title.includes('43');
-      if (activeScale === 'M') return title.includes('24');
-      return title.includes('18');
+      if (activeScale === 'S') return title.includes('43') || title.includes('1:2') || title.includes('half');
+      if (activeScale === 'M') return title.includes('24') || title.includes('collector');
+      return title.includes('18') || title.includes('1:1') || title.includes('full');
     });
     return activeVariant ? activeVariant.id : parsedVariants[0].id;
   };
@@ -249,7 +325,6 @@ export function ProductScrollytelling({
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     handleScroll();
 
-    // Store reference to function so it can be called inside intersection observer
     (window as any).__pwHandleProductScroll = handleScroll;
 
     return () => {
@@ -263,7 +338,6 @@ export function ProductScrollytelling({
     const observer = new IntersectionObserver(
       ([entry]) => {
         showButtonsRef.current = !entry.isIntersecting;
-        // Trigger style update immediately
         if (typeof (window as any).__pwHandleProductScroll === 'function') {
           (window as any).__pwHandleProductScroll();
         }
@@ -304,7 +378,6 @@ export function ProductScrollytelling({
         body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] }),
       });
       
-      // Update cart bubbles on page
       const badge = document.getElementById('cart-counter-display');
       if (badge) {
         const currentCount = parseInt(badge.innerText) || 0;
@@ -324,7 +397,6 @@ export function ProductScrollytelling({
       return;
     }
 
-    // Direct redirect to checkout shortcut!
     window.location.href = `/cart/${variantId}:1`;
   };
 
@@ -333,8 +405,25 @@ export function ProductScrollytelling({
     if (activeTeam === 'redbull') return redbullUrl;
     if (activeTeam === 'ferrari') return ferrariUrl;
     if (activeTeam === 'mercedes') return mercedesUrl;
+    if (activeTeam === 'lando-norris-helmet') return norrisHelmetUrl || '';
+    if (activeTeam === 'schumacher-helmet') return schumacherHelmetUrl || '';
+    if (activeTeam === 'verstappen-helmet') return verstappenHelmetUrl || '';
     return mclarenUrl;
   };
+
+  // Handle zero-lag switcher button click syncing both state and browser URL handle
+  const handleTeamSwitch = (targetTeam: keyof typeof TEAMS_DATA) => {
+    setActiveTeam(targetTeam);
+    const targetHandle = teamButtonLabels[targetTeam].toLowerCase();
+    
+    // Smoothly update browser URL using History API to resolve D-01/D-02
+    window.history.pushState(null, '', '/products/' + targetHandle);
+  };
+
+  // Restrict switcher button scope to contextual context (D-03)
+  const switcherTeams = isHelmet 
+    ? ['lando-norris-helmet', 'schumacher-helmet', 'verstappen-helmet']
+    : ['mclaren', 'redbull', 'ferrari', 'mercedes'];
 
   return (
     <div 
@@ -376,6 +465,9 @@ export function ProductScrollytelling({
               redbullUrl={redbullUrl}
               ferrariUrl={ferrariUrl}
               mercedesUrl={mercedesUrl}
+              norrisHelmetUrl={norrisHelmetUrl}
+              schumacherHelmetUrl={schumacherHelmetUrl}
+              verstappenHelmetUrl={verstappenHelmetUrl}
             />
           </div>
 
@@ -389,10 +481,10 @@ export function ProductScrollytelling({
               pointerEvents: 'auto'
             }}
           >
-            {(Object.keys(TEAMS_DATA) as Array<keyof typeof TEAMS_DATA>).map((team) => (
+            {switcherTeams.map((team) => (
               <button
                 key={team}
-                onClick={() => setActiveTeam(team)}
+                onClick={() => handleTeamSwitch(team as keyof typeof TEAMS_DATA)}
                 className={`px-5 py-2.5 border font-mono text-[11px] uppercase transition-all flex items-center justify-between gap-3 backdrop-blur-md whitespace-nowrap ${
                   activeTeam === team
                     ? 'border-brand-black bg-[#0C0C0C]/85 text-[#EDEBE5] font-semibold'
@@ -459,10 +551,10 @@ export function ProductScrollytelling({
                     SELECT COLLECTIBLE SIZE
                   </span>
                   <div className="grid grid-cols-3 gap-2">
-                     {(Object.keys(SCALES_DATA) as Array<keyof typeof SCALES_DATA>).map((scale) => (
+                     {(isHelmet ? Object.keys(HELMET_SCALES) : Object.keys(SCALES_DATA)).map((scale) => (
                       <button
                         key={scale}
-                        onClick={() => setActiveScale(scale)}
+                        onClick={() => setActiveScale(scale as keyof typeof SCALES_DATA)}
                         className={`py-3 border font-mono text-xs uppercase transition-all flex flex-col items-center justify-center gap-0.5 backdrop-blur-md ${
                           activeScale === scale
                             ? 'border-brand-black bg-[#0C0C0C]/85 text-[#EDEBE5] font-semibold'
@@ -470,7 +562,9 @@ export function ProductScrollytelling({
                         }`}
                       >
                         <span className="text-sm font-bold">{scale}</span>
-                        <span className="text-[8px] text-brand-black/45 scale-[0.9]">{SCALES_DATA[scale].label.split(' ')[0]}</span>
+                        <span className="text-[8px] text-brand-black/45 scale-[0.9]">
+                          {(isHelmet ? HELMET_SCALES : SCALES_DATA)[scale as keyof typeof SCALES_DATA].label.split(' ')[0]}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -535,8 +629,6 @@ export function ProductScrollytelling({
 
       {/* Featured Products Carousel */}
       <FeaturedCarousel />
-
-
     </div>
   );
 }
