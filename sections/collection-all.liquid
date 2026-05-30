@@ -1,0 +1,489 @@
+<!-- PITWALL ALL PRODUCTS SHOWCASE CATALOG -->
+<style>
+  .pw-catalog-section {
+    background-color: var(--bg);
+    padding: 120px 100px 100px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    min-height: calc(100vh - 64px);
+  }
+
+  /* Top Label Header Row */
+  .pw-catalog-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 80px;
+    width: 100%;
+  }
+
+  .pw-catalog-main-title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 4.5vw, 64px);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    color: var(--fg);
+    margin: 0;
+  }
+
+  .pw-catalog-season-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--fg);
+    opacity: 0.8;
+    text-transform: uppercase;
+    padding-bottom: 6px;
+  }
+
+  /* Catalog Staggered Grid */
+  .pw-catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: 40px;
+    row-gap: 120px;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .pw-catalog-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 95%;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 300ms ease;
+  }
+
+  /* Staggered Column Splitting Rules (A, B, C, D repeats) */
+  .pw-catalog-card-a {
+    grid-column: 1 / 8;
+    justify-self: start;
+  }
+
+  .pw-catalog-card-b {
+    grid-column: 8 / 13;
+    margin-top: 120px;
+    justify-self: end;
+  }
+
+  .pw-catalog-card-c {
+    grid-column: 1 / 6;
+    margin-top: 80px;
+    justify-self: start;
+  }
+
+  .pw-catalog-card-d {
+    grid-column: 6 / 13;
+    justify-self: end;
+  }
+
+  .pw-catalog-img-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
+  }
+
+  .pw-catalog-card-a .pw-catalog-img-container,
+  .pw-catalog-card-d .pw-catalog-img-container {
+    aspect-ratio: 4/5;
+  }
+
+  .pw-catalog-card-b .pw-catalog-img-container,
+  .pw-catalog-card-c .pw-catalog-img-container {
+    aspect-ratio: 3/4;
+  }
+
+  /* Vector Blueprint fallbacks */
+  .pw-catalog-sketch-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.65;
+    transition: opacity 300ms ease;
+  }
+
+  .pw-catalog-card:hover .pw-catalog-sketch-overlay {
+    opacity: 0.9;
+  }
+
+  .pw-catalog-img-element {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%);
+    transition: transform 400ms ease, filter 300ms ease;
+  }
+
+  .pw-catalog-card:hover .pw-catalog-img-element {
+    transform: scale(1.03);
+    filter: grayscale(0%);
+  }
+
+  /* Dynamic Slide-Up Bottom Info Panel */
+  .pw-catalog-hover-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #0C0C0C;
+    padding: 20px 24px;
+    transform: translateY(100%);
+    transition: transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid rgba(237, 235, 229, 0.1);
+  }
+
+  .pw-catalog-card:hover .pw-catalog-hover-info {
+    transform: translateY(0);
+  }
+
+  .pw-catalog-hover-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: #EDEBE5;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .pw-catalog-hover-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(237, 235, 229, 0.15);
+    padding-top: 8px;
+    gap: 12px;
+  }
+
+  .pw-catalog-hover-specs {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: rgba(237, 235, 229, 0.45);
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pw-catalog-price-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .pw-catalog-hover-price {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: #F6C917;
+    font-weight: 600;
+  }
+
+  /* Inline Pre-Order Tag */
+  .pw-catalog-preorder-tag {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    color: #F6C917;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Responsive layouts */
+  @media screen and (max-width: 1024px) {
+    .pw-catalog-section {
+      padding: 100px 48px 80px;
+    }
+    .pw-catalog-grid {
+      column-gap: 30px;
+      row-gap: 80px;
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    .pw-catalog-section {
+      padding: 80px 20px 60px;
+    }
+    .pw-catalog-header-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+    .pw-catalog-grid {
+      grid-template-columns: 1fr;
+      row-gap: 40px;
+    }
+    .pw-catalog-card {
+      grid-column: 1 !important;
+      margin-top: 0 !important;
+      width: 100%;
+    }
+    .pw-catalog-img-container {
+      aspect-ratio: 4/5 !important;
+    }
+    /* Expose metadata block permanently on mobile since hover hover panel is hard to trigger on mobile tap */
+    .pw-catalog-hover-info {
+      position: relative;
+      transform: translateY(0);
+      background-color: transparent;
+      padding: 12px 0 0 0;
+      border-top: none;
+    }
+    .pw-catalog-hover-title {
+      color: var(--fg);
+      font-size: 14px;
+    }
+    .pw-catalog-hover-specs {
+      color: var(--fg);
+      opacity: 0.6;
+    }
+    .pw-catalog-hover-meta {
+      border-top: 1px solid rgba(12, 12, 12, 0.1);
+      padding-top: 6px;
+    }
+    .pw-catalog-hover-price {
+      color: var(--fg);
+      font-weight: 600;
+    }
+  }
+</style>
+
+<section class="pw-catalog-section">
+  <!-- Dynamic top row technical label -->
+  <div class="pw-catalog-header-row">
+    <h1 class="pw-catalog-main-title">{{ section.settings.header_title }}</h1>
+    <span class="pw-catalog-season-label">{{ section.settings.season_label }}</span>
+  </div>
+
+  <div class="pw-catalog-grid">
+    <!-- Read collection products or all products -->
+    {% assign active_collection = collection | default: collections.all %}
+    {% if active_collection.products.size > 0 %}
+      
+      {% for product in active_collection.products limit: section.settings.products_limit %}
+        <!-- Cycle staggered styles A, B, C, D -->
+        {% assign cycle_class = 'a' %}
+        {% capture modulo_val %}{{ forloop.index0 | modulo: 4 }}{% endcapture %}
+        {% if modulo_val == '1' %}
+          {% assign cycle_class = 'b' %}
+        {% elsif modulo_val == '2' %}
+          {% assign cycle_class = 'c' %}
+        {% elsif modulo_val == '3' %}
+          {% assign cycle_class = 'd' %}
+        {% endif %}
+
+        <!-- Pre-order check -->
+        {% assign is_pre_order = false %}
+        {% for tag in product.tags %}
+          {% assign downcase_tag = tag | downcase %}
+          {% if downcase_tag == 'pre-order' %}
+            {% assign is_pre_order = true %}
+          {% endif %}
+        {% endfor %}
+
+        <a href="{{ product.url }}" class="pw-catalog-card pw-catalog-card-{{ cycle_class }} cursor-pointer">
+          <div class="pw-catalog-img-container">
+            {% if product.featured_image != blank %}
+              <img 
+                class="pw-catalog-img-element" 
+                src="{{ product.featured_image | image_url: width: 1000 }}" 
+                alt="{{ product.title | escape }}"
+                loading="lazy"
+              >
+            {% else %}
+              <div class="pw-catalog-sketch-overlay">
+                <!-- Custom sketch placeholder according to index -->
+                {% if cycle_class == 'a' %}
+                  <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+                    <path d="M 40 120 L 360 120 M 100 80 L 180 100 L 300 100 L 330 135" stroke-dasharray="3,3" />
+                    <rect x="50" y="60" width="10" height="110" stroke-width="2" opacity="0.4" />
+                    <circle cx="120" cy="120" r="32" stroke-width="2" />
+                    <circle cx="280" cy="120" r="35" stroke-width="2" />
+                  </svg>
+                {% elsif cycle_class == 'b' %}
+                  <svg viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+                    <circle cx="150" cy="120" r="60" stroke-width="2" />
+                    <path d="M 150 60 C 210 60 210 180 150 180 Z" stroke-width="2" />
+                  </svg>
+                {% elsif cycle_class == 'c' %}
+                  <svg viewBox="0 0 300 240" style="width: 70%; height: 70%; stroke: var(--fg); fill: none; stroke-width: 2.5">
+                    <path d="M 50 50 L 250 50 L 250 120 L 200 150 L 150 120 L 100 190 L 50 120 Z" stroke-linejoin="bevel" />
+                  </svg>
+                {% else %}
+                  <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+                    <circle cx="200" cy="120" r="60" stroke="#F6C917" stroke-width="3" />
+                    <path d="M 120 120 H 280 M 200 40 V 200" stroke-dasharray="3,3" />
+                  </svg>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <!-- Detail Slide-Up overlay -->
+            <div class="pw-catalog-hover-info">
+              <span class="pw-catalog-hover-title">{{ product.title }}</span>
+              <div class="pw-catalog-hover-meta">
+                <span class="pw-catalog-hover-specs">{{ product.type | default: 'TECHNICAL ACCS' | upcase }}</span>
+                <div class="pw-catalog-price-container">
+                  {% if is_pre_order %}
+                    <span class="pw-catalog-preorder-tag">[ PRE-ORDER ]</span>
+                  {% endif %}
+                  <span class="pw-catalog-hover-price">{{ product.price | money }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+
+    {% else %}
+      <!-- D-09 Static Mock Fallback items in staggered grids -->
+      
+      <!-- Mock 1: CAR MODELS (Staggered A, Pre-order Active) -->
+      <a href="/products/mclaren-mcl39" class="pw-catalog-card pw-catalog-card-a cursor-pointer">
+        <div class="pw-catalog-img-container">
+          <div class="pw-catalog-sketch-overlay">
+            <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+              <path d="M 40 120 L 360 120 M 100 80 L 180 100 L 300 100 L 330 135" stroke-dasharray="3,3" />
+              <rect x="50" y="60" width="10" height="110" stroke-width="2" opacity="0.4" />
+              <circle cx="120" cy="120" r="32" stroke-width="2" />
+              <circle cx="280" cy="120" r="35" stroke-width="2" />
+              <path d="M 190 70 L 220 30 H 260 L 280 70 Z" fill="rgba(12,12,12,0.03)" />
+            </svg>
+          </div>
+          <div class="pw-catalog-hover-info">
+            <span class="pw-catalog-hover-title">CAR MODELS // MOCK-01</span>
+            <div class="pw-catalog-hover-meta">
+              <span class="pw-catalog-hover-specs">1:18 SCALE / RESIN COMPOSITE</span>
+              <div class="pw-catalog-price-container">
+                <span class="pw-catalog-preorder-tag">[ PRE-ORDER ]</span>
+                <span class="pw-catalog-hover-price">₹12,499</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Mock 2: HELMET REPLICAS (Staggered B) -->
+      <div class="pw-catalog-card pw-catalog-card-b">
+        <div class="pw-catalog-img-container">
+          <div class="pw-catalog-sketch-overlay">
+            <svg viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+              <circle cx="150" cy="120" r="60" stroke-width="2" />
+              <path d="M 150 60 C 210 60 210 180 150 180 Z" stroke-width="2" />
+              <rect x="145" y="90" width="60" height="24" fill="rgba(12,12,12,0.08)" />
+              <path d="M 90 120 H 150" stroke-dasharray="4,4" />
+            </svg>
+          </div>
+          <div class="pw-catalog-hover-info">
+            <span class="pw-catalog-hover-title">HELMET REPLICAS // MOCK-02</span>
+            <div class="pw-catalog-hover-meta">
+              <span class="pw-catalog-hover-specs">1:2 SCALE / MATTE CARBON FIBER</span>
+              <div class="pw-catalog-price-container">
+                <span class="pw-catalog-hover-price">₹7,999</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mock 3: TRACK SILHOUETTES (Staggered C) -->
+      <div class="pw-catalog-card pw-catalog-card-c">
+        <div class="pw-catalog-img-container">
+          <div class="pw-catalog-sketch-overlay">
+            <svg viewBox="0 0 300 240" style="width: 70%; height: 70%; stroke: var(--fg); fill: none; stroke-width: 2.5">
+              <path d="M 50 50 L 250 50 L 250 120 L 200 150 L 150 120 L 100 190 L 50 120 Z" stroke-linejoin="bevel" />
+              <circle cx="50" cy="50" r="4" fill="#F6C917" stroke="none" />
+            </svg>
+          </div>
+          <div class="pw-catalog-hover-info">
+            <span class="pw-catalog-hover-title">TRACK SILHOUETTES // MOCK-03</span>
+            <div class="pw-catalog-hover-meta">
+              <span class="pw-catalog-hover-specs">3D TOPOGRAPHIC WOOD / STEEL</span>
+              <div class="pw-catalog-price-container">
+                <span class="pw-catalog-hover-price">₹4,499</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mock 4: DECOR LIGHTS (Staggered D, Pre-Order Active) -->
+      <div class="pw-catalog-card pw-catalog-card-d">
+        <div class="pw-catalog-img-container">
+          <div class="pw-catalog-sketch-overlay">
+            <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+              <circle cx="200" cy="120" r="60" stroke="#F6C917" stroke-width="3" />
+              <path d="M 120 120 H 280 M 200 40 V 200" stroke-dasharray="3,3" />
+              <rect x="180" y="100" width="40" height="40" fill="rgba(246,201,23,0.05)" />
+            </svg>
+          </div>
+          <div class="pw-catalog-hover-info">
+            <span class="pw-catalog-hover-title">DECOR LIGHTS // MOCK-04</span>
+            <div class="pw-catalog-hover-meta">
+              <span class="pw-catalog-hover-specs">USB-C POWERED DUAL LED</span>
+              <div class="pw-catalog-price-container">
+                <span class="pw-catalog-preorder-tag">[ PRE-ORDER ]</span>
+                <span class="pw-catalog-hover-price">₹6,899</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product Staggered Catalog",
+  "settings": [
+    {
+      "type": "text",
+      "id": "header_title",
+      "label": "Section Headline",
+      "default": "ALL PRODUCTS"
+    },
+    {
+      "type": "text",
+      "id": "season_label",
+      "label": "Technical Season Label",
+      "default": "[ SEASON-01 / CALIBRATION ]"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Max Products Count",
+      "min": 4,
+      "max": 24,
+      "step": 4,
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Staggered Catalog"
+    }
+  ]
+}
+{% endschema %}
