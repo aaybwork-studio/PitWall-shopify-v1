@@ -217,15 +217,15 @@ export function ProductScrollytelling({
 
       // Wordmark fade
       if (wordmarkRef.current) {
-        const opacity = progress < 0.3 ? (1 - (progress / 0.3)) * 0.85 : 0;
+        const opacity = progress < 0.25 ? (1 - (progress / 0.25)) * 0.85 : 0;
         wordmarkRef.current.style.opacity = `${opacity}`;
         wordmarkRef.current.style.pointerEvents = opacity > 0.05 ? 'auto' : 'none';
       }
 
       // Configurator fade
       if (configuratorRef.current) {
-        const opacity = progress < 0.3 ? 1 - (progress / 0.3) : 0;
-        const translateY = progress < 0.3 ? 0 : 24;
+        const opacity = progress < 0.25 ? 1 - (progress / 0.25) : 0;
+        const translateY = progress < 0.25 ? 0 : 24;
         configuratorRef.current.style.opacity = `${opacity}`;
         configuratorRef.current.style.transform = `translate(-50%, ${translateY}px)`;
         configuratorRef.current.style.pointerEvents = opacity > 0.05 ? 'auto' : 'none';
@@ -233,20 +233,20 @@ export function ProductScrollytelling({
 
       // Left spec card slide
       if (leftCardRef.current) {
-        const translateX = progress >= 0.4 ? '0%' : '-150%';
-        const opacity = progress >= 0.4 ? 1 : 0;
+        const translateX = progress >= 0.25 ? '0%' : '-150%';
+        const opacity = progress >= 0.25 ? 1 : 0;
         leftCardRef.current.style.transform = `translateY(-50%) translateX(${translateX})`;
         leftCardRef.current.style.opacity = `${opacity}`;
-        leftCardRef.current.style.pointerEvents = progress >= 0.4 ? 'auto' : 'none';
+        leftCardRef.current.style.pointerEvents = progress >= 0.25 ? 'auto' : 'none';
       }
 
       // Right price card slide
       if (rightCardRef.current) {
-        const translateX = progress >= 0.4 ? '0%' : '150%';
-        const opacity = progress >= 0.4 ? 1 : 0;
+        const translateX = progress >= 0.25 ? '0%' : '150%';
+        const opacity = progress >= 0.25 ? 1 : 0;
         rightCardRef.current.style.transform = `translateY(-50%) translateX(${translateX})`;
         rightCardRef.current.style.opacity = `${opacity}`;
-        rightCardRef.current.style.pointerEvents = progress >= 0.4 ? 'auto' : 'none';
+        rightCardRef.current.style.pointerEvents = progress >= 0.25 ? 'auto' : 'none';
       }
 
       // Sticky bottom bar
@@ -363,7 +363,7 @@ export function ProductScrollytelling({
       } as React.CSSProperties}
     >
       {/* 1. Scrollytelling Product Showcase Track */}
-      <div ref={trackRef} className="relative w-full product-track" style={{ height: '300vh' }}>
+      <div ref={trackRef} className="relative w-full product-track" style={{ height: '400vh' }}>
         <div className="sticky top-0 w-full h-screen overflow-hidden">
           
           {/* Background Wordmark */}

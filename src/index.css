@@ -41,6 +41,7 @@ main[role="main"],
   margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box !important;
+  overflow: visible !important;
 }
 
 /* Override any default Shopify margins or grid layouts that squeeze our app */
