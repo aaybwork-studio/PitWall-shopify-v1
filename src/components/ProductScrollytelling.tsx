@@ -400,7 +400,7 @@ export function ProductScrollytelling({
           {/* Model Switcher Configurator Buttons */}
           <div 
             ref={configuratorRef}
-            className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex gap-3 pointer-events-auto transition-all duration-500"
+            className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 flex gap-3 pointer-events-auto transition-all duration-500"
             style={{ 
               opacity: 1,
               transform: 'translate(-50%, 0)',
@@ -411,7 +411,7 @@ export function ProductScrollytelling({
               <button
                 key={team}
                 onClick={() => setActiveTeam(team)}
-                className={`px-5 py-2.5 border font-mono text-[11px] uppercase transition-all flex items-center justify-between gap-3 backdrop-blur-md ${
+                className={`px-5 py-2.5 border font-mono text-[11px] uppercase transition-all flex items-center justify-between gap-3 backdrop-blur-md whitespace-nowrap ${
                   activeTeam === team
                     ? 'border-brand-black bg-[#0C0C0C]/85 text-[#EDEBE5] font-semibold'
                     : 'border-brand-black/20 hover:border-brand-black/45 text-brand-black/75 bg-[#EDEBE5]/45'

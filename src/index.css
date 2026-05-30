@@ -28,6 +28,31 @@
   --muted: rgba(12, 12, 12, 0.50);
 }
 
+/* Force all Shopify parent wrappers to be 100% full-bleed and full-width */
+html, body, 
+#MainContent, 
+.content-for-layout,
+main[role="main"],
+.shopify-section,
+#product-scrollytelling-root,
+#car-canvas-root {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Override any default Shopify margins or grid layouts that squeeze our app */
+.shopify-section > div,
+.shopify-section .page-width,
+.shopify-section .wrapper {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 /* Custom Brutalist Text Selection */
 ::selection {
   background-color: var(--accent);
