@@ -111,7 +111,10 @@ export function CarCanvas({ modelName, modelUrl, scrollProgress = 0, onLoadProgr
     pivotRef.current = pivot;
 
     // Autonomous Scroll Listener
-    const track = canvas.closest('.product-track-wrapper');
+    const track = canvas.closest('.product-track-wrapper') || 
+                  canvas.closest('.product-track') || 
+                  document.querySelector('.product-track') || 
+                  document.querySelector('.product-track-wrapper');
     const handleScroll = () => {
       if (scrollProgress !== undefined && scrollProgress !== 0) return;
       if (!track) return;

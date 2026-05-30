@@ -1,6 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600&family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@700;800&family=Space+Grotesk:wght@700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --font-syne: 'Syne', sans-serif;
+  --font-barlow: 'Barlow', sans-serif;
+  --font-ibm-plex-mono: 'IBM Plex Mono', monospace;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+
+  --background: #EDEBE5;
+  --foreground: #0C0C0C;
+  --brand-black: #0C0C0C;
+  --brand-white: #EDEBE5;
+  --brand-red: #F6C917;
+  --brand-surface: #F5F4F0;
+
+  --bg: #EDEBE5;
+  --fg: #0C0C0C;
+  --accent: #F6C917;
+  --surface: #F5F4F0;
+  --surface-2: #E5E3DD;
+  --border: rgba(12, 12, 12, 0.10);
+  --muted: rgba(12, 12, 12, 0.50);
+}
 
 /* Custom Brutalist Text Selection */
 ::selection {
@@ -36,5 +62,171 @@ html, body {
     font-family: var(--font-mono), monospace;
     font-weight: 400;
     letter-spacing: 0.08em;
+  }
+}
+
+/* ─── Universal Footer Styles ─────────────────────────────────────── */
+.pw-footer-section {
+  background-color: var(--accent, #F6C917);
+  color: var(--fg, #0C0C0C);
+  padding: 72px 100px 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.pw-footer-columns {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 64px;
+}
+
+.pw-footer-left {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.pw-footer-tagline {
+  font-family: var(--font-display, 'Syne', sans-serif);
+  font-weight: 700;
+  font-size: clamp(18px, 2vw, 26px);
+  line-height: 1.3;
+  color: var(--fg, #0C0C0C);
+  margin-bottom: 24px;
+}
+
+.pw-footer-shop-btn {
+  background-color: var(--fg, #0C0C0C);
+  color: var(--bg, #EDEBE5);
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 40px;
+  transition: background-color 150ms ease;
+}
+
+.pw-footer-shop-btn:hover {
+  background-color: var(--surface-2, #E5E3DD);
+  color: var(--fg, #0C0C0C);
+}
+
+.pw-footer-social-row {
+  display: flex;
+  gap: 16px;
+}
+
+.pw-footer-social-link {
+  color: var(--fg, #0C0C0C);
+  transition: opacity 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pw-footer-social-link:hover {
+  opacity: 0.6;
+}
+
+.pw-footer-social-svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.pw-footer-right {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pw-footer-nav-link {
+  font-family: var(--font-display, 'Syne', sans-serif);
+  font-weight: 700;
+  font-size: clamp(28px, 4vw, 52px);
+  line-height: 1.0;
+  color: var(--fg, #0C0C0C);
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: -0.03em;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.2);
+  transition: color 150ms ease;
+}
+
+.pw-footer-nav-link:hover {
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.pw-footer-bottom-bar {
+  background-color: rgba(12, 12, 12, 0.12);
+  padding: 16px 100px;
+  margin-top: 64px;
+  margin-left: -100px;
+  margin-right: -100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pw-footer-legal-text {
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: 10px;
+  color: rgba(12, 12, 12, 0.6);
+  letter-spacing: 0.08em;
+}
+
+.pw-footer-ghost-container {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0 12px;
+}
+
+.pw-footer-ghost-text {
+  font-family: var(--font-display, 'Syne', sans-serif);
+  font-weight: 800;
+  font-size: clamp(80px, 14vw, 200px);
+  line-height: 0.85;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  color: rgba(12, 12, 12, 0.08);
+  user-select: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .pw-footer-section {
+    padding: 48px 20px 0;
+  }
+
+  .pw-footer-columns {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .pw-footer-left,
+  .pw-footer-right {
+    width: 100%;
+  }
+
+  .pw-footer-bottom-bar {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 24px 20px;
   }
 }

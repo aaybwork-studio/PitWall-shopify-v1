@@ -3,6 +3,8 @@ import { Loader2, ArrowLeft, Check } from 'lucide-react';
 import { CarCanvas } from './CarCanvas';
 import { TechSpecTable } from './TechSpecTable';
 import { FeaturedCarousel } from './FeaturedCarousel';
+import { Footer } from './Footer';
+
 
 interface ShopifyVariant {
   id: number;
@@ -167,6 +169,8 @@ export function ProductScrollytelling({
   const leftCardRef = useRef<HTMLDivElement>(null);
   const rightCardRef = useRef<HTMLDivElement>(null);
   const ctaBlockRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+  const showButtonsRef = useRef<boolean>(true);
 
   const teamInfo = TEAMS_DATA[activeTeam];
   const scaleInfo = SCALES_DATA[activeScale];
@@ -250,7 +254,7 @@ export function ProductScrollytelling({
 
       // Sticky bottom bar
       if (ctaBlockRef.current) {
-        const isVisible = progress > 0.2;
+        const isVisible = progress > 0.2 && showButtonsRef.current;
         if (isVisible) {
           ctaBlockRef.current.style.transform = 'translate(-50%, 0) scale(1)';
           ctaBlockRef.current.style.opacity = '1';
@@ -266,8 +270,40 @@ export function ProductScrollytelling({
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
+    // Store reference to function so it can be called inside intersection observer
+    (window as any).__pwHandleProductScroll = handleScroll;
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      delete (window as any).__pwHandleProductScroll;
+    };
+  }, []);
+
+  // IntersectionObserver to hide persistent CTAs when footer comes into view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        showButtonsRef.current = !entry.isIntersecting;
+        // Trigger style update immediately
+        if (typeof (window as any).__pwHandleProductScroll === 'function') {
+          (window as any).__pwHandleProductScroll();
+        }
+      },
+      { 
+        rootMargin: '0px 0px 150px 0px',
+        threshold: 0 
+      }
+    );
+
+    const currentFooter = footerRef.current;
+    if (currentFooter) {
+      observer.observe(currentFooter);
+    }
+
+    return () => {
+      if (currentFooter) {
+        observer.unobserve(currentFooter);
+      }
     };
   }, []);
 
@@ -331,7 +367,7 @@ export function ProductScrollytelling({
     >
       
       {/* 1. Scrollytelling Product Showcase Track */}
-      <div ref={trackRef} className="relative w-full" style={{ height: '300vh' }}>
+      <div ref={trackRef} className="relative w-full product-track product-track-wrapper" style={{ height: '300vh' }}>
         <div className="sticky top-0 w-full h-screen overflow-hidden">
           
           {/* Background Wordmark */}
@@ -517,6 +553,11 @@ export function ProductScrollytelling({
 
       {/* Featured Products Carousel */}
       <FeaturedCarousel />
+
+      {/* Universal Footer Component */}
+      <div ref={footerRef} className="relative z-30 w-full pointer-events-auto">
+        <Footer />
+      </div>
 
     </div>
   );
