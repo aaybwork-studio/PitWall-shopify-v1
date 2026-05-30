@@ -4,7 +4,7 @@ import { CarCanvas } from './CarCanvas';
 import { TechSpecTable } from './TechSpecTable';
 import { FeaturedCarousel } from './FeaturedCarousel';
 import { Footer } from './Footer';
-
+import { Navbar } from './Navbar';
 
 interface ShopifyVariant {
   id: number;
@@ -23,6 +23,7 @@ interface ProductScrollytellingProps {
   redbullUrl: string;
   ferrariUrl: string;
   mercedesUrl: string;
+  logoUrl?: string;
 }
 
 const TEAMS_DATA = {
@@ -119,6 +120,7 @@ export function ProductScrollytelling({
   redbullUrl,
   ferrariUrl,
   mercedesUrl,
+  logoUrl = '',
 }: ProductScrollytellingProps) {
   // Parse dynamic shopify variants
   console.log('PDP calibration initialized for product:', productTitle, 'basePrice:', productPrice);
@@ -267,14 +269,14 @@ export function ProductScrollytelling({
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     handleScroll();
 
     // Store reference to function so it can be called inside intersection observer
     (window as any).__pwHandleProductScroll = handleScroll;
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScroll, { capture: true } as any);
       delete (window as any).__pwHandleProductScroll;
     };
   }, []);
@@ -365,6 +367,8 @@ export function ProductScrollytelling({
         '--team-accent-text': '#FFFFFF'
       } as React.CSSProperties}
     >
+      {/* Universal Navbar */}
+      <Navbar logoUrl={logoUrl} />
       
       {/* 1. Scrollytelling Product Showcase Track */}
       <div ref={trackRef} className="relative w-full product-track product-track-wrapper" style={{ height: '300vh' }}>

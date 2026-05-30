@@ -126,7 +126,7 @@ export function CarCanvas({ modelName, modelUrl, scrollProgress = 0, onLoadProgr
     };
 
     if (scrollProgress === undefined || scrollProgress === 0) {
-      window.addEventListener('scroll', handleScroll, { passive: true });
+      window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
       handleScroll();
     }
 
@@ -186,7 +186,7 @@ export function CarCanvas({ modelName, modelUrl, scrollProgress = 0, onLoadProgr
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', onResize);
       if (scrollProgress === undefined || scrollProgress === 0) {
-        window.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('scroll', handleScroll, { capture: true } as any);
       }
 
       loadedModelsRef.current.forEach((model) => {
