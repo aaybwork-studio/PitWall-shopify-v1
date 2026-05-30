@@ -1,4 +1,4 @@
-<!-- Pitwall Dynamic Routing & 404 Engine -->
+<!-- Pitwall OS 2.0 Dynamic Routing & 404 Engine -->
 {% if request.path contains '/products/' %}
   {% assign url_handle = request.path | split: '/products/' | last | split: '?' | first %}
   
@@ -41,3 +41,15 @@
   </div>
 
 {% endif %}
+
+{% schema %}
+{
+  "name": "Main 404 Handler",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Main 404 Handler"
+    }
+  ]
+}
+{% endschema %}
