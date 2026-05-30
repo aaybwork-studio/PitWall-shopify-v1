@@ -1,4 +1,13 @@
-{% assign model_name = product.handle | default: 'mclaren' %}
+{% assign model_name = 'mclaren' %}
+{% if product.handle contains 'redbull' or product.handle contains 'red-bull' %}
+  {% assign model_name = 'redbull' %}
+{% elsif product.handle contains 'ferrari' %}
+  {% assign model_name = 'ferrari' %}
+{% elsif product.handle contains 'mercedes' %}
+  {% assign model_name = 'mercedes' %}
+{% elsif product.handle contains 'mclaren' %}
+  {% assign model_name = 'mclaren' %}
+{% endif %}
 {% capture model_filename %}{{ model_name }}.glb{% endcapture %}
 
 <div class="product-track-wrapper">
