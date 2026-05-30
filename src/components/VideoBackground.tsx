@@ -57,8 +57,18 @@ export function VideoBackground({ playlist }: VideoBackgroundProps) {
       vid.load();
     };
 
+    let errorCount = 0;
     vid.addEventListener('ended', advance);
-    vid.addEventListener('error', () => setTimeout(advance, 500));
+    vid.addEventListener('error', () => {
+      errorCount++;
+      if (errorCount >= 3) {
+        if (container.contains(vid)) {
+          container.removeChild(vid);
+        }
+        return;
+      }
+      setTimeout(advance, 500);
+    });
 
     vm.current.queue = shuffleArray(playlist);
     vm.current.el = vid;

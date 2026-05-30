@@ -1,5 +1,5 @@
 <!-- Navigation Header -->
-<header class="nav-header nav-visible">
+<header class="nav-header">
   <div class="nav-grid">
     <button id="menu-trigger-btn" class="nav-menu-btn" aria-label="Toggle menu">MENU</button>
     <a href="/" class="nav-logo-link">
@@ -41,16 +41,16 @@
   </div>
 </div>
 
-<!-- Hero Section Container -->
+<!-- 1. Hero Section Container -->
 <section class="hero-section">
   <!-- Video background container (React/Vite Mount point for playlist & mute state) -->
   <div 
     id="hero-video-root" 
     class="hero-video-container"
     data-video-playlist="[
-      {%- if section.settings.video_1 != blank -%}'{{ section.settings.video_1 }}'{%- else -%}'/video/F1_helmet_orbiting_white_void_202605251628.mp4'{%- endif -%},
-      {%- if section.settings.video_2 != blank -%}'{{ section.settings.video_2 }}'{%- else -%}'/video/F1_helmet_orbiting_white_void_202605251636.mp4'{%- endif -%},
-      {%- if section.settings.video_3 != blank -%}'{{ section.settings.video_3 }}'{%- else -%}'/video/Formula_1_car_accelerates_white_202605251629.mp4'{%- endif -%}
+      {%- if section.settings.video_1 != blank -%}'{{ section.settings.video_1 }}'{%- endif -%},
+      {%- if section.settings.video_2 != blank -%}'{{ section.settings.video_2 }}'{%- endif -%},
+      {%- if section.settings.video_3 != blank -%}'{{ section.settings.video_3 }}'{%- endif -%}
     ]"
   >
     <div class="hero-video-fallback"></div>
@@ -66,6 +66,203 @@
   <!-- Interactive React Mute Mount Point -->
   <div id="mute-button-root"></div>
 </section>
+
+<!-- 2. Ticker / Marquee Section -->
+<section class="ticker-bar">
+  <div class="ticker-track">
+    <div class="ticker-item-1">FOR THE ONES WHO NOTICE <span class="ticker-sep-1">/</span></div>
+    <div class="ticker-item-1">FOR THE ONES WHO NOTICE <span class="ticker-sep-1">/</span></div>
+    <div class="ticker-item-1">FOR THE ONES WHO NOTICE <span class="ticker-sep-1">/</span></div>
+    <div class="ticker-item-1">FOR THE ONES WHO NOTICE <span class="ticker-sep-1">/</span></div>
+    <div class="ticker-item-1">FOR THE ONES WHO NOTICE <span class="ticker-sep-1">/</span></div>
+    <div class="ticker-item-1">FOR THE ONES WHO NOTICE <span class="ticker-sep-1">/</span></div>
+    <div class="ticker-item-1">FOR THE ONES WHO NOTICE <span class="ticker-sep-1">/</span></div>
+    <div class="ticker-item-1">FOR THE ONES WHO NOTICE <span class="ticker-sep-1">/</span></div>
+  </div>
+</section>
+
+<!-- 3. Product Showcase Section -->
+<section class="showcase-section" id="showcase">
+  <div class="showcase-header scroll-reveal">
+    <span class="showcase-label">THE COLLECTION</span>
+    <div class="showcase-divider"></div>
+  </div>
+
+  <div class="product-grid">
+    {% for product in collections.all.products limit: 4 %}
+      {% assign indexes = 'a,b,c,d' | split: ',' %}
+      {% assign card_class = indexes[forloop.index0] %}
+      <a href="{{ product.url }}" class="product-card product-{{ card_class }} scroll-reveal cursor-pointer">
+        <div class="product-image-container">
+          {% if product.featured_image != blank %}
+            <img class="product-img-element" src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.title }}">
+          {% else %}
+            <div class="product-sketch-overlay">
+              <span class="technical-label" style="opacity: 0.3;">NO chassIs SKETCH</span>
+            </div>
+          {% endif %}
+          <div class="product-hover-info">
+            <span class="product-hover-title">{{ product.title }}</span>
+            <div class="product-hover-meta">
+              <span class="product-hover-specs">{{ product.type | upcase }}</span>
+              <span class="product-hover-price">{{ product.price | money }}</span>
+            </div>
+          </div>
+        </div>
+      </a>
+    {% else %}
+      <!-- Static Mock Products matching original designs -->
+      <a href="/products/mclaren-mcl39" class="product-card product-a scroll-reveal cursor-pointer">
+        <div class="product-image-container">
+          <div class="product-sketch-overlay">
+            <svg class="product-sketch-svg" viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+              <path d="M 40 120 L 360 120 M 100 80 L 180 100 L 300 100 L 330 135" stroke-dasharray="3,3" />
+              <rect x="50" y="60" width="10" height="110" stroke-width="2" opacity="0.4" />
+              <circle cx="120" cy="120" r="32" stroke-width="2" />
+              <circle cx="280" cy="120" r="35" stroke-width="2" />
+              <path d="M 190 70 L 220 30 H 260 L 280 70 Z" fill="rgba(12,12,12,0.03)" />
+            </svg>
+          </div>
+          <div class="product-hover-info">
+            <span class="product-hover-title">CAR MODELS</span>
+            <div class="product-hover-meta">
+              <span class="product-hover-specs">1:18 SCALE / RESIN COMPOSITE</span>
+              <span class="product-hover-price">₹12,499</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <div class="product-card product-b scroll-reveal">
+        <div class="product-image-container" style="background-color: var(--surface-2)">
+          <div class="product-sketch-overlay">
+            <svg class="product-sketch-svg" viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+              <circle cx="150" cy="120" r="60" stroke-width="2" />
+              <path d="M 150 60 C 210 60 210 180 150 180 Z" stroke-width="2" />
+              <rect x="145" y="90" width="60" height="24" fill="rgba(12,12,12,0.08)" />
+              <path d="M 90 120 H 150" stroke-dasharray="4,4" />
+            </svg>
+          </div>
+          <div class="product-hover-info">
+            <span class="product-hover-title">HELMET REPLICAS</span>
+            <div class="product-hover-meta">
+              <span class="product-hover-specs">1:2 SCALE / MATTE CARBON FIBER</span>
+              <span class="product-hover-price">₹7,999</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card product-c scroll-reveal">
+        <div class="product-image-container">
+          <div class="product-sketch-overlay">
+            <svg class="product-sketch-svg" viewBox="0 0 300 240" style="width: 70%; height: 70%; stroke: var(--fg); fill: none; stroke-width: 2.5">
+              <path d="M 50 50 L 250 50 L 250 120 L 200 150 L 150 120 L 100 190 L 50 120 Z" stroke-linejoin="bevel" />
+              <circle cx="50" cy="50" r="4" fill="#F6C917" stroke="none" />
+            </svg>
+          </div>
+          <div class="product-hover-info">
+            <span class="product-hover-title">TRACK SILHOUETTES</span>
+            <div class="product-hover-meta">
+              <span class="product-hover-specs">3D TOPOGRAPHIC WOOD / STEEL</span>
+              <span class="product-hover-price">₹4,499</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card product-d scroll-reveal">
+        <div class="product-image-container" style="background-color: var(--surface-2)">
+          <div class="product-sketch-overlay">
+            <svg class="product-sketch-svg" viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
+              <circle cx="200" cy="120" r="60" stroke="#F6C917" stroke-width="3" />
+              <path d="M 120 120 H 280 M 200 40 V 200" stroke-dasharray="3,3" />
+              <rect x="180" y="100" width="40" height="40" fill="rgba(246,201,23,0.05)" />
+            </svg>
+          </div>
+          <div class="product-hover-info">
+            <span class="product-hover-title">DECOR LIGHTS</span>
+            <div class="product-hover-meta">
+              <span class="product-hover-specs">USB-C POWERED DUAL LED</span>
+              <span class="product-hover-price">₹6,899</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- 4. Manifesto Section -->
+<section class="manifesto-section manifesto-punch" id="manifesto">
+  <div class="manifesto-header-row">
+    <span class="manifesto-label">MANIFESTO</span>
+    <div class="manifesto-line-border"></div>
+  </div>
+  <h2 class="manifesto-headline">
+    <span class="manifesto-line-small">WE DON'T MAKE FAN MERCH.</span>
+    <span class="manifesto-line-large">WE MAKE OBJECTS WORTH OWNING.</span>
+  </h2>
+</section>
+
+<!-- 5. About Strip Section -->
+<section class="about-strip-section">
+  <div class="about-left slide-from-left">
+    <span class="about-label">ABOUT PITWALL</span>
+    <h2 class="about-headline">PRECISION IS ITS OWN AESTHETIC.</h2>
+    <p class="about-body">
+      PITWALL is an India-first F1 collectibles brand for fans who understand the sport at the level of the pitwall. Not the grandstand. The wall. Where every object we make is held to the same standard as the machines we obsess over.
+    </p>
+    <button class="about-btn" onclick="location.href='/pages/about'">OUR STORY</button>
+  </div>
+
+  <div class="about-right slide-from-right">
+    <div class="about-img-placeholder">
+      <svg viewBox="0 0 400 500" style="width: 90%; height: 90%; opacity: 0.22; stroke: var(--fg); fill: none; stroke-width: 0.8">
+        <path d="M 0 50 H 400 M 0 100 H 400 M 0 150 H 400 M 0 200 H 400 M 0 250 H 400 M 0 300 H 400 M 0 350 H 400 M 0 400 H 400 M 0 450 H 400" />
+        <path d="M 50 0 V 500 M 100 0 V 500 M 150 0 V 500 M 200 0 V 500 M 250 0 V 500 M 300 0 V 500 M 350 0 V 500" />
+        <path d="M 50 150 L 150 300 L 250 200 L 350 400" stroke="#F6C917" stroke-width="2.5" />
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Brutalist Footer -->
+<footer class="footer-section" id="footer">
+  <div class="footer-columns scroll-reveal">
+    <!-- Left Column (40%) -->
+    <div class="footer-left">
+      <h2 class="footer-tagline">Precision objects for the ones who notice.</h2>
+      <button class="footer-shop-btn" onclick="location.href='/collections/all'">SHOP NOW</button>
+      
+      <div class="footer-social-row">
+        <a href="#" class="footer-social-link" aria-label="Instagram">
+          <svg class="footer-social-svg" viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor;">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Right Column (60%) -->
+    <div class="footer-right">
+      <a href="/collections/all" class="footer-nav-link">Shop</a>
+      <a href="/collections" class="footer-nav-link">Collections</a>
+      <a href="/pages/about" class="footer-nav-link">About</a>
+    </div>
+  </div>
+
+  <!-- Bottom legal bar -->
+  <div class="footer-bottom-bar">
+    <span class="footer-legal-text">© 2026 PITWALL. ALL RIGHTS RESERVED.</span>
+    <span class="footer-legal-text">PRIVACY · TERMS</span>
+  </div>
+
+  <!-- Ghost branding mark -->
+  <div class="footer-ghost-container">
+    <div class="footer-ghost-text">PITWALL</div>
+  </div>
+</footer>
 
 {% schema %}
 {
