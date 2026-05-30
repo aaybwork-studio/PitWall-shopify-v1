@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { Volume2, VolumeX } from 'lucide-react';
 import { CarCanvas } from './components/CarCanvas';
 import { VideoBackground } from './components/VideoBackground';
+import { ProductScrollytelling } from './components/ProductScrollytelling';
 
 // ─── Universal Mute Button Module ──────────────────────────────────────────
 function UniversalMuteButton() {
@@ -41,6 +42,35 @@ document.addEventListener('DOMContentLoaded', () => {
     root.render(
       <React.StrictMode>
         <CarCanvas modelName={modelName} modelUrl={modelUrl} />
+      </React.StrictMode>
+    );
+  }
+
+  // 1.5 Mount Product Scrollytelling Flagship Experience
+  const pdpRoot = document.getElementById('product-scrollytelling-root');
+  if (pdpRoot) {
+    const productTitle = pdpRoot.getAttribute('data-product-title') || '';
+    const productHandle = pdpRoot.getAttribute('data-product-handle') || '';
+    const productPrice = pdpRoot.getAttribute('data-product-price') || '';
+    const variantsJson = pdpRoot.getAttribute('data-product-variants-json') || '[]';
+    const mclarenUrl = pdpRoot.getAttribute('data-mclaren-url') || '';
+    const redbullUrl = pdpRoot.getAttribute('data-redbull-url') || '';
+    const ferrariUrl = pdpRoot.getAttribute('data-ferrari-url') || '';
+    const mercedesUrl = pdpRoot.getAttribute('data-mercedes-url') || '';
+
+    const root = ReactDOM.createRoot(pdpRoot);
+    root.render(
+      <React.StrictMode>
+        <ProductScrollytelling 
+          productTitle={productTitle}
+          productHandle={productHandle}
+          productPrice={productPrice}
+          variantsJson={variantsJson}
+          mclarenUrl={mclarenUrl}
+          redbullUrl={redbullUrl}
+          ferrariUrl={ferrariUrl}
+          mercedesUrl={mercedesUrl}
+        />
       </React.StrictMode>
     );
   }
