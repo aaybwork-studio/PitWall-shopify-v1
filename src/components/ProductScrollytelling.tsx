@@ -224,7 +224,30 @@ export function ProductScrollytelling({
     return 'mclaren';
   };
 
-  const activeTeam = getInitialTeam();
+  const [activeTeam, setActiveTeam] = useState<keyof typeof TEAMS_DATA>(getInitialTeam);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      const handle = path.split('/').pop() || '';
+      const teamKeyMap: Record<string, keyof typeof TEAMS_DATA> = {
+        'mclaren-mcl39': 'mclaren',
+        'red-bull-rb19': 'redbull',
+        'ferrari-sf23': 'ferrari',
+        'mercedes-w14': 'mercedes',
+        'lando-norris-helmet': 'lando-norris-helmet',
+        'schumacher-helmet': 'schumacher-helmet',
+        'verstappen-helmet': 'verstappen-helmet',
+      };
+      const newTeam = teamKeyMap[handle];
+      if (newTeam) {
+        setActiveTeam(newTeam);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const [activeScale, setActiveScale] = useState<keyof typeof SCALES_DATA>('L');
   
   const [justAdded, setJustAdded] = useState<boolean>(false);
@@ -433,7 +456,8 @@ export function ProductScrollytelling({
       'verstappen-helmet': 'verstappen-helmet',
     };
     const targetHandle = handleMap[targetTeam];
-    window.location.href = '/products/' + targetHandle;
+    window.history.pushState(null, '', '/products/' + targetHandle);
+    setActiveTeam(targetTeam);
   };
 
   // Restrict switcher button scope to contextual context (D-03)

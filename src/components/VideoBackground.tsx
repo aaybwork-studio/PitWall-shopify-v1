@@ -6,12 +6,16 @@ interface VideoBackgroundProps {
 
 export function VideoBackground({ playlist }: VideoBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const vm = useRef<{
-    el: HTMLVideoElement | null;
+  const stateRef = useRef<{
     queue: string[];
+    vidA: HTMLVideoElement | null;
+    vidB: HTMLVideoElement | null;
+    activeVid: HTMLVideoElement | null;
   }>({
-    el: null,
     queue: [],
+    vidA: null,
+    vidB: null,
+    activeVid: null,
   });
 
   function shuffleArray<T>(arr: T[]): T[] {
@@ -27,60 +31,123 @@ export function VideoBackground({ playlist }: VideoBackgroundProps) {
     const container = containerRef.current;
     if (!container || !playlist.length) return;
 
-    const vid = document.createElement('video');
-    vid.autoplay = true;
-    vid.muted = true;
-    vid.playsInline = true;
-    vid.setAttribute('playsinline', '');
-    vid.style.cssText = [
-      'position:absolute', 'top:0', 'left:0',
-      'width:100%', 'height:100%', 'object-fit:cover',
-      'z-index:2', 'background:transparent',
-    ].join(';');
-
-    const advance = () => {
-      if (vm.current.queue.length === 0) {
-        vm.current.queue = shuffleArray(playlist);
-      }
-      const next = vm.current.queue.shift()!;
-
-      vid.oncanplay = null;
-      vid.oncanplay = () => {
-        vid.oncanplay = null;
-        vid.play().catch(() => {
-          vid.muted = true;
-          vid.play().catch(() => {});
-        });
-      };
-
-      vid.src = next;
-      vid.load();
+    // Helper to create and configure a video element
+    const createVideoElement = (): HTMLVideoElement => {
+      const vid = document.createElement('video');
+      vid.autoplay = false;
+      vid.muted = true;
+      vid.playsInline = true;
+      vid.setAttribute('playsinline', '');
+      vid.style.cssText = [
+        'position:absolute',
+        'top:0',
+        'left:0',
+        'width:100%',
+        'height:100%',
+        'object-fit:cover',
+        'z-index:2',
+        'opacity:0',
+        'transition:opacity 800ms cubic-bezier(0.16, 1, 0.3, 1)',
+        'background:transparent',
+      ].join(';');
+      return vid;
     };
 
-    let errorCount = 0;
-    vid.addEventListener('ended', advance);
-    vid.addEventListener('error', () => {
-      errorCount++;
-      if (errorCount >= 3) {
-        if (container.contains(vid)) {
-          container.removeChild(vid);
-        }
-        return;
+    const vidA = createVideoElement();
+    const vidB = createVideoElement();
+    
+    stateRef.current.vidA = vidA;
+    stateRef.current.vidB = vidB;
+    stateRef.current.queue = shuffleArray(playlist);
+
+    container.appendChild(vidA);
+    container.appendChild(vidB);
+
+    // Initial setup: start on vidA
+    const startPlaylist = () => {
+      if (stateRef.current.queue.length === 0) {
+        stateRef.current.queue = shuffleArray(playlist);
       }
-      setTimeout(advance, 500);
-    });
+      const first = stateRef.current.queue.shift()!;
+      vidA.src = first;
+      vidA.playbackRate = 0.75;
+      vidA.style.opacity = '1';
+      stateRef.current.activeVid = vidA;
 
-    vm.current.queue = shuffleArray(playlist);
-    vm.current.el = vid;
-    container.appendChild(vid);
-    advance();
+      vidA.play().catch(() => {
+        vidA.muted = true;
+        vidA.play().catch(() => {});
+      });
 
-    // Listen to universal mute state updates from the audio toggle component
+      // Preload the next one on vidB
+      preloadNext(vidB);
+    };
+
+    const preloadNext = (inactiveVid: HTMLVideoElement) => {
+      if (stateRef.current.queue.length === 0) {
+        stateRef.current.queue = shuffleArray(playlist);
+      }
+      const next = stateRef.current.queue.shift()!;
+      inactiveVid.src = next;
+      inactiveVid.playbackRate = 0.75;
+      inactiveVid.style.opacity = '0';
+      inactiveVid.load();
+    };
+
+    const handleEnded = (endedVid: HTMLVideoElement) => {
+      const active = stateRef.current.activeVid;
+      if (active !== endedVid) return; // Ignore if not active
+
+      const nextActive = endedVid === vidA ? vidB : vidA;
+      const nextPreload = endedVid === vidA ? vidA : vidB;
+
+      // Transition
+      nextActive.style.zIndex = '3';
+      endedVid.style.zIndex = '2';
+
+      nextActive.playbackRate = 0.75;
+      nextActive.play().then(() => {
+        nextActive.style.opacity = '1';
+        endedVid.style.opacity = '0';
+
+        setTimeout(() => {
+          endedVid.pause();
+          preloadNext(nextPreload);
+        }, 800);
+
+        stateRef.current.activeVid = nextActive;
+      }).catch(() => {
+        // Fallback if play fails
+        nextActive.muted = true;
+        nextActive.play().then(() => {
+          nextActive.style.opacity = '1';
+          endedVid.style.opacity = '0';
+          setTimeout(() => {
+            endedVid.pause();
+            preloadNext(nextPreload);
+          }, 800);
+          stateRef.current.activeVid = nextActive;
+        }).catch(() => {});
+      });
+    };
+
+    const onEndedA = () => handleEnded(vidA);
+    const onEndedB = () => handleEnded(vidB);
+
+    vidA.addEventListener('ended', onEndedA);
+    vidB.addEventListener('ended', onEndedB);
+
+    // Initial load
+    startPlaylist();
+
+    // Listen to universal mute state updates
     const handleMuteToggle = (e: CustomEvent<{ muted: boolean }>) => {
-      vid.muted = e.detail.muted;
-      if (!e.detail.muted) {
-        vid.play().catch(() => {
-          vid.muted = true;
+      if (vidA) vidA.muted = e.detail.muted;
+      if (vidB) vidB.muted = e.detail.muted;
+      const active = stateRef.current.activeVid;
+      if (active && !e.detail.muted) {
+        active.play().catch(() => {
+          active.muted = true;
         });
       }
     };
@@ -88,13 +155,21 @@ export function VideoBackground({ playlist }: VideoBackgroundProps) {
     window.addEventListener('pitwall:mute', handleMuteToggle as EventListener);
 
     return () => {
-      vid.oncanplay = null;
-      vid.removeEventListener('ended', advance);
+      vidA.removeEventListener('ended', onEndedA);
+      vidB.removeEventListener('ended', onEndedB);
       window.removeEventListener('pitwall:mute', handleMuteToggle as EventListener);
-      vid.pause();
-      vid.src = '';
-      if (container.contains(vid)) container.removeChild(vid);
-      vm.current.el = null;
+      
+      vidA.pause();
+      vidB.pause();
+      vidA.src = '';
+      vidB.src = '';
+      
+      if (container.contains(vidA)) container.removeChild(vidA);
+      if (container.contains(vidB)) container.removeChild(vidB);
+
+      stateRef.current.vidA = null;
+      stateRef.current.vidB = null;
+      stateRef.current.activeVid = null;
     };
   }, [playlist]);
 

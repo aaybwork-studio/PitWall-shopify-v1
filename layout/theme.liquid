@@ -47,7 +47,7 @@
       <div class="nav-grid">
         <button id="menu-trigger-btn" class="nav-menu-btn" aria-label="Toggle menu">MENU</button>
         <a href="/" class="nav-logo-link">
-          <span style="font-family: var(--font-mono); font-weight: 600; color: var(--bg); font-size: 14px; letter-spacing: 0.15em;">PITWALL</span>
+          <img src="{{ 'emblem.jpg' | asset_url }}" alt="PITWALL" class="nav-logo-img" />
         </a>
         <button class="nav-cart-btn" onclick="location.href='/cart'" aria-label="View cart">
           CART <span class="nav-cart-badge">[ <span id="cart-counter-display">0</span> ]</span>
@@ -59,14 +59,25 @@
     <div id="full-menu-overlay" class="menu-overlay">
       <div class="menu-content">
         <ul class="menu-links-list">
-          <li class="menu-link-item is-active">
+          <li class="menu-link-item {% if template == 'index' %}is-active{% endif %}">
+            <svg class="menu-bullet-svg" viewBox="0 0 10 10" style="width: 10px; height: 10px; fill: var(--accent); margin-right: 16px;"><rect width="10" height="10"/></svg>
             <a href="/" class="menu-link">HOME</a>
           </li>
-          <li class="menu-link-item">
+          <li class="menu-link-item {% if template contains 'collection' and handle == 'all' %}is-active{% endif %}">
+            <svg class="menu-bullet-svg" viewBox="0 0 10 10" style="width: 10px; height: 10px; fill: var(--accent); margin-right: 16px;"><rect width="10" height="10"/></svg>
             <a href="/collections/all" class="menu-link">SHOP</a>
           </li>
-          <li class="menu-link-item">
+          <li class="menu-link-item {% if template contains 'collection' and handle != 'all' %}is-active{% endif %}">
+            <svg class="menu-bullet-svg" viewBox="0 0 10 10" style="width: 10px; height: 10px; fill: var(--accent); margin-right: 16px;"><rect width="10" height="10"/></svg>
+            <a href="/collections" class="menu-link">COLLECTIONS</a>
+          </li>
+          <li class="menu-link-item {% if template == 'page' and page.handle == 'about' %}is-active{% endif %}">
+            <svg class="menu-bullet-svg" viewBox="0 0 10 10" style="width: 10px; height: 10px; fill: var(--accent); margin-right: 16px;"><rect width="10" height="10"/></svg>
             <a href="/pages/about" class="menu-link">ABOUT</a>
+          </li>
+          <li class="menu-link-item">
+            <svg class="menu-bullet-svg" viewBox="0 0 10 10" style="width: 10px; height: 10px; fill: var(--accent); margin-right: 16px;"><rect width="10" height="10"/></svg>
+            <a href="#footer" class="menu-link" onclick="document.getElementById('full-menu-overlay').classList.remove('is-active'); document.body.style.overflow = '';">CONTACT</a>
           </li>
         </ul>
         <div class="menu-contact-col">
@@ -79,9 +90,19 @@
         <div class="menu-images-col">
           <div class="menu-image-panel">
             <div class="menu-img-placeholder"></div>
-            <span class="menu-img-caption">CHASSIS PREVIEW // DEV-01</span>
+            <span class="menu-img-caption">ABOUT THE BRAND</span>
+          </div>
+          <div class="menu-image-panel">
+            <div class="menu-img-placeholder" style="background-color: var(--surface-2);"></div>
+            <span class="menu-img-caption">LATEST DROP</span>
           </div>
         </div>
+      </div>
+      <!-- Bottom telemetry status bar -->
+      <div class="menu-bottom-bar">
+        <span style="font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;">
+          [ STATUS: ONLINE ] &nbsp;·&nbsp; [ NEXT DROP: UPCOMING ] &nbsp;·&nbsp; [ EDITION: 01/100 ]
+        </span>
       </div>
     </div>
 
@@ -121,9 +142,9 @@
         <span class="footer-legal-text">PRIVACY · TERMS</span>
       </div>
 
-      <!-- Ghost branding mark -->
-      <div class="footer-ghost-container">
-        <div class="footer-ghost-text">PITWALL</div>
+      <!-- Brand Wordmark Footer Image -->
+      <div class="footer-wordmark-container">
+        <img src="{{ 'wordmark-footer.jpg' | asset_url }}" alt="PITWALL" class="footer-wordmark-img" />
       </div>
     </footer>
 

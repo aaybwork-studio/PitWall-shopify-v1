@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600&family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@700;800&family=Space+Grotesk:wght@700&display=swap');
+
 @font-face {
   font-family: 'btseps2';
   src: url('{{ "btseps2.ttf" | asset_url }}') format('truetype');
@@ -13,8 +15,6 @@
   font-style: normal;
   font-display: swap;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600&family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@700;800&family=Space+Grotesk:wght@700&display=swap');
 
 /* Inverted Color Tokens */
 :root {
@@ -318,7 +318,7 @@ html, body {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background-color: rgba(12, 12, 12, 0.45);
+  background-color: rgba(12, 12, 12, 0.15);
   z-index: 3;
   pointer-events: none;
 }
@@ -1110,4 +1110,59 @@ html, body {
     margin-right: -20px;
     padding: 24px 20px;
   }
+}
+
+/* Pitwall Brand Styling Additions */
+.nav-logo-img {
+  height: 28px;
+  width: auto;
+  display: block;
+  filter: invert(1);
+  mix-blend-mode: screen;
+}
+
+.menu-link-item .menu-bullet-svg {
+  display: none;
+  vertical-align: middle;
+}
+
+.menu-link-item.is-active .menu-link {
+  color: var(--accent) !important;
+}
+
+.menu-link-item.is-active .menu-bullet-svg {
+  display: inline-block !important;
+}
+
+.menu-img-caption {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 8px;
+  display: block;
+}
+
+.menu-bottom-bar {
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.footer-wordmark-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 24px 0 12px;
+  overflow: hidden;
+}
+
+.footer-wordmark-img {
+  width: 90%;
+  max-width: 1200px;
+  height: auto;
+  display: block;
 }
