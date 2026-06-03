@@ -25,7 +25,7 @@ module.exports = {
         mono: ["var(--font-mono)", "IBM Plex Mono", "monospace"],
       },
       letterSpacing: {
-        display: "-0.04em",
+        display: "0.06em",
         technical: "0.08em",
       },
       lineHeight: {
