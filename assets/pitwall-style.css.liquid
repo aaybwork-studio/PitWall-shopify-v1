@@ -157,7 +157,6 @@ html, body {
   justify-self: center;
   display: flex;
   align-items: center;
-  gap: 10px;
 }
 
 .nav-cart-btn {
@@ -1111,6 +1110,12 @@ html, body {
     margin-right: -20px;
     padding: 24px 20px;
   }
+
+  .footer-wordmark-container {
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+  }
 }
 
 /* Pitwall Brand Styling Additions */
@@ -1118,12 +1123,8 @@ html, body {
   height: 28px;
   width: auto;
   display: block;
-}
-
-.nav-logo-wordmark {
-  height: 18px;
-  width: auto;
-  display: block;
+  filter: invert(1);
+  mix-blend-mode: screen;
 }
 
 .menu-link-item .menu-bullet-svg {
@@ -1158,24 +1159,17 @@ html, body {
 }
 
 .footer-wordmark-container {
-  width: 100%;
+  width: calc(100% + 200px);
+  margin-left: -100px;
+  margin-right: -100px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: clamp(16px, 4vw, 32px);
-  padding: 40px 20px;
+  padding: 24px 0 0;
   overflow: hidden;
-  box-sizing: border-box;
-}
-
-.footer-emblem-img {
-  height: clamp(50px, 8vw, 80px);
-  width: auto;
-  display: block;
 }
 
 .footer-wordmark-img {
-  height: clamp(35px, 6vw, 55px);
-  width: auto;
+  width: 100%;
+  height: auto;
   display: block;
 }
