@@ -26,7 +26,7 @@ function UniversalMuteButton() {
         {muted ? 'ACTIVATE SOUND' : 'MUTE STUDIO'}
       </span>
       <div className="mute-icon-box">
-        {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        {muted ? <VolumeX size={24} /> : <Volume2 size={24} />}
       </div>
     </button>
   );
