@@ -48,6 +48,7 @@
         <button id="menu-trigger-btn" class="nav-menu-btn" aria-label="Toggle menu">MENU</button>
         <a href="/" class="nav-logo-link">
           <img src="{{ 'emblem.png' | asset_url }}" alt="PITWALL" class="nav-logo-img" />
+          <img src="{{ 'wordmark-footer.png' | asset_url }}" alt="PITWALL" class="nav-logo-wordmark" />
         </a>
         <button class="nav-cart-btn" onclick="location.href='/cart'" aria-label="View cart">
           CART <span class="nav-cart-badge">[ <span id="cart-counter-display">0</span> ]</span>
@@ -144,6 +145,7 @@
 
       <!-- Brand Wordmark Footer Image -->
       <div class="footer-wordmark-container">
+        <img src="{{ 'emblem.png' | asset_url }}" alt="PITWALL" class="footer-emblem-img" />
         <img src="{{ 'wordmark-footer.png' | asset_url }}" alt="PITWALL" class="footer-wordmark-img" />
       </div>
     </footer>

@@ -157,6 +157,7 @@ html, body {
   justify-self: center;
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 .nav-cart-btn {
@@ -1119,6 +1120,12 @@ html, body {
   display: block;
 }
 
+.nav-logo-wordmark {
+  height: 18px;
+  width: auto;
+  display: block;
+}
+
 .menu-link-item .menu-bullet-svg {
   display: none;
   vertical-align: middle;
@@ -1154,13 +1161,21 @@ html, body {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 24px 0 12px;
+  align-items: center;
+  gap: clamp(16px, 4vw, 32px);
+  padding: 40px 20px;
   overflow: hidden;
+  box-sizing: border-box;
+}
+
+.footer-emblem-img {
+  height: clamp(50px, 8vw, 80px);
+  width: auto;
+  display: block;
 }
 
 .footer-wordmark-img {
-  width: 90%;
-  max-width: 1200px;
-  height: auto;
+  height: clamp(35px, 6vw, 55px);
+  width: auto;
   display: block;
 }
