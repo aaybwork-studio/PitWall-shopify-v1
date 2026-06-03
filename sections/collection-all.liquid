@@ -1,484 +1,465 @@
-<!-- PITWALL ALL PRODUCTS SHOWCASE CATALOG -->
+<!-- PITWALL COMBINED CATALOG & COLLECTIONS PAGE -->
 <style>
-  .pw-catalog-section {
+  .pw-combined-section {
     background-color: var(--bg);
-    padding: 120px 100px 100px;
-    border-bottom: 1px solid var(--border);
+    padding: 80px 0 120px;
     position: relative;
     z-index: 10;
     width: 100%;
     min-height: calc(100vh - 64px);
   }
 
-  /* Top Label Header Row */
-  .pw-catalog-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 24px;
-    margin-bottom: 80px;
-    width: 100%;
-  }
-
-  .pw-catalog-main-title {
-    font-family: var(--font-display);
-    font-size: clamp(36px, 4.5vw, 64px);
-    font-weight: 800;
-    line-height: 0.9;
-    letter-spacing: -0.04em;
-    text-transform: uppercase;
-    color: var(--fg);
-    margin: 0;
-  }
-
-  .pw-catalog-season-label {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    color: var(--fg);
-    opacity: 0.8;
-    text-transform: uppercase;
-    padding-bottom: 6px;
-  }
-
-  /* Catalog Staggered Grid */
-  .pw-catalog-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    column-gap: 40px;
-    row-gap: 120px;
-    width: 100%;
+  /* Collections Section */
+  .pw-colls-container {
+    padding: 0 100px 60px;
     max-width: 1440px;
     margin: 0 auto;
   }
 
-  .pw-catalog-card {
+  .pw-colls-title {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 6.5vw, 96px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 0.9;
+    text-transform: uppercase;
+    margin-bottom: 50px;
+    color: var(--fg);
+  }
+
+  /* Horizontal scrolling collections layout */
+  .pw-colls-row {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding-bottom: 24px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pw-colls-row::-webkit-scrollbar {
+    height: 6px;
+  }
+  .pw-colls-row::-webkit-scrollbar-track {
+    background: rgba(12, 12, 12, 0.05);
+  }
+  .pw-colls-row::-webkit-scrollbar-thumb {
+    background: rgba(12, 12, 12, 0.2);
+  }
+
+  .pw-coll-card {
+    flex: 0 0 280px;
     display: flex;
     flex-direction: column;
-    position: relative;
-    width: 95%;
+    gap: 16px;
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
     text-decoration: none;
     color: inherit;
-    transition: transform 300ms ease;
   }
 
-  /* Staggered Column Splitting Rules (A, B, C, D repeats) */
-  .pw-catalog-card-a {
-    grid-column: 1 / 8;
-    justify-self: start;
+  .pw-coll-card.reveal-active {
+    opacity: 1;
+    transform: translateX(0);
   }
 
-  .pw-catalog-card-b {
-    grid-column: 8 / 13;
-    margin-top: 120px;
-    justify-self: end;
-  }
-
-  .pw-catalog-card-c {
-    grid-column: 1 / 6;
-    margin-top: 80px;
-    justify-self: start;
-  }
-
-  .pw-catalog-card-d {
-    grid-column: 6 / 13;
-    justify-self: end;
-  }
-
-  .pw-catalog-img-container {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    background-color: var(--surface-2);
-    border: 1px solid var(--border);
-  }
-
-  .pw-catalog-card-a .pw-catalog-img-container,
-  .pw-catalog-card-d .pw-catalog-img-container {
+  .pw-coll-img-wrapper {
     aspect-ratio: 4/5;
+    width: 100%;
+    border: 1px solid rgba(12, 12, 12, 0.15);
+    overflow: hidden;
+    background-color: var(--surface);
   }
 
-  .pw-catalog-card-b .pw-catalog-img-container,
-  .pw-catalog-card-c .pw-catalog-img-container {
-    aspect-ratio: 3/4;
-  }
-
-  /* Vector Blueprint fallbacks */
-  .pw-catalog-sketch-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.65;
-    transition: opacity 300ms ease;
-  }
-
-  .pw-catalog-card:hover .pw-catalog-sketch-overlay {
-    opacity: 0.9;
-  }
-
-  .pw-catalog-img-element {
+  .pw-coll-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(100%);
-    transition: transform 400ms ease, filter 300ms ease;
+    transition: transform 300ms ease;
   }
 
-  .pw-catalog-card:hover .pw-catalog-img-element {
-    transform: scale(1.03);
-    filter: grayscale(0%);
+  .pw-coll-card:hover .pw-coll-img {
+    transform: scale(1.05);
   }
 
-  /* Dynamic Slide-Up Bottom Info Panel */
-  .pw-catalog-hover-info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #0C0C0C;
-    padding: 20px 24px;
-    transform: translateY(100%);
-    transition: transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    border-top: 1px solid rgba(237, 235, 229, 0.1);
-  }
-
-  .pw-catalog-card:hover .pw-catalog-hover-info {
-    transform: translateY(0);
-  }
-
-  .pw-catalog-hover-title {
+  .pw-coll-name {
     font-family: var(--font-display);
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
-    color: #EDEBE5;
-    text-transform: uppercase;
     letter-spacing: -0.01em;
-    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--fg);
   }
 
-  .pw-catalog-hover-meta {
+  /* Section Breaker: Double-lined filters and sort */
+  .pw-breaker-bar {
+    border-top: 1px solid rgba(12, 12, 12, 0.15);
+    border-bottom: 1px solid rgba(12, 12, 12, 0.15);
+    padding: 16px 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid rgba(237, 235, 229, 0.15);
-    padding-top: 8px;
-    gap: 12px;
+    background-color: var(--bg);
+    width: 100%;
   }
 
-  .pw-catalog-hover-specs {
+  .pw-dropdown-btn {
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.08em;
-    color: rgba(237, 235, 229, 0.45);
     text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .pw-catalog-price-container {
+    background: transparent;
+    border: none;
+    color: var(--fg);
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
+    gap: 6px;
+    padding: 0;
+  }
+  
+  .pw-dropdown-btn:hover {
+    color: var(--accent);
   }
 
-  .pw-catalog-hover-price {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: #F6C917;
-    font-weight: 600;
+  /* Shop Section */
+  .pw-shop-section {
+    padding: 80px 100px 0;
+    max-width: 1440px;
+    margin: 0 auto;
   }
 
-  /* Inline Pre-Order Tag */
-  .pw-catalog-preorder-tag {
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    font-weight: 600;
-    color: #F6C917;
-    letter-spacing: 0.05em;
+  .pw-shop-title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 4.5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
     text-transform: uppercase;
+    margin-bottom: 48px;
+    color: var(--fg);
+  }
+
+  /* 3-Column Clean Products Grid */
+  .pw-shop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 40px;
+    row-gap: 80px;
+    width: 100%;
+  }
+
+  .pw-shop-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .pw-reveal-item {
+    opacity: 0;
+    transform: translateY(48px);
+    transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pw-reveal-item.reveal-active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .pw-shop-img-wrapper {
+    aspect-ratio: 4/5;
+    width: 100%;
+    border: 1px solid rgba(12, 12, 12, 0.08);
+    overflow: hidden;
+    background-color: #FFFFFF;
+    margin-bottom: 20px;
+  }
+
+  .pw-shop-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pw-shop-card:hover .pw-shop-img {
+    transform: scale(1.03);
+  }
+
+  .pw-shop-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(12, 12, 12, 0.1);
+  }
+
+  .pw-shop-card:hover .pw-shop-info {
+    border-color: var(--fg);
+  }
+
+  .pw-shop-name {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: var(--fg);
+  }
+
+  .pw-shop-price {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--fg);
+  }
+
+  .pw-shop-meta {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: rgba(12, 12, 12, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   /* Responsive layouts */
   @media screen and (max-width: 1024px) {
-    .pw-catalog-section {
-      padding: 100px 48px 80px;
+    .pw-colls-container, .pw-breaker-bar, .pw-shop-section {
+      padding-left: 48px;
+      padding-right: 48px;
     }
-    .pw-catalog-grid {
+    .pw-shop-grid {
+      grid-template-columns: repeat(2, 1fr);
       column-gap: 30px;
-      row-gap: 80px;
+      row-gap: 60px;
     }
   }
 
   @media screen and (max-width: 767px) {
-    .pw-catalog-section {
-      padding: 80px 20px 60px;
+    .pw-colls-container, .pw-breaker-bar, .pw-shop-section {
+      padding-left: 20px;
+      padding-right: 20px;
     }
-    .pw-catalog-header-row {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 48px;
+    .pw-colls-container {
+      padding-bottom: 40px;
     }
-    .pw-catalog-grid {
+    .pw-colls-title {
+      margin-bottom: 30px;
+    }
+    .pw-shop-grid {
       grid-template-columns: 1fr;
-      row-gap: 40px;
-    }
-    .pw-catalog-card {
-      grid-column: 1 !important;
-      margin-top: 0 !important;
-      width: 100%;
-    }
-    .pw-catalog-img-container {
-      aspect-ratio: 4/5 !important;
-    }
-    /* Expose metadata block permanently on mobile since hover hover panel is hard to trigger on mobile tap */
-    .pw-catalog-hover-info {
-      position: relative;
-      transform: translateY(0);
-      background-color: transparent;
-      padding: 12px 0 0 0;
-      border-top: none;
-    }
-    .pw-catalog-hover-title {
-      color: var(--fg);
-      font-size: 14px;
-    }
-    .pw-catalog-hover-specs {
-      color: var(--fg);
-      opacity: 0.6;
-    }
-    .pw-catalog-hover-meta {
-      border-top: 1px solid rgba(12, 12, 12, 0.1);
-      padding-top: 6px;
-    }
-    .pw-catalog-hover-price {
-      color: var(--fg);
-      font-weight: 600;
+      row-gap: 48px;
     }
   }
 </style>
 
-<section class="pw-catalog-section">
-  <!-- Dynamic top row technical label -->
-  <div class="pw-catalog-header-row">
-    <h1 class="pw-catalog-main-title">{{ section.settings.header_title }}</h1>
-    <span class="pw-catalog-season-label">{{ section.settings.season_label }}</span>
+<section class="pw-combined-section">
+  <!-- Collections Horizontal Row -->
+  <div class="pw-colls-container">
+    <h1 class="pw-colls-title">Collections</h1>
+    <div class="pw-colls-row">
+      
+      <!-- WLED LIGHT BOXES -->
+      <div class="pw-coll-card" style="transition-delay: 0ms;">
+        <div class="pw-coll-img-wrapper">
+          <img src="{{ 'wled_light_boxes.png' | asset_url }}" alt="WLED LIGHT BOXES" class="pw-coll-img" loading="lazy" />
+        </div>
+        <span class="pw-coll-name">WLED LIGHT BOXES</span>
+      </div>
+
+      <!-- CAR MODELS -->
+      <div class="pw-coll-card" style="transition-delay: 100ms;">
+        <div class="pw-coll-img-wrapper">
+          <img src="{{ 'car_models.png' | asset_url }}" alt="CAR MODELS" class="pw-coll-img" loading="lazy" />
+        </div>
+        <span class="pw-coll-name">CAR MODELS</span>
+      </div>
+
+      <!-- 2D WALL ART -->
+      <div class="pw-coll-card" style="transition-delay: 200ms;">
+        <div class="pw-coll-img-wrapper">
+          <img src="{{ 'wall_art.png' | asset_url }}" alt="2D WALL ART" class="pw-coll-img" loading="lazy" />
+        </div>
+        <span class="pw-coll-name">2D WALL ART</span>
+      </div>
+
+      <!-- KEYCHAINS -->
+      <div class="pw-coll-card" style="transition-delay: 300ms;">
+        <div class="pw-coll-img-wrapper">
+          <img src="{{ 'keychains.png' | asset_url }}" alt="KEYCHAINS" class="pw-coll-img" loading="lazy" />
+        </div>
+        <span class="pw-coll-name">KEYCHAINS</span>
+      </div>
+
+      <!-- DESK ACCESSORIES -->
+      <div class="pw-coll-card" style="transition-delay: 400ms;">
+        <div class="pw-coll-img-wrapper">
+          <img src="{{ 'desk_accessories.png' | asset_url }}" alt="DESK ACCESSORIES" class="pw-coll-img" loading="lazy" />
+        </div>
+        <span class="pw-coll-name">DESK ACCESSORIES</span>
+      </div>
+
+      <!-- LAYERED ART -->
+      <div class="pw-coll-card" style="transition-delay: 500ms;">
+        <div class="pw-coll-img-wrapper">
+          <img src="{{ 'layered_art.png' | asset_url }}" alt="LAYERED ART" class="pw-coll-img" loading="lazy" />
+        </div>
+        <span class="pw-coll-name">LAYERED ART</span>
+      </div>
+
+      <!-- DRIVER FIGURINE -->
+      <div class="pw-coll-card" style="transition-delay: 600ms;">
+        <div class="pw-coll-img-wrapper">
+          <img src="{{ 'driver_figurine.png' | asset_url }}" alt="DRIVER FIGURINE" class="pw-coll-img" loading="lazy" />
+        </div>
+        <span class="pw-coll-name">DRIVER FIGURINE</span>
+      </div>
+
+    </div>
   </div>
 
-  <div class="pw-catalog-grid">
+  <!-- Double-Lined Section Breaker (Filter/Sort Bar) -->
+  <div class="pw-breaker-bar">
+    <button class="pw-dropdown-btn">
+      Show Filters ▾
+    </button>
+    <button class="pw-dropdown-btn">
+      Sort by ▾
+    </button>
+  </div>
 
-    <!-- CAR 1: McLaren MCL39 -->
-    <a href="/products/mclaren-mcl39" class="pw-catalog-card pw-catalog-card-a cursor-pointer">
-      <div class="pw-catalog-img-container">
-        <div class="pw-catalog-sketch-overlay">
-          <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <path d="M 40 120 L 360 120 M 100 80 L 180 100 L 300 100 L 330 135" stroke-dasharray="3,3" />
-            <rect x="50" y="60" width="10" height="110" stroke-width="2" opacity="0.4" />
-            <circle cx="120" cy="120" r="32" stroke-width="2" />
-            <circle cx="280" cy="120" r="35" stroke-width="2" />
-            <path d="M 190 70 L 220 30 H 260 L 280 70 Z" fill="rgba(255,128,0,0.08)" />
-            <path d="M 180 100 L 200 80 L 310 80 L 330 100" stroke="#FF8000" stroke-width="1.5" />
-          </svg>
-        </div>
-        <div class="pw-catalog-hover-info">
-          <span class="pw-catalog-hover-title">McLaren MCL39</span>
-          <div class="pw-catalog-hover-meta">
-            <span class="pw-catalog-hover-specs">1:18 SCALE / PRE-PREG CARBON</span>
-            <div class="pw-catalog-price-container">
-              <span class="pw-catalog-hover-price">₹12,499</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </a>
+  <!-- Shop Grid Section -->
+  <div class="pw-shop-section">
+    <h2 class="pw-shop-title">Shop</h2>
+    <div class="pw-shop-grid">
 
-    <!-- CAR 2: Red Bull RB19 -->
-    <a href="/products/red-bull-rb19" class="pw-catalog-card pw-catalog-card-b cursor-pointer">
-      <div class="pw-catalog-img-container">
-        <div class="pw-catalog-sketch-overlay">
-          <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <path d="M 40 120 L 360 120 M 80 90 L 200 95 L 320 90 L 340 130" stroke-dasharray="3,3" />
-            <circle cx="110" cy="120" r="30" stroke-width="2" />
-            <circle cx="285" cy="120" r="33" stroke-width="2" />
-            <path d="M 185 65 L 210 35 H 250 L 268 65 Z" fill="rgba(252,213,0,0.1)" />
-            <path d="M 160 95 L 185 65 L 268 65 L 290 90" stroke="#FCD500" stroke-width="1.5" />
-          </svg>
+      <!-- McLaren MCL39 -->
+      <a href="/products/mclaren-mcl39" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'mclaren.png' | asset_url }}" alt="McLaren MCL39 Car Model" class="pw-shop-img" loading="lazy" />
         </div>
-        <div class="pw-catalog-hover-info">
-          <span class="pw-catalog-hover-title">Red Bull RB19</span>
-          <div class="pw-catalog-hover-meta">
-            <span class="pw-catalog-hover-specs">1:18 SCALE / ANODIZED ALLOY</span>
-            <div class="pw-catalog-price-container">
-              <span class="pw-catalog-hover-price">₹12,499</span>
-            </div>
-          </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">McLaren MCL39 Car Model</span>
+          <span class="pw-shop-price">₹12,499</span>
         </div>
-      </div>
-    </a>
+        <span class="pw-shop-meta">3 Scales Available (1:43, 1:24, 1:18)</span>
+      </a>
 
-    <!-- CAR 3: Ferrari SF-23 -->
-    <a href="/products/ferrari-sf23" class="pw-catalog-card pw-catalog-card-c cursor-pointer">
-      <div class="pw-catalog-img-container">
-        <div class="pw-catalog-sketch-overlay">
-          <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <path d="M 50 120 L 350 120 M 90 85 L 190 92 L 310 88 L 335 128" stroke-dasharray="3,3" />
-            <circle cx="115" cy="120" r="31" stroke-width="2" />
-            <circle cx="275" cy="120" r="34" stroke-width="2" />
-            <path d="M 175 68 L 200 38 H 240 L 258 68 Z" fill="rgba(225,6,0,0.08)" />
-            <path d="M 150 92 L 180 68 L 258 68 L 280 88" stroke="#E10600" stroke-width="1.5" />
-          </svg>
+      <!-- Red Bull RB19 -->
+      <a href="/products/red-bull-rb19" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'redbull.png' | asset_url }}" alt="Red Bull RB19 Car Model" class="pw-shop-img" loading="lazy" />
         </div>
-        <div class="pw-catalog-hover-info">
-          <span class="pw-catalog-hover-title">Ferrari SF-23</span>
-          <div class="pw-catalog-hover-meta">
-            <span class="pw-catalog-hover-specs">1:18 SCALE / PRECISION DIE-CAST</span>
-            <div class="pw-catalog-price-container">
-              <span class="pw-catalog-hover-price">₹12,499</span>
-            </div>
-          </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Red Bull RB19 Car Model</span>
+          <span class="pw-shop-price">₹12,499</span>
         </div>
-      </div>
-    </a>
+        <span class="pw-shop-meta">3 Scales Available (1:43, 1:24, 1:18)</span>
+      </a>
 
-    <!-- CAR 4: Mercedes W14 -->
-    <a href="/products/mercedes-w14" class="pw-catalog-card pw-catalog-card-d cursor-pointer">
-      <div class="pw-catalog-img-container">
-        <div class="pw-catalog-sketch-overlay">
-          <svg viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <path d="M 45 120 L 355 120 M 85 88 L 195 94 L 315 90 L 338 132" stroke-dasharray="3,3" />
-            <circle cx="112" cy="120" r="31" stroke-width="2" />
-            <circle cx="278" cy="120" r="34" stroke-width="2" />
-            <path d="M 178 70 L 202 40 H 244 L 260 70 Z" fill="rgba(0,161,155,0.08)" />
-            <path d="M 155 94 L 182 70 L 260 70 L 282 90" stroke="#00A19B" stroke-width="1.5" />
-          </svg>
+      <!-- Ferrari SF-23 -->
+      <a href="/products/ferrari-sf23" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'ferrari.png' | asset_url }}" alt="Ferrari SF-23 Car Model" class="pw-shop-img" loading="lazy" />
         </div>
-        <div class="pw-catalog-hover-info">
-          <span class="pw-catalog-hover-title">Mercedes W14</span>
-          <div class="pw-catalog-hover-meta">
-            <span class="pw-catalog-hover-specs">1:18 SCALE / EXPOSED CARBON</span>
-            <div class="pw-catalog-price-container">
-              <span class="pw-catalog-hover-price">₹12,499</span>
-            </div>
-          </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Ferrari SF-23 Car Model</span>
+          <span class="pw-shop-price">₹12,499</span>
         </div>
-      </div>
-    </a>
+        <span class="pw-shop-meta">3 Scales Available (1:43, 1:24, 1:18)</span>
+      </a>
 
-    <!-- HELMET 1: Lando Norris -->
-    <a href="/products/lando-norris-helmet" class="pw-catalog-card pw-catalog-card-a cursor-pointer">
-      <div class="pw-catalog-img-container">
-        <div class="pw-catalog-sketch-overlay">
-          <svg viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <circle cx="150" cy="115" r="65" stroke-width="2" />
-            <path d="M 150 50 C 215 50 215 180 150 180 Z" stroke-width="2" />
-            <rect x="148" y="88" width="65" height="26" fill="rgba(255,128,0,0.1)" />
-            <path d="M 85 115 H 150" stroke-dasharray="4,4" />
-            <path d="M 150 98 L 198 106" stroke="#FF8000" stroke-width="1.5" />
-          </svg>
+      <!-- Mercedes W14 -->
+      <a href="/products/mercedes-w14" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'mercedes.png' | asset_url }}" alt="Mercedes W14 Car Model" class="pw-shop-img" loading="lazy" />
         </div>
-        <div class="pw-catalog-hover-info">
-          <span class="pw-catalog-hover-title">Norris Replica Helmet</span>
-          <div class="pw-catalog-hover-meta">
-            <span class="pw-catalog-hover-specs">1:2 SCALE / MATTE CARBON</span>
-            <div class="pw-catalog-price-container">
-              <span class="pw-catalog-hover-price">₹7,999</span>
-            </div>
-          </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Mercedes W14 Car Model</span>
+          <span class="pw-shop-price">₹12,499</span>
         </div>
-      </div>
-    </a>
+        <span class="pw-shop-meta">3 Scales Available (1:43, 1:24, 1:18)</span>
+      </a>
 
-    <!-- HELMET 2: Schumacher 2002 -->
-    <a href="/products/schumacher-helmet" class="pw-catalog-card pw-catalog-card-b cursor-pointer">
-      <div class="pw-catalog-img-container">
-        <div class="pw-catalog-sketch-overlay">
-          <svg viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <circle cx="150" cy="115" r="65" stroke-width="2" />
-            <path d="M 150 50 C 215 50 215 180 150 180 Z" stroke-width="2" />
-            <rect x="148" y="88" width="65" height="26" fill="rgba(225,6,0,0.1)" />
-            <path d="M 85 115 H 150" stroke-dasharray="4,4" />
-            <path d="M 150 98 L 198 106" stroke="#E10600" stroke-width="1.5" />
-          </svg>
+      <!-- Lando Norris Helmet -->
+      <a href="/products/lando-norris-helmet" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'norris.png' | asset_url }}" alt="Norris Helmet Replica" class="pw-shop-img" loading="lazy" />
         </div>
-        <div class="pw-catalog-hover-info">
-          <span class="pw-catalog-hover-title">Schumacher Replica Helmet</span>
-          <div class="pw-catalog-hover-meta">
-            <span class="pw-catalog-hover-specs">1:2 SCALE / GLOSS CARBON</span>
-            <div class="pw-catalog-price-container">
-              <span class="pw-catalog-hover-price">₹7,999</span>
-            </div>
-          </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Norris Helmet Replica</span>
+          <span class="pw-shop-price">₹7,999</span>
         </div>
-      </div>
-    </a>
+        <span class="pw-shop-meta">2 Scales Available (1:2, 1:1)</span>
+      </a>
 
-    <!-- HELMET 3: Verstappen 2023 -->
-    <a href="/products/verstappen-helmet" class="pw-catalog-card pw-catalog-card-c cursor-pointer">
-      <div class="pw-catalog-img-container">
-        <div class="pw-catalog-sketch-overlay">
-          <svg viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <circle cx="150" cy="115" r="65" stroke-width="2" />
-            <path d="M 150 50 C 215 50 215 180 150 180 Z" stroke-width="2" />
-            <rect x="148" y="88" width="65" height="26" fill="rgba(252,213,0,0.1)" />
-            <path d="M 85 115 H 150" stroke-dasharray="4,4" />
-            <path d="M 150 98 L 198 106" stroke="#FCD500" stroke-width="1.5" />
-          </svg>
+      <!-- Schumacher Helmet -->
+      <a href="/products/schumacher-helmet" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'schumacher.png' | asset_url }}" alt="Schumacher Helmet Replica" class="pw-shop-img" loading="lazy" />
         </div>
-        <div class="pw-catalog-hover-info">
-          <span class="pw-catalog-hover-title">Verstappen Replica Helmet</span>
-          <div class="pw-catalog-hover-meta">
-            <span class="pw-catalog-hover-specs">1:2 SCALE / MATTE CARBON</span>
-            <div class="pw-catalog-price-container">
-              <span class="pw-catalog-hover-price">₹7,999</span>
-            </div>
-          </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Schumacher Helmet Replica</span>
+          <span class="pw-shop-price">₹7,999</span>
         </div>
-      </div>
-    </a>
+        <span class="pw-shop-meta">2 Scales Available (1:2, 1:1)</span>
+      </a>
 
+      <!-- Verstappen Helmet -->
+      <a href="/products/verstappen-helmet" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'verstappen.png' | asset_url }}" alt="Verstappen Helmet Replica" class="pw-shop-img" loading="lazy" />
+        </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Verstappen Helmet Replica</span>
+          <span class="pw-shop-price">₹7,999</span>
+        </div>
+        <span class="pw-shop-meta">2 Scales Available (1:2, 1:1)</span>
+      </a>
+
+    </div>
   </div>
 </section>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Immediately activate collections reveal animation
+    const collCards = document.querySelectorAll('.pw-coll-card');
+    collCards.forEach(card => {
+      card.classList.add('reveal-active');
+    });
+
+    // 2. Setup IntersectionObserver for shop products reveal animation on scroll
+    const shopObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-active');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '0px 0px -5% 0px',
+      threshold: 0.05
+    });
+
+    const shopItems = document.querySelectorAll('.pw-reveal-item');
+    shopItems.forEach(item => {
+      shopObserver.observe(item);
+    });
+  });
+</script>
 
 {% schema %}
 {
-  "name": "Product Staggered Catalog",
-  "settings": [
-    {
-      "type": "text",
-      "id": "header_title",
-      "label": "Section Headline",
-      "default": "ALL PRODUCTS"
-    },
-    {
-      "type": "text",
-      "id": "season_label",
-      "label": "Technical Season Label",
-      "default": "[ SEASON-01 / CALIBRATION ]"
-    },
-    {
-      "type": "range",
-      "id": "products_limit",
-      "label": "Max Products Count",
-      "min": 4,
-      "max": 24,
-      "step": 4,
-      "default": 12
-    }
-  ],
+  "name": "Combined Collections & Shop",
+  "settings": [],
   "presets": [
     {
-      "name": "Product Staggered Catalog"
+      "name": "Combined Collections & Shop"
     }
   ]
 }

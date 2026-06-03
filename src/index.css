@@ -5,11 +5,11 @@
 @tailwind utilities;
 
 :root {
-  --font-syne: 'Syne', sans-serif;
+  --font-syne: 'btseps2', sans-serif;
   --font-barlow: 'Barlow', sans-serif;
   --font-ibm-plex-mono: 'IBM Plex Mono', monospace;
   --font-mono: 'IBM Plex Mono', monospace;
-  --font-display: 'Syne', sans-serif;
+  --font-display: 'btseps2', sans-serif;
   --font-body: 'Barlow', sans-serif;
 
   --background: #EDEBE5;

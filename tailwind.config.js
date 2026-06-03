@@ -20,7 +20,7 @@ module.exports = {
         surface: "#F5F4F0",   // Light Surface tone
       },
       fontFamily: {
-        display: ["var(--font-display)", "Syne", "sans-serif"],
+        display: ["var(--font-display)", "btseps2", "sans-serif"],
         body: ["var(--font-body)", "Barlow", "sans-serif"],
         mono: ["var(--font-mono)", "IBM Plex Mono", "monospace"],
       },

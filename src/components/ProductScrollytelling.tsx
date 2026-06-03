@@ -154,16 +154,6 @@ const HELMET_SCALES = {
   },
 };
 
-const teamTitles: Record<string, { line1: string; line2: string }> = {
-  mclaren: { line1: 'MCLAREN', line2: 'MCL39' },
-  redbull: { line1: 'RED BULL', line2: 'RB19' },
-  ferrari: { line1: 'FERRARI', line2: 'SF-23' },
-  mercedes: { line1: 'MERCEDES', line2: 'W14' },
-  'lando-norris-helmet': { line1: 'LANDO NORRIS', line2: 'LN-F1' },
-  'schumacher-helmet': { line1: 'SCHUMACHER', line2: 'MS-2002' },
-  'verstappen-helmet': { line1: 'VERSTAPPEN', line2: 'MV1-2023' },
-};
-
 const teamButtonLabels: Record<string, string> = {
   mclaren: 'Mclaren-MCL39',
   redbull: 'Redbull-RB19',
@@ -477,25 +467,8 @@ export function ProductScrollytelling({
       <div ref={trackRef} className="relative w-full product-track" style={{ height: '400vh' }}>
         <div className="sticky top-0 w-full h-screen overflow-hidden">
           
-          {/* Background Wordmark */}
-          <div 
-            ref={wordmarkRef}
-            className="absolute top-[12vh] left-0 right-0 flex flex-col items-center z-[5] pointer-events-none select-none transition-opacity duration-300"
-            style={{ opacity: 0.85 }}
-          >
-            <div className="text-center transition-all duration-300">
-              <h1 className="text-[8.5vw] font-display-strict uppercase tracking-tighter leading-[0.85] text-[#0C0C0C]/85 font-extrabold">
-                {teamTitles[activeTeam].line1}
-              </h1>
-              <h1 className="text-[8.5vw] font-display-strict uppercase tracking-tighter leading-[0.85] text-[#0C0C0C]/85 font-extrabold">
-                {teamTitles[activeTeam].line2}
-              </h1>
-              <p className="mt-3 font-body-strict text-sm md:text-base text-[#0C0C0C]/55 max-w-md mx-auto">
-                {TEAMS_DATA[activeTeam].subtitle}
-              </p>
-            </div>
-          </div>
-
+          {/* Background Wordmark Removed */}
+ 
           {/* Full Screen WebGL Canvas */}
           <div className="absolute inset-0 w-full h-full z-10 select-none pointer-events-none">
             <CarCanvas 
@@ -510,36 +483,54 @@ export function ProductScrollytelling({
               verstappenHelmetUrl={verstappenHelmetUrl}
             />
           </div>
-
-          {/* Model Switcher Configurator Buttons */}
+ 
+          {/* Model Switcher Configurator Wrapper */}
           <div 
             ref={configuratorRef}
-            className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 flex gap-3 pointer-events-auto transition-all duration-500"
+            className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 pointer-events-auto transition-all duration-500"
             style={{ 
               opacity: 1,
               transform: 'translate(-50%, 0)',
               pointerEvents: 'auto'
             }}
           >
-            {switcherTeams.map((team) => (
-              <button
-                key={team}
-                onClick={() => handleTeamSwitch(team as keyof typeof TEAMS_DATA)}
-                className={`px-5 py-2.5 border font-mono text-[11px] uppercase transition-all flex items-center justify-between gap-3 backdrop-blur-md whitespace-nowrap ${
-                  activeTeam === team
-                    ? 'border-brand-black bg-[#0C0C0C]/85 text-[#EDEBE5] font-semibold'
-                    : 'border-brand-black/20 hover:border-brand-black/45 text-brand-black/75 bg-[#EDEBE5]/45'
-                }`}
-              >
-                <span>{teamButtonLabels[team]}</span>
-                {activeTeam === team && (
-                  <div 
-                    className="w-1.5 h-1.5 rounded-none" 
-                    style={{ backgroundColor: TEAMS_DATA[team].accentColor }}
-                  />
-                )}
-              </button>
-            ))}
+            {/* Model Tagline */}
+            <div 
+              style={{
+                fontFamily: 'var(--font-mono), monospace',
+                fontSize: '18px',
+                color: teamInfo.accentColor,
+                opacity: 0.5,
+                textAlign: 'center',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em'
+              }}
+            >
+              "{teamInfo.subtitle}"
+            </div>
+
+            {/* Configurator Buttons */}
+            <div className="flex gap-3">
+              {switcherTeams.map((team) => (
+                <button
+                  key={team}
+                  onClick={() => handleTeamSwitch(team as keyof typeof TEAMS_DATA)}
+                  className={`px-5 py-2.5 border font-mono text-[11px] uppercase transition-all flex items-center justify-between gap-3 backdrop-blur-md whitespace-nowrap ${
+                    activeTeam === team
+                      ? 'border-brand-black bg-[#0C0C0C]/85 text-[#EDEBE5] font-semibold'
+                      : 'border-brand-black/20 hover:border-brand-black/45 text-brand-black/75 bg-[#EDEBE5]/45'
+                  }`}
+                >
+                  <span>{teamButtonLabels[team]}</span>
+                  {activeTeam === team && (
+                    <div 
+                      className="w-1.5 h-1.5 rounded-none" 
+                      style={{ backgroundColor: TEAMS_DATA[team].accentColor }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* LEFT SPECIFICATIONS CARD */}
