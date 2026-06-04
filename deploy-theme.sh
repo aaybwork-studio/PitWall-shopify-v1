@@ -102,6 +102,10 @@ deploy-theme.sh
 *.glb
 *.mp4
 *.mp3
+.env
+.env.*
+.next/
+.vercel/
 EOF
 
 # ── Step 5: Commit & force-push ───────────────────────────────────────────────
