@@ -4,10 +4,10 @@
   data-product-handle="{{ product.handle | escape }}"
   data-product-price="{{ product.price | money }}"
   data-product-variants-json='{{ product.variants | json }}'
-  data-mclaren-url="{{ 'mclaren.glb' | asset_url }}"
-  data-redbull-url="{{ 'redbull.glb' | asset_url }}"
-  data-ferrari-url="{{ 'ferrari.glb' | asset_url }}"
-  data-mercedes-url="{{ 'mercedes.glb' | asset_url }}"
+  data-mclaren-url="{{ 'mclaren.glb' | file_url }}"
+  data-redbull-url="{{ 'redbull.glb' | file_url }}"
+  data-ferrari-url="{{ 'ferrari.glb' | file_url }}"
+  data-mercedes-url="{{ 'mercedes.glb' | file_url }}"
   data-logo-url="{{ 'logo_new.png' | asset_url }}"
 >
   <!-- Brutalist loader displayed during React initialization -->

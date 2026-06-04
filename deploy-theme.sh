@@ -99,9 +99,10 @@ tailwind.config.js
 .planning/
 .DS_Store
 deploy-theme.sh
-*.glb
-*.mp4
-*.mp3
+assets/mclaren.glb
+assets/redbull.glb
+assets/ferrari.glb
+assets/mercedes.glb
 .env
 .env.*
 .next/
