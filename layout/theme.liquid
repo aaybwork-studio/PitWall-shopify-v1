@@ -49,7 +49,7 @@
         <a href="/" class="nav-logo-link">
           <img src="{{ 'emblem.png' | asset_url }}" alt="PITWALL" class="nav-logo-img" />
         </a>
-        <button class="nav-cart-btn" onclick="location.href='/cart'" aria-label="View cart">
+        <button class="nav-cart-btn pw-nav-cart-btn" id="pw-cart-open-btn" aria-label="Open cart drawer">
           CART <span class="nav-cart-badge">[ <span id="cart-counter-display">0</span> ]</span>
         </button>
       </div>
@@ -73,7 +73,7 @@
           </li>
           <li class="menu-link-item">
             <svg class="menu-bullet-svg" viewBox="0 0 10 10" style="width: 10px; height: 10px; fill: var(--accent); margin-right: 16px;"><rect width="10" height="10"/></svg>
-            <a href="#footer" class="menu-link" onclick="document.getElementById('full-menu-overlay').classList.remove('is-active'); document.body.style.overflow = '';">CONTACT</a>
+            <a href="/pages/contact" class="menu-link" onclick="document.getElementById('full-menu-overlay').classList.remove('is-active'); document.body.style.overflow = '';">CONTACT</a>
           </li>
         </ul>
         <div class="menu-contact-col">
@@ -128,7 +128,7 @@
         <div class="footer-right">
           <a href="/collections" class="footer-nav-link">Collections</a>
           <a href="/pages/about" class="footer-nav-link">About</a>
-          <a href="#footer" class="footer-nav-link">Contact</a>
+          <a href="/pages/contact" class="footer-nav-link">Contact</a>
         </div>
       </div>
 
@@ -143,6 +143,106 @@
         <img src="{{ 'wordmark-footer.png' | asset_url }}" alt="PITWALL" class="footer-wordmark-img" />
       </div>
     </footer>
+
+    <!-- Cart Drawer -->
+    <div id="pw-cart-backdrop" class="pw-cart-backdrop" aria-hidden="true"></div>
+    <div id="pw-cart-drawer" class="pw-cart-drawer" role="dialog" aria-modal="true" aria-label="Cart">
+      <div class="pw-cart-drawer-header">
+        <span class="pw-cart-drawer-title">CART</span>
+        <button id="pw-cart-close-btn" class="pw-cart-close-btn" aria-label="Close cart">✕</button>
+      </div>
+      <div id="pw-cart-items" class="pw-cart-items"></div>
+      <div id="pw-cart-footer" class="pw-cart-footer" style="display:none;">
+        <div class="pw-cart-subtotal">
+          <span class="pw-cart-subtotal-label">SUBTOTAL</span>
+          <span id="pw-cart-subtotal-value" class="pw-cart-subtotal-value"></span>
+        </div>
+        <a href="/checkout" class="pw-cart-checkout-btn">CHECKOUT →</a>
+      </div>
+      <div id="pw-cart-empty" class="pw-cart-empty">
+        <p>Your cart is empty.</p>
+        <a href="/collections" class="pw-cart-browse-link">BROWSE COLLECTION →</a>
+      </div>
+    </div>
+
+    <script>
+    (function() {
+      var openBtn = document.getElementById('pw-cart-open-btn');
+      var closeBtn = document.getElementById('pw-cart-close-btn');
+      var backdrop = document.getElementById('pw-cart-backdrop');
+      var drawer = document.getElementById('pw-cart-drawer');
+      var counter = document.getElementById('cart-counter-display');
+
+      function openCart() {
+        refreshCart();
+        drawer.classList.add('is-open');
+        backdrop.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeCart() {
+        drawer.classList.remove('is-open');
+        backdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
+      }
+
+      function formatMoney(cents) {
+        return '₹' + (cents / 100).toLocaleString('en-IN');
+      }
+
+      function refreshCart() {
+        fetch('/cart.js')
+          .then(function(r) { return r.json(); })
+          .then(function(cart) {
+            var count = cart.item_count || 0;
+            counter.textContent = count;
+
+            var itemsEl = document.getElementById('pw-cart-items');
+            var footerEl = document.getElementById('pw-cart-footer');
+            var emptyEl = document.getElementById('pw-cart-empty');
+            var subtotalEl = document.getElementById('pw-cart-subtotal-value');
+
+            if (count === 0) {
+              itemsEl.innerHTML = '';
+              footerEl.style.display = 'none';
+              emptyEl.style.display = 'block';
+            } else {
+              emptyEl.style.display = 'none';
+              footerEl.style.display = 'block';
+              subtotalEl.textContent = formatMoney(cart.total_price);
+
+              itemsEl.innerHTML = cart.items.map(function(item) {
+                return '<div class="pw-cart-item">' +
+                  '<div class="pw-cart-item-img-wrap">' +
+                    (item.image ? '<img src="' + item.image + '" alt="' + item.title + '" class="pw-cart-item-img" />' : '<div class="pw-cart-item-img-placeholder"></div>') +
+                  '</div>' +
+                  '<div class="pw-cart-item-info">' +
+                    '<span class="pw-cart-item-title">' + item.product_title + '</span>' +
+                    (item.variant_title && item.variant_title !== 'Default Title' ? '<span class="pw-cart-item-variant">' + item.variant_title + '</span>' : '') +
+                    '<div class="pw-cart-item-row">' +
+                      '<span class="pw-cart-item-qty">QTY: ' + item.quantity + '</span>' +
+                      '<span class="pw-cart-item-price">' + formatMoney(item.line_price) + '</span>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+              }).join('');
+            }
+          });
+      }
+
+      if (openBtn) openBtn.addEventListener('click', openCart);
+      if (closeBtn) closeBtn.addEventListener('click', closeCart);
+      if (backdrop) backdrop.addEventListener('click', closeCart);
+
+      // Refresh count on page load
+      fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
+        if (counter) counter.textContent = cart.item_count || 0;
+      });
+
+      // Listen for Shopify cart updates
+      document.addEventListener('cart:refresh', refreshCart);
+    })();
+    </script>
 
     <!-- Bundled React + Three.js components -->
     {{ 'pitwall-interactive.js' | asset_url | script_tag }}

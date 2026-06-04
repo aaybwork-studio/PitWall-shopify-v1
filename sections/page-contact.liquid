@@ -1,0 +1,112 @@
+<style>
+  .pw-contact-section {
+    background-color: var(--bg);
+    min-height: calc(100vh - 64px);
+    padding: 120px 100px 80px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .pw-contact-title {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 8vw, 120px);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 0.9;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 40px;
+  }
+
+  .pw-contact-statement {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: rgba(12, 12, 12, 0.65);
+    line-height: 1.7;
+    max-width: 520px;
+    margin-bottom: 48px;
+  }
+
+  .pw-contact-divider {
+    width: 100%;
+    height: 1px;
+    background-color: rgba(12, 12, 12, 0.15);
+    margin-bottom: 48px;
+  }
+
+  .pw-contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .pw-contact-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pw-contact-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(12, 12, 12, 0.4);
+  }
+
+  .pw-contact-link {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 2.5vw, 32px);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+
+  .pw-contact-link:hover {
+    color: var(--accent);
+  }
+
+  @media screen and (max-width: 767px) {
+    .pw-contact-section {
+      padding: 100px 20px 60px;
+    }
+  }
+</style>
+
+<section class="pw-contact-section">
+  <h1 class="pw-contact-title">Contact</h1>
+
+  <p class="pw-contact-statement">
+    For the ones who notice. PITWALL is a curated collection of Formula 1 collectibles built for obsessives.
+  </p>
+
+  <div class="pw-contact-divider"></div>
+
+  <div class="pw-contact-info">
+    <div class="pw-contact-row">
+      <span class="pw-contact-label">Email</span>
+      <a href="mailto:hello@pitwall.in" class="pw-contact-link">hello@pitwall.in</a>
+    </div>
+
+    <div class="pw-contact-row">
+      <span class="pw-contact-label">Instagram</span>
+      <a href="https://instagram.com/pitwall.in" target="_blank" rel="noopener noreferrer" class="pw-contact-link">@pitwall.in</a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact Page",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Contact Page"
+    }
+  ]
+}
+{% endschema %}

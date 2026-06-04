@@ -88,7 +88,7 @@
     font-family: var(--font-display);
     font-size: 14px;
     font-weight: 700;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--fg);
   }
@@ -206,7 +206,7 @@
     font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.06em;
     color: var(--fg);
   }
 
@@ -321,6 +321,9 @@
     </div>
   </div>
 
+  <!-- Yellow Section Break -->
+  <div style="width: 100%; height: 4px; background-color: #F6C917;"></div>
+
   <!-- Double-Lined Section Breaker (Filter/Sort Bar) -->
   <div class="pw-breaker-bar">
     <button class="pw-dropdown-btn">
@@ -384,40 +387,124 @@
         <span class="pw-shop-meta">3 Scales Available (1:43, 1:24, 1:18)</span>
       </a>
 
-      <!-- Lando Norris Helmet -->
-      <a href="/products/lando-norris-helmet" class="pw-shop-card pw-reveal-item">
+      <!-- WLED Neon Box GT -->
+      <a href="/products/neon-box-gt" class="pw-shop-card pw-reveal-item">
         <div class="pw-shop-img-wrapper">
-          <img src="{{ 'norris.png' | asset_url }}" alt="Norris Helmet Replica" class="pw-shop-img" loading="lazy" />
+          <img src="{{ 'wled_light_boxes.png' | asset_url }}" alt="WLED Neon Box GT" class="pw-shop-img" loading="lazy" />
         </div>
         <div class="pw-shop-info">
-          <span class="pw-shop-name">Norris Helmet Replica</span>
-          <span class="pw-shop-price">₹7,999</span>
+          <span class="pw-shop-name">WLED Neon Box GT</span>
+          <span class="pw-shop-price">₹4,999</span>
         </div>
-        <span class="pw-shop-meta">2 Scales Available (1:2, 1:1)</span>
+        <span class="pw-shop-meta">WLED Light Boxes</span>
       </a>
 
-      <!-- Schumacher Helmet -->
-      <a href="/products/schumacher-helmet" class="pw-shop-card pw-reveal-item">
+      <!-- WLED Neon Box F1 -->
+      <a href="/products/neon-box-f1" class="pw-shop-card pw-reveal-item">
         <div class="pw-shop-img-wrapper">
-          <img src="{{ 'schumacher.png' | asset_url }}" alt="Schumacher Helmet Replica" class="pw-shop-img" loading="lazy" />
+          <img src="{{ 'wled_light_boxes.png' | asset_url }}" alt="WLED Neon Box F1" class="pw-shop-img" loading="lazy" />
         </div>
         <div class="pw-shop-info">
-          <span class="pw-shop-name">Schumacher Helmet Replica</span>
-          <span class="pw-shop-price">₹7,999</span>
+          <span class="pw-shop-name">WLED Neon Box F1</span>
+          <span class="pw-shop-price">₹4,999</span>
         </div>
-        <span class="pw-shop-meta">2 Scales Available (1:2, 1:1)</span>
+        <span class="pw-shop-meta">WLED Light Boxes</span>
       </a>
 
-      <!-- Verstappen Helmet -->
-      <a href="/products/verstappen-helmet" class="pw-shop-card pw-reveal-item">
+      <!-- Monaco Track Wall Art -->
+      <a href="/products/monaco-track" class="pw-shop-card pw-reveal-item">
         <div class="pw-shop-img-wrapper">
-          <img src="{{ 'verstappen.png' | asset_url }}" alt="Verstappen Helmet Replica" class="pw-shop-img" loading="lazy" />
+          <img src="{{ 'wall_art.png' | asset_url }}" alt="Monaco Track Wall Art" class="pw-shop-img" loading="lazy" />
         </div>
         <div class="pw-shop-info">
-          <span class="pw-shop-name">Verstappen Helmet Replica</span>
-          <span class="pw-shop-price">₹7,999</span>
+          <span class="pw-shop-name">Monaco Track Wall Art</span>
+          <span class="pw-shop-price">₹2,999</span>
         </div>
-        <span class="pw-shop-meta">2 Scales Available (1:2, 1:1)</span>
+        <span class="pw-shop-meta">Wall Art · A2 / A1 Sizes</span>
+      </a>
+
+      <!-- Silverstone Track Wall Art -->
+      <a href="/products/silverstone-track" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'wall_art.png' | asset_url }}" alt="Silverstone Track Wall Art" class="pw-shop-img" loading="lazy" />
+        </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Silverstone Track Wall Art</span>
+          <span class="pw-shop-price">₹2,999</span>
+        </div>
+        <span class="pw-shop-meta">Wall Art · A2 / A1 Sizes</span>
+      </a>
+
+      <!-- McLaren Keychain -->
+      <a href="/products/mclaren-keychain" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'keychains.png' | asset_url }}" alt="McLaren Keychain" class="pw-shop-img" loading="lazy" />
+        </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">McLaren Keychain</span>
+          <span class="pw-shop-price">₹799</span>
+        </div>
+        <span class="pw-shop-meta">Die-Cast Zinc Alloy</span>
+      </a>
+
+      <!-- Ferrari Keychain -->
+      <a href="/products/ferrari-keychain" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'keychains.png' | asset_url }}" alt="Ferrari Keychain" class="pw-shop-img" loading="lazy" />
+        </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Ferrari Keychain</span>
+          <span class="pw-shop-price">₹799</span>
+        </div>
+        <span class="pw-shop-meta">Die-Cast Zinc Alloy</span>
+      </a>
+
+      <!-- Front Wing Desk Stand -->
+      <a href="/products/front-wing-stand" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'desk_accessories.png' | asset_url }}" alt="Front Wing Desk Stand" class="pw-shop-img" loading="lazy" />
+        </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Front Wing Desk Stand</span>
+          <span class="pw-shop-price">₹3,499</span>
+        </div>
+        <span class="pw-shop-meta">Desk Accessories · Anodized Alloy</span>
+      </a>
+
+      <!-- Brake Caliper Stand -->
+      <a href="/products/brake-caliper-stand" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'desk_accessories.png' | asset_url }}" alt="Brake Caliper Stand" class="pw-shop-img" loading="lazy" />
+        </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Brake Caliper Stand</span>
+          <span class="pw-shop-price">₹3,499</span>
+        </div>
+        <span class="pw-shop-meta">Desk Accessories · Anodized Alloy</span>
+      </a>
+
+      <!-- Suzuka Layered Art -->
+      <a href="/products/suzuka-layered" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'layered_art.png' | asset_url }}" alt="Suzuka Layered Art" class="pw-shop-img" loading="lazy" />
+        </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Suzuka Layered Art</span>
+          <span class="pw-shop-price">₹5,999</span>
+        </div>
+        <span class="pw-shop-meta">Layered Art · 5 Depth Layers</span>
+      </a>
+
+      <!-- Senna Driver Figurine -->
+      <a href="/products/senna-figurine" class="pw-shop-card pw-reveal-item">
+        <div class="pw-shop-img-wrapper">
+          <img src="{{ 'driver_figurine.png' | asset_url }}" alt="Senna Driver Figurine" class="pw-shop-img" loading="lazy" />
+        </div>
+        <div class="pw-shop-info">
+          <span class="pw-shop-name">Senna Driver Figurine</span>
+          <span class="pw-shop-price">₹8,499</span>
+        </div>
+        <span class="pw-shop-meta">1:6 Scale · Resin Cast</span>
       </a>
 
     </div>
