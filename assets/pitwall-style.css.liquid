@@ -313,30 +313,30 @@ html, body {
 .hero-section {
   position: relative;
   width: 100%;
-  height: 56.25vw; /* 16:9 aspect ratio fallback on mobile */
+  height: 100vh;
+  height: 100svh;
   background-color: #000000;
-  overflow: hidden;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   border-bottom: 1px solid var(--border);
 }
 
-@media screen and (min-width: 768px) {
-  .hero-section {
-    height: auto;
-    aspect-ratio: 2.39 / 1; /* CinemaScope cinematic aspect ratio */
-  }
-}
-
 .hero-video-container {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+  position: relative;
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  z-index: 0;
   pointer-events: none;
   overflow: hidden;
+}
+
+@media screen and (min-width: 768px) {
+  .hero-video-container {
+    aspect-ratio: 2.39 / 1;
+  }
 }
 
 .hero-video-fallback {

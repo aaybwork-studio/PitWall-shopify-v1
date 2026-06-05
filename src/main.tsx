@@ -33,7 +33,7 @@ function UniversalMuteButton() {
 }
 
 // ─── Bootstrap Integration on DOM Load ──────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+function bootstrap() {
   // 1. Mount Three.js Product Chassis Canvas
   const canvasRoot = document.getElementById('car-canvas-root');
   if (canvasRoot) {
@@ -183,4 +183,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrap);
+} else {
+  bootstrap();
+}
