@@ -1,55 +1,88 @@
-# Pitwall Studio — Shopify Storefront Theme
+# PITWALL — Shopify Theme
 
-This is a standalone, performance-optimized, **Shopify-ready theme** repository for **Pitwall Studio**. It houses your high-end brutalist design system, immersive responsive layouts, and the interactive **React & Three.js 3D WebGL chassis viewer**.
-
----
-
-## Architecture Design
-
-* **`theme/`**: The standard, production-ready Shopify theme structure. This is the directory that Shopify loads and syncs with your online store.
-* **`src/`**: The separate React, TypeScript, and Three.js source code. It builds into a single compressed bundle inside `theme/assets/pitwall-interactive.js` to run inside Shopify Liquid seamlessly.
+A premium F1-inspired Shopify storefront theme with immersive 3D WebGL car/helmet viewers, video backgrounds, and a brutalist design system.
 
 ---
 
-## Getting Started
+## Stack
 
-### 1. Development and Local Compilations
-To edit the 3D viewer or mute components, perform edits inside the `src/` directory and compile the bundle:
+| Layer | Technology |
+|---|---|
+| Storefront | Shopify Liquid |
+| Interactivity | React 18 + Three.js (compiled to `assets/pitwall-interactive.js`) |
+| Styling | Tailwind CSS (compiled to `assets/main.css`) |
+| 3D Models | GLTF/GLB via Three.js GLTFLoader |
 
+---
+
+## Dev Workflow
+
+### 1. Install dependencies
 ```bash
-# Install dependencies
 npm install
-
-# Run build compilation (outputs updated JS directly to theme/assets/)
-npm run build
 ```
 
-### 2. Uploading 3D Models (.glb files) to Shopify
-Because Shopify uses its global CDN to host assets, you must upload your `.glb` model files so Three.js can load them:
+### 2. Preview live on Shopify store
+```bash
+npm run shopify:dev
+# Opens browser login — no API token needed
+# Live-reloads Liquid changes on your store
+```
 
-1. In your Shopify Admin, go to **Content > Files** or **Online Store > Themes > Edit Code > Assets**.
-2. Upload your F1 car chassis models: `mclaren.glb`, `redbull.glb`, `ferrari.glb`, `mercedes.glb`.
-3. The Liquid template (`product-detail.liquid`) dynamically resolves the CDN URL of these files automatically using the product handle:
-   ```liquid
-   {% capture model_filename %}{{ product.handle }}.glb{% endcapture %}
-   ```
-   *Note: Ensure your Shopify Product's URL handle matches the name of your model file (e.g., product handle `mclaren` resolves `mclaren.glb`).*
+### 3. Edit React/Three.js components
+```bash
+# After editing anything in src/:
+npm run build
+# Compiles → assets/pitwall-interactive.js + assets/main.css
+```
+
+### 4. Push changes to Shopify
+```bash
+git add -A
+git commit -m "feat: your change"
+git push origin main
+# Shopify GitHub integration auto-syncs the theme
+```
+
+---
+
+## Repository Structure
+
+```
+├── assets/           ← Compiled JS/CSS, images, fonts, videos, small .glb models
+├── config/           ← Theme settings schema
+├── layout/           ← theme.liquid (global HTML shell)
+├── locales/          ← Translation strings
+├── sections/         ← Liquid section files
+├── templates/        ← JSON page templates
+├── src/              ← React + Three.js source (build only, Shopify ignores this)
+├── .shopifyignore    ← Tells Shopify CLI which files to skip
+└── package.json
+```
+
+---
+
+## Large 3D Car Models (> 20MB)
+
+These files exceed Shopify's 20MB theme asset limit and must be uploaded manually:
+
+| File | Size | Where |
+|---|---|---|
+| `mclaren.glb` | 43 MB | Shopify Admin → Content → Files |
+| `ferrari.glb` | 29 MB | Shopify Admin → Content → Files |
+| `mercedes.glb` | 26 MB | Shopify Admin → Content → Files |
+| `redbull.glb` | 24 MB | Shopify Admin → Content → Files |
+
+Liquid templates already reference them via `{{ 'mclaren.glb' | file_url }}` — once uploaded, they work automatically.
+
+The 3 helmet models are under 20MB and live in `assets/` normally.
 
 ---
 
 ## Connecting to Shopify via GitHub
 
-1. Create a fresh GitHub repository (e.g., `pitwall-shopify-theme`).
-2. Initialize and push this local folder:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initialize Pitwall Shopify theme"
-   git remote add origin <your-github-repo-url>
-   git branch -M main
-   git push -u origin main
-   ```
-3. In Shopify, navigate to **Online Store > Themes**.
-4. Click **Add Theme > Connect from GitHub**.
-5. Select your repository. If Shopify asks for a root directory, specify `./theme` (or Shopify will automatically find the standard Liquid theme structure).
-6. **Done!** Every time you run `npm run build` and push changes to GitHub, your Shopify theme updates in real-time.
+1. Shopify Admin → **Online Store → Themes**
+2. **Add theme → Connect from GitHub**
+3. Select repo: `aaybwork-studio/PitWall-shopify-v1`
+4. Select branch: `main`
+5. Done — every push to `main` auto-syncs

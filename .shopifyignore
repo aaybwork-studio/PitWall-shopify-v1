@@ -1,10 +1,30 @@
-# Shopify Ignore list for developer files
+# ── Build source (Shopify only needs compiled output in assets/) ───────────────
 src/
 node_modules/
 package.json
 package-lock.json
 tsconfig.json
 vite.config.ts
-.gitignore
-README.md
+tailwind.config.js
+postcss.config.js
+
+# ── Git & CI ──────────────────────────────────────────────────────────────────
+.github/
 .git/
+.gitignore
+.gitattributes
+
+# ── Docs & scripts ────────────────────────────────────────────────────────────
+README.md
+*.sh
+*.md
+
+# ── OS & misc ─────────────────────────────────────────────────────────────────
+.DS_Store
+.env
+.env.*
+.next/
+dist/
+*.log
+.claude/
+.planning/

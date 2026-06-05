@@ -6,8 +6,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "deploy": "bash deploy-theme.sh",
-    "shopify:deploy": "bash deploy-theme.sh"
+    "shopify:dev": "shopify theme dev",
+    "shopify:push": "shopify theme push --allow-live"
   },
   "dependencies": {
     "lucide-react": "^0.378.0",
