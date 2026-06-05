@@ -158,23 +158,22 @@ function bootstrap() {
     nav.classList.add('nav-visible');
 
     const handleScroll = () => {
-      // Find the About strip section on the homepage
-      const aboutStrip = document.querySelector('.about-strip-section') as HTMLElement | null;
-      if (aboutStrip) {
-        const rect = aboutStrip.getBoundingClientRect();
-        // If the top of the About strip section is at or above the bottom of the navbar (64px)
-        if (rect.top <= 64) {
+      // Find the hero section on the homepage
+      const hero = document.querySelector('.hero-section') as HTMLElement | null;
+      if (hero) {
+        // Homepage dynamic behavior: dark over hero video, light everywhere else
+        const heroHeight = hero.offsetHeight || window.innerHeight;
+        if (window.scrollY >= heroHeight - 64) {
           nav.classList.add('nav-light-bg');
         } else {
           nav.classList.remove('nav-light-bg');
         }
       } else {
-        // If not on the homepage, check if it's a PDP page
+        // Standard pages dynamic behavior: PDP is dark, collections/standard pages are light
         const isPDP = document.querySelector('#product-scrollytelling-root') !== null;
         if (isPDP) {
           nav.classList.remove('nav-light-bg');
         } else {
-          // Standard collections/pages have light backgrounds, default to light-bg
           nav.classList.add('nav-light-bg');
         }
       }
