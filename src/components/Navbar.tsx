@@ -106,7 +106,7 @@ export function Navbar({ logoUrl = '', cartCount = 0 }: NavbarProps) {
                 style={{ height: '31px', width: 'auto', display: 'block' }} 
               />
             ) : (
-              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: '600', color: 'var(--bg)', fontSize: '14px', letterSpacing: '0.15em' }}>
+              <span style={{ fontFamily: 'var(--font-branding, btseps2)', fontWeight: '600', color: 'var(--bg)', fontSize: '14px', letterSpacing: '0.15em' }}>
                 PITWALL
               </span>
             )}

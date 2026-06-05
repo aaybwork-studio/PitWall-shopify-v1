@@ -151,24 +151,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Add scroll headers intersection handlers
+  // Add scroll headers intersection handlers for color adaptive dynamic header
   const nav = document.querySelector('.nav-header') as HTMLElement | null;
   if (nav) {
-    // On hero page: hide until scrolled. On all other pages: always show nav.
-    const isHomePage = document.body.classList.contains('template-index') ||
-      document.querySelector('.hero-section') !== null;
-    if (!isHomePage) {
-      nav.classList.add('nav-visible');
-    } else {
-      const onScroll = () => {
-        if (window.scrollY > window.innerHeight * 0.4) {
-          nav.classList.add('nav-visible');
+    // Keep the navbar always visible on all pages (including the hero)
+    nav.classList.add('nav-visible');
+
+    const handleScroll = () => {
+      // Find the About strip section on the homepage
+      const aboutStrip = document.querySelector('.about-strip-section') as HTMLElement | null;
+      if (aboutStrip) {
+        const rect = aboutStrip.getBoundingClientRect();
+        // If the top of the About strip section is at or above the bottom of the navbar (64px)
+        if (rect.top <= 64) {
+          nav.classList.add('nav-light-bg');
         } else {
-          nav.classList.remove('nav-visible');
+          nav.classList.remove('nav-light-bg');
         }
-      };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
-    }
+      } else {
+        // If not on the homepage, check if it's a PDP page
+        const isPDP = document.querySelector('#product-scrollytelling-root') !== null;
+        if (isPDP) {
+          nav.classList.remove('nav-light-bg');
+        } else {
+          // Standard collections/pages have light backgrounds, default to light-bg
+          nav.classList.add('nav-light-bg');
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
   }
 });
