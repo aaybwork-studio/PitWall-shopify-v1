@@ -512,7 +512,7 @@
 </section>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  function initAnimations() {
     // 1. Immediately activate collections reveal animation
     const collCards = document.querySelectorAll('.pw-coll-card');
     collCards.forEach(card => {
@@ -537,16 +537,26 @@
     shopItems.forEach(item => {
       shopObserver.observe(item);
     });
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAnimations);
+  } else {
+    initAnimations();
+  }
+
+  // Support Shopify Theme Editor live reloading
+  document.addEventListener('shopify:section:load', initAnimations);
+  document.addEventListener('shopify:section:select', initAnimations);
 </script>
 
 {% schema %}
 {
-  "name": "Combined Collections & Shop",
+  "name": "Collections & Shop",
   "settings": [],
   "presets": [
     {
-      "name": "Combined Collections & Shop"
+      "name": "Collections & Shop"
     }
   ]
 }

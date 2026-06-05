@@ -1,6 +1,6 @@
 # ── Build source (Shopify only needs compiled output in assets/) ───────────────
-src/
-node_modules/
+src/*
+node_modules/*
 package.json
 package-lock.json
 tsconfig.json
@@ -9,8 +9,8 @@ tailwind.config.js
 postcss.config.js
 
 # ── Git & CI ──────────────────────────────────────────────────────────────────
-.github/
-.git/
+.github/*
+.git/*
 .gitignore
 .gitattributes
 
@@ -23,8 +23,15 @@ README.md
 .DS_Store
 .env
 .env.*
-.next/
-dist/
+.next/*
+dist/*
 *.log
-.claude/
-.planning/
+.claude/*
+.planning/*
+
+# ── Oversized car GLBs (>20MB Shopify limit — upload via Shopify Admin → Content → Files) ──
+assets/mclaren.glb
+assets/ferrari.glb
+assets/mercedes.glb
+assets/redbull.glb
+
