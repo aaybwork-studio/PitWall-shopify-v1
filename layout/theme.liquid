@@ -21,7 +21,7 @@
     {{ content_for_header }}
 
     <!-- Pitwall Custom brutalist CSS -->
-    {{ 'pitwall-style.css' | asset_url | stylesheet_tag }}
+    {{ 'pitwall-style.css.liquid' | asset_url | stylesheet_tag }}
     <!-- Compiled Tailwind CSS -->
     {{ 'main.css' | asset_url | stylesheet_tag }}
   </head>

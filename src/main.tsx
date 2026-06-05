@@ -154,14 +154,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add scroll headers intersection handlers
   const nav = document.querySelector('.nav-header') as HTMLElement | null;
   if (nav) {
-    const onScroll = () => {
-      if (window.scrollY > window.innerHeight * 0.4) {
-        nav.classList.add('nav-visible');
-      } else {
-        nav.classList.remove('nav-visible');
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    // On hero page: hide until scrolled. On all other pages: always show nav.
+    const isHomePage = document.body.classList.contains('template-index') ||
+      document.querySelector('.hero-section') !== null;
+    if (!isHomePage) {
+      nav.classList.add('nav-visible');
+    } else {
+      const onScroll = () => {
+        if (window.scrollY > window.innerHeight * 0.4) {
+          nav.classList.add('nav-visible');
+        } else {
+          nav.classList.remove('nav-visible');
+        }
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
   }
 });
