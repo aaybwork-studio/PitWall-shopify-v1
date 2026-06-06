@@ -49,11 +49,18 @@ html.dark-mode {
 }
 
 /* Force all Shopify parent wrappers to be 100% full-bleed and full-width */
-html, body, 
 #MainContent, 
 .content-for-layout,
 main[role="main"],
-.shopify-section,
+.shopify-section {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Roots for non-homepage interactive components */
 #product-scrollytelling-root,
 #car-canvas-root {
   width: 100% !important;
@@ -61,7 +68,6 @@ main[role="main"],
   margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box !important;
-  overflow: visible !important;
 }
 
 /* Override any default Shopify margins or grid layouts that squeeze our app */
@@ -80,11 +86,30 @@ main[role="main"],
   color: var(--fg);
 }
 
-/* Custom styles for layout and scrolling integration */
+/* Lock html/body so the scrollytelling container is the scroll root, not the page */
 html, body {
-  overscroll-behavior-y: auto !important;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overscroll-behavior: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Homepage: lock viewport so only the scrollytelling container scrolls */
+html.homepage-scrollytelling-active,
+html.homepage-scrollytelling-active body {
+  overflow: hidden !important;
+  height: 100% !important;
+}
+
+/* Non-homepage pages: allow normal vertical scroll */
+html:not(.homepage-scrollytelling-active) body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: auto;
 }
 
 ::-webkit-scrollbar {
@@ -602,71 +627,72 @@ html, body {
   }
 }
 
-/* ─── Homepage Snap & Redesign Layout Styles ───────────────────────── */
+/* ─── Homepage Scrollytelling Layout (replaces old snap system) ──── */
 
-@media (min-width: 768px) {
-  html.homepage-snap {
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
-    height: 100vh;
-    overflow-y: scroll;
-    scroll-padding-top: 64px; /* Offset snap position by navbar height */
-  }
-  
-  html.homepage-snap body {
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  .snap-section {
-    height: calc(100vh - 64px); /* Fits exactly below navbar */
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    min-width: 100%;
-    box-sizing: border-box;
-  }
-
-  .hero-section.snap-section {
-    height: 100vh !important;
-    scroll-margin-top: -64px !important; /* Snap to very top of screen */
-    padding-top: 0 !important;
-  }
-
-  .separator-video-container {
-    height: 33.333vh;
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    /* Snapping properties removed so it doesn't snap */
-  }
-
-  .footer-section {
-    scroll-snap-align: end;
-  }
+/* The scrollytelling container is the ONE scroll root for the homepage.
+   It stacks Groups 1 and 2 vertically so window.scrollY moves between them.
+   Each group is a horizontal strip that scroll via JS wheel interception. */
+.homepage-scroll-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  overscroll-behavior: none;
+  z-index: 0;
+}
+.homepage-scroll-container::-webkit-scrollbar {
+  display: none;
 }
 
+/* Each group is a full-viewport horizontal row, laid out vertically inside the container */
+.horizontal-scroll-group {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  flex-shrink: 0;
+  position: relative;
+  will-change: transform;
+}
+
+/* Each individual slide is exactly one screen wide and tall */
+.horizontal-slide {
+  width: 100vw;
+  height: 100vh;
+  flex-shrink: 0;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile: release all locking, stack normally */
 @media (max-width: 767px) {
-  html.homepage-snap {
-    scroll-snap-type: none;
+  .homepage-scroll-container {
+    position: static;
+    overflow: auto;
     height: auto;
-    overflow-y: visible;
   }
-  
-  .snap-section {
+  .horizontal-scroll-group {
+    flex-direction: column;
+    width: 100%;
     height: auto;
-    scroll-snap-align: none;
     overflow: visible;
   }
-
-  .separator-video-container {
-    height: auto;
-    aspect-ratio: 21 / 9;
+  .horizontal-slide {
     width: 100%;
-    position: relative;
-    overflow: hidden;
+    height: auto;
+    min-height: 100vh;
   }
 }
 

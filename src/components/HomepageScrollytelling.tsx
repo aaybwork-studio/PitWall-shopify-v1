@@ -210,6 +210,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
   // Layout refs
   const group1Ref = useRef<HTMLDivElement>(null);
   const group2Ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // States
   const [scrollLeft1, setScrollLeft1] = useState(0);
@@ -245,6 +246,14 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // ─── Lock body scroll while the scrollytelling container is mounted ─────────
+  useEffect(() => {
+    document.documentElement.classList.add('homepage-scrollytelling-active');
+    return () => {
+      document.documentElement.classList.remove('homepage-scrollytelling-active');
+    };
   }, []);
 
   // ─── Ticker Velocity Animation Loop ─────────────────────────────────────────
@@ -289,91 +298,78 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
     if (isMobile) return;
 
     const handleGlobalWheel = (e: WheelEvent) => {
-      const scrollY = window.scrollY;
-      const vh = window.innerHeight;
+      e.preventDefault();
+      const container = containerRef.current;
+      if (!container) return;
 
-      // Group 1 horizontal translation (Slides 1-4)
-      if (scrollY < vh / 2) {
-        const container = group1Ref.current;
-        if (container) {
-          const maxScroll = container.scrollWidth - container.clientWidth;
-          const currentScroll = container.scrollLeft;
+      const scrollTop = container.scrollTop;
+      const vh = container.clientHeight;
 
-          // Scroll horizontally
+      // ── Group 1: Slides 1–4 (scrollTop is near 0) ──
+      if (scrollTop < vh / 2) {
+        const g1 = group1Ref.current;
+        if (g1) {
+          const maxScroll = g1.scrollWidth - g1.clientWidth;
+          const currentScroll = g1.scrollLeft;
+
           if (e.deltaY > 0 && currentScroll < maxScroll - 5) {
-            e.preventDefault();
-            container.scrollLeft = Math.min(maxScroll, currentScroll + e.deltaY * 0.85);
-            setScrollLeft1(container.scrollLeft);
-            setActiveIndex1(Math.round(container.scrollLeft / window.innerWidth));
+            g1.scrollLeft = Math.min(maxScroll, currentScroll + e.deltaY * 0.85);
+            setScrollLeft1(g1.scrollLeft);
+            setActiveIndex1(Math.round(g1.scrollLeft / g1.clientWidth));
             return;
           }
           if (e.deltaY < 0 && currentScroll > 5) {
-            e.preventDefault();
-            container.scrollLeft = Math.max(0, currentScroll + e.deltaY * 0.85);
-            setScrollLeft1(container.scrollLeft);
-            setActiveIndex1(Math.round(container.scrollLeft / window.innerWidth));
+            g1.scrollLeft = Math.max(0, currentScroll + e.deltaY * 0.85);
+            setScrollLeft1(g1.scrollLeft);
+            setActiveIndex1(Math.round(g1.scrollLeft / g1.clientWidth));
             return;
           }
-
-          // Reach end of Group 1 -> Snap vertically down to Group 2
+          // End of Group 1 → snap container down to Group 2
           if (e.deltaY > 0 && currentScroll >= maxScroll - 5) {
-            e.preventDefault();
-            window.scrollTo({ top: vh, behavior: 'smooth' });
+            container.scrollTo({ top: vh, behavior: 'smooth' });
             return;
           }
         }
       }
 
-      // Group 2 horizontal translation (Slides 5-6)
-      if (scrollY >= vh / 2 && scrollY < vh * 1.5) {
-        const container = group2Ref.current;
-        if (container) {
-          const maxScroll = container.scrollWidth - container.clientWidth;
-          const currentScroll = container.scrollLeft;
+      // ── Group 2: Slides 5–6 (scrollTop is near vh) ──
+      if (scrollTop >= vh / 2) {
+        const g2 = group2Ref.current;
+        if (g2) {
+          const maxScroll = g2.scrollWidth - g2.clientWidth;
+          const currentScroll = g2.scrollLeft;
 
-          // Horizontal scroll within Group 2
           if (e.deltaY > 0 && currentScroll < maxScroll - 5) {
-            e.preventDefault();
-            container.scrollLeft = Math.min(maxScroll, currentScroll + e.deltaY * 0.85);
-            setActiveIndex2(Math.round(container.scrollLeft / window.innerWidth));
+            g2.scrollLeft = Math.min(maxScroll, currentScroll + e.deltaY * 0.85);
+            setActiveIndex2(Math.round(g2.scrollLeft / g2.clientWidth));
             return;
           }
           if (e.deltaY < 0 && currentScroll > 5) {
-            e.preventDefault();
-            container.scrollLeft = Math.max(0, currentScroll + e.deltaY * 0.85);
-            setActiveIndex2(Math.round(container.scrollLeft / window.innerWidth));
+            g2.scrollLeft = Math.max(0, currentScroll + e.deltaY * 0.85);
+            setActiveIndex2(Math.round(g2.scrollLeft / g2.clientWidth));
             return;
           }
-
-          // Reached left of Group 2 -> Snap back up to Group 1
+          // Start of Group 2 scrolling left → snap back to Group 1
           if (e.deltaY < 0 && currentScroll <= 5) {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            container.scrollTo({ top: 0, behavior: 'smooth' });
             return;
           }
-
-          // Reached end of Group 2 -> Let natural scroll move to footer
+          // End of Group 2 → let container scroll down naturally to footer
           if (e.deltaY > 0 && currentScroll >= maxScroll - 5) {
-            return; // Natural vertical scroll down
-          }
-        }
-      }
-
-      // Footer area scroll up -> snap back up to Group 2
-      if (scrollY >= vh * 1.5 && e.deltaY < 0) {
-        const footer = document.getElementById('footer');
-        if (footer) {
-          const rect = footer.getBoundingClientRect();
-          if (rect.top >= window.innerHeight - 50) {
-            e.preventDefault();
-            window.scrollTo({ top: vh, behavior: 'smooth' });
+            container.scrollBy({ top: 80, behavior: 'smooth' });
+            return;
           }
         }
       }
     };
 
-    window.addEventListener('wheel', handleGlobalWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleGlobalWheel);
+    const el = containerRef.current;
+    if (el) {
+      el.addEventListener('wheel', handleGlobalWheel, { passive: false });
+    }
+    return () => {
+      if (el) el.removeEventListener('wheel', handleGlobalWheel);
+    };
   }, [isMobile]);
 
   // ─── Swap Randomized Products on Viewport Enter ─────────────────────────────
@@ -526,7 +522,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
 
   // Render Desktop Snapping scrollytelling Layout
   return (
-    <div className="homepage-scroll-container">
+    <div ref={containerRef} className="homepage-scroll-container">
       {/* ─── SCROLL GROUP 1: Slides 1-4 ──────────────────────────────────────── */}
       <div 
         ref={group1Ref}
