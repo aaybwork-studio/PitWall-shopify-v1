@@ -1,5 +1,5 @@
-<div 
-  id="homepage-interactive-root" 
+<div
+  id="homepage-interactive-root"
   class="w-full h-full min-h-screen relative"
   data-video-playlist="[
     {%- if section.settings.video_1 != blank -%}'{{ section.settings.video_1 }}'{%- else -%}'{{ 'F1_car_idling_on_background_202606011707.mp4' | asset_url }}'{%- endif -%},
@@ -8,6 +8,16 @@
     '{{ 'Formula_1_car_approaches_camera_202606011705.mp4' | asset_url }}',
     '{{ 'Formula_1_car_braking_and_202606011705.mp4' | asset_url }}'
   ]"
+  data-about-heading="{{ section.settings.about_heading | default: 'ABOUT US' | escape }}"
+  data-cta-label="{{ section.settings.cta_label | default: 'OUR STORY' | escape }}"
+  data-cta-url="{{ section.settings.cta_url | default: '/pages/about' }}"
+  data-stat-1-value="{{ section.settings.stat_1_value | default: 'ZERO' | escape }}"
+  data-stat-1-label="{{ section.settings.stat_1_label | default: 'COMPROMISE' | escape }}"
+  data-stat-2-value="{{ section.settings.stat_2_value | default: 'ONE' | escape }}"
+  data-stat-2-label="{{ section.settings.stat_2_label | default: 'PURSUIT' | escape }}"
+  data-stat-3-value="{{ section.settings.stat_3_value | default: 'INFINITE' | escape }}"
+  data-stat-3-label="{{ section.settings.stat_3_label | default: 'PRECISION' | escape }}"
+  data-explore-cta="{{ section.settings.explore_cta_label | default: 'EXPLORE OUR STORY' | escape }}"
 >
   <!-- Products data script -->
   <script id="collection-products-data" type="application/json">
@@ -37,6 +47,14 @@
       "norris.png": "{{ 'norris.png' | asset_url }}",
       "schumacher.png": "{{ 'schumacher.png' | asset_url }}",
       "verstappen.png": "{{ 'verstappen.png' | asset_url }}"
+    }
+  </script>
+
+  <!-- About Us long-form text data script -->
+  <script id="about-content-data" type="application/json">
+    {
+      "foundingStory": {{ section.settings.founding_story | default: "Pitwall was born from obsession. We build objects that earn their place alongside the machines we worship." | json }},
+      "brandParagraph": {{ section.settings.brand_paragraph | default: "Where every object we make is held to the same standards as the machines we obsess over." | json }}
     }
   </script>
 
@@ -74,6 +92,82 @@
       "type": "collection",
       "id": "collection",
       "label": "Sourced Collection"
+    },
+    {
+      "type": "header",
+      "content": "About Us — Group 3"
+    },
+    {
+      "type": "text",
+      "id": "about_heading",
+      "label": "About Heading",
+      "default": "ABOUT US"
+    },
+    {
+      "type": "textarea",
+      "id": "founding_story",
+      "label": "Founding Story",
+      "default": "Pitwall was born from obsession. We build objects that earn their place alongside the machines we worship."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA Label",
+      "default": "OUR STORY"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA URL",
+      "default": "/pages/about"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_value",
+      "label": "Stat 1 Value",
+      "default": "ZERO"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Stat 1 Label",
+      "default": "COMPROMISE"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_value",
+      "label": "Stat 2 Value",
+      "default": "ONE"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Stat 2 Label",
+      "default": "PURSUIT"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_value",
+      "label": "Stat 3 Value",
+      "default": "INFINITE"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Stat 3 Label",
+      "default": "PRECISION"
+    },
+    {
+      "type": "textarea",
+      "id": "brand_paragraph",
+      "label": "Brand Paragraph",
+      "default": "Where every object we make is held to the same standards as the machines we obsess over."
+    },
+    {
+      "type": "text",
+      "id": "explore_cta_label",
+      "label": "Explore CTA Label",
+      "default": "EXPLORE OUR STORY"
     }
   ],
   "presets": [

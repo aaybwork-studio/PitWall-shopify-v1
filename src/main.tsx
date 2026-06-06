@@ -32,16 +32,52 @@ function bootstrap() {
       }
     }
 
+    let foundingStory = 'Pitwall was born from obsession. We build objects that earn their place alongside the machines we worship.';
+    let brandParagraph = 'Where every object we make is held to the same standards as the machines we obsess over.';
+    const aboutContentScript = document.getElementById('about-content-data');
+    if (aboutContentScript) {
+      try {
+        const aboutData = JSON.parse(aboutContentScript.textContent || '{}');
+        foundingStory = aboutData.foundingStory || foundingStory;
+        brandParagraph = aboutData.brandParagraph || brandParagraph;
+      } catch (err) {
+        Logger.error('Failed to parse about-content-data JSON', err);
+      }
+    }
+
+    const aboutHeading = homepageRoot.getAttribute('data-about-heading') || 'ABOUT US';
+    const ctaLabel = homepageRoot.getAttribute('data-cta-label') || 'OUR STORY';
+    const ctaUrl = homepageRoot.getAttribute('data-cta-url') || '/pages/about';
+    const stat1Value = homepageRoot.getAttribute('data-stat-1-value') || 'ZERO';
+    const stat1Label = homepageRoot.getAttribute('data-stat-1-label') || 'COMPROMISE';
+    const stat2Value = homepageRoot.getAttribute('data-stat-2-value') || 'ONE';
+    const stat2Label = homepageRoot.getAttribute('data-stat-2-label') || 'PURSUIT';
+    const stat3Value = homepageRoot.getAttribute('data-stat-3-value') || 'INFINITE';
+    const stat3Label = homepageRoot.getAttribute('data-stat-3-label') || 'PRECISION';
+    const exploreCta = homepageRoot.getAttribute('data-explore-cta') || 'EXPLORE OUR STORY';
+
     const videoPlaylist = homepageRoot.getAttribute('data-video-playlist') || '[]';
 
     try {
       const root = ReactDOM.createRoot(homepageRoot);
       root.render(
         <React.StrictMode>
-          <HomepageScrollytelling 
-            productsJson={productsJson} 
-            videoPlaylist={videoPlaylist} 
-            fallbackImages={fallbackImages} 
+          <HomepageScrollytelling
+            productsJson={productsJson}
+            videoPlaylist={videoPlaylist}
+            fallbackImages={fallbackImages}
+            aboutHeading={aboutHeading}
+            foundingStory={foundingStory}
+            ctaLabel={ctaLabel}
+            ctaUrl={ctaUrl}
+            stat1Value={stat1Value}
+            stat1Label={stat1Label}
+            stat2Value={stat2Value}
+            stat2Label={stat2Label}
+            stat3Value={stat3Value}
+            stat3Label={stat3Label}
+            brandParagraph={brandParagraph}
+            exploreCta={exploreCta}
           />
         </React.StrictMode>
       );
