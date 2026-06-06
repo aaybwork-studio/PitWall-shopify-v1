@@ -145,18 +145,56 @@ const mockProducts: Product[] = [
 interface HomepageScrollytellingProps {
   productsJson: string;
   videoPlaylist: string;
+  fallbackImages?: Record<string, string>;
 }
 
-export function HomepageScrollytelling({ productsJson, videoPlaylist }: HomepageScrollytellingProps) {
+export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackImages = {} }: HomepageScrollytellingProps) {
   // Parse products & video playlists
   const products: Product[] = React.useMemo(() => {
+    let parsed: Product[] = [];
     try {
-      const parsed = JSON.parse(productsJson);
-      return parsed.length > 0 ? parsed : mockProducts;
+      parsed = JSON.parse(productsJson);
     } catch {
-      return mockProducts;
+      parsed = [];
     }
-  }, [productsJson]);
+    
+    const rawList = parsed.length > 0 ? parsed : mockProducts;
+    
+    // Resolve fallback image paths using the fallbackImages CDN map
+    const resolvedList = rawList.map(item => ({
+      ...item,
+      image: (() => {
+        const url = item.image || '';
+        if (url.startsWith('http') || url.startsWith('//') || url.startsWith('data:')) {
+          return url;
+        }
+        const filename = url.split('/').pop() || '';
+        if (fallbackImages && fallbackImages[filename]) {
+          return fallbackImages[filename];
+        }
+        return url;
+      })()
+    }));
+
+    // Pad the list to have at least 10 products safely
+    const paddedList = [...resolvedList];
+    let i = 0;
+    while (paddedList.length < 10) {
+      if (resolvedList.length > 0) {
+        paddedList.push(resolvedList[i % resolvedList.length]);
+      } else {
+        paddedList.push({
+          title: 'PITWALL CHASSIS',
+          url: '/collections/all',
+          price: '₹12,499.00',
+          image: '',
+          specs: '1:18 SCALE / PRECISION DETAIL'
+        });
+      }
+      i++;
+    }
+    return paddedList;
+  }, [productsJson, fallbackImages]);
 
   const playlist: string[] = React.useMemo(() => {
     try {
@@ -187,6 +225,14 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist }: Homepage
   // Randomized Featured Products
   const [featProduct1, setFeatProduct1] = useState<Product>(products[0] || mockProducts[0]);
   const [featProduct2, setFeatProduct2] = useState<Product>(products[4] || mockProducts[4]);
+
+  // Synchronize featured products when the products list is loaded/resolved
+  useEffect(() => {
+    if (products && products.length > 0) {
+      setFeatProduct1(products[0]);
+      setFeatProduct2(products[Math.min(4, products.length - 1)]);
+    }
+  }, [products]);
 
   // Viewport entered state for micro-animations
   const [inViewSlides, setInViewSlides] = useState<Record<number, boolean>>({});
@@ -620,11 +666,11 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist }: Homepage
               {/* Col 1: Stacked Card 0 & Card 1 */}
               <div className="flex flex-col gap-4 h-full justify-between">
                 <CollectionCard 
-                  product={products[0] || mockProducts[0]} 
+                  product={products[0]} 
                   className={`w-full flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[4] ? 'reveal-active' : ''}`} 
                 />
                 <CollectionCard 
-                  product={products[1] || mockProducts[1]} 
+                  product={products[1]} 
                   className={`w-full flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[4] ? 'reveal-active' : ''}`} 
                   style={{ transitionDelay: '100ms' } as React.CSSProperties}
                 />
@@ -633,12 +679,12 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist }: Homepage
               {/* Col 2: Stacked Card 2 & Card 3 */}
               <div className="flex flex-col gap-4 h-full justify-between">
                 <CollectionCard 
-                  product={products[2] || mockProducts[2]} 
+                  product={products[2]} 
                   className={`w-full flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[4] ? 'reveal-active' : ''}`} 
                   style={{ transitionDelay: '150ms' } as React.CSSProperties}
                 />
                 <CollectionCard 
-                  product={products[3] || mockProducts[3]} 
+                  product={products[3]} 
                   className={`w-full flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[4] ? 'reveal-active' : ''}`} 
                   style={{ transitionDelay: '200ms' } as React.CSSProperties}
                 />
@@ -647,7 +693,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist }: Homepage
               {/* Col 3: Tall Card 4 (top, 70% height) + Title Card (bottom, 30% height) */}
               <div className="flex flex-col gap-4 h-full justify-between">
                 <div className={`flex-[7] min-h-0 reveal-dashboard-item ${inViewSlides[4] ? 'reveal-active' : ''}`} style={{ transitionDelay: '250ms' } as React.CSSProperties}>
-                  <CollectionCard product={products[4] || mockProducts[4]} className="w-full h-full" isTall={true} />
+                  <CollectionCard product={products[4]} className="w-full h-full" isTall={true} />
                 </div>
                 <div className={`flex-[3] min-h-0 reveal-dashboard-item ${inViewSlides[4] ? 'reveal-active' : ''}`} style={{ transitionDelay: '300ms' } as React.CSSProperties}>
                   <DesignedTitleCard title="the collection" unit="01" isYellow={true} />
@@ -658,28 +704,28 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist }: Homepage
               <div className="flex flex-col gap-4 h-full justify-between">
                 {/* Top Wide Product */}
                 <a 
-                  href={(products[5] || mockProducts[5]).url} 
+                  href={products[5].url} 
                   className={`flex-[1] min-h-0 pw-card group relative flex flex-col justify-end overflow-hidden bg-white text-[#0C0C0C] rounded-[5px] shadow-sm transition-all duration-300 reveal-dashboard-item ${inViewSlides[4] ? 'reveal-active' : ''}`}
                   style={{ transitionDelay: '350ms' } as React.CSSProperties}
                 >
                   <div className="absolute inset-0 w-full h-full overflow-hidden bg-gray-50">
-                    <img src={(products[5] || mockProducts[5]).image} alt={(products[5] || mockProducts[5]).title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <img src={products[5].image} alt={products[5].title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div className="relative z-10 p-3.5 bg-white/90 backdrop-blur-sm border-t border-[#0C0C0C]/5 flex justify-between items-center w-full">
-                    <span className="font-mono text-[10px] uppercase tracking-wider truncate font-semibold">{(products[5] || mockProducts[5]).title}</span>
-                    <span className="font-mono text-[10px] font-bold">{(products[5] || mockProducts[5]).price}</span>
+                    <span className="font-mono text-[10px] uppercase tracking-wider truncate font-semibold">{products[5].title}</span>
+                    <span className="font-mono text-[10px] font-bold">{products[5].price}</span>
                   </div>
                 </a>
                 
                 {/* Bottom Two side-by-side */}
                 <div className="flex-[1] flex gap-4 min-h-0">
                   <CollectionCard 
-                    product={products[6] || mockProducts[6]} 
+                    product={products[6]} 
                     className={`flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[4] ? 'reveal-active' : ''}`} 
                     style={{ transitionDelay: '400ms' } as React.CSSProperties}
                   />
                   <CollectionCard 
-                    product={products[7] || mockProducts[1]} 
+                    product={products[7]} 
                     className={`flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[4] ? 'reveal-active' : ''}`} 
                     style={{ transitionDelay: '450ms' } as React.CSSProperties}
                   />
@@ -688,8 +734,9 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist }: Homepage
 
               {/* Col 5: Tall Card 8 (full height, 100% height) */}
               <div className={`h-full reveal-dashboard-item ${inViewSlides[4] ? 'reveal-active' : ''}`} style={{ transitionDelay: '500ms' } as React.CSSProperties}>
-                <CollectionCard product={products[8] || mockProducts[2]} className="w-full h-full" isTall={true} />
+                <CollectionCard product={products[8]} className="w-full h-full" isTall={true} />
               </div>
+
 
             </div>
           </div>
@@ -769,7 +816,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist }: Homepage
               {/* Col 1: Tall Card 9 (top, 70% height) + Spec text card (bottom, 30% height, un-flipped text) */}
               <div className="flex flex-col gap-4 h-full justify-between">
                 <div className={`flex-[7] min-h-0 reveal-dashboard-item ${inViewSlides[6] ? 'reveal-active' : ''}`}>
-                  <CollectionCard product={products[1] || mockProducts[1]} className="w-full h-full" isTall={true} />
+                  <CollectionCard product={products[1]} className="w-full h-full" isTall={true} />
                 </div>
                 <div className={`flex-[3] min-h-0 reveal-dashboard-item ${inViewSlides[6] ? 'reveal-active' : ''}`} style={{ transitionDelay: '100ms' } as React.CSSProperties}>
                   <DesignedTitleCard title="specifications" unit="02" />
@@ -779,12 +826,12 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist }: Homepage
               {/* Col 2: Stacked Card 10 & Card 11 */}
               <div className="flex flex-col gap-4 h-full justify-between">
                 <CollectionCard 
-                  product={products[2] || mockProducts[2]} 
+                  product={products[2]} 
                   className={`w-full flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[6] ? 'reveal-active' : ''}`} 
                   style={{ transitionDelay: '150ms' } as React.CSSProperties}
                 />
                 <CollectionCard 
-                  product={products[3] || mockProducts[3]} 
+                  product={products[3]} 
                   className={`w-full flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[6] ? 'reveal-active' : ''}`} 
                   style={{ transitionDelay: '200ms' } as React.CSSProperties}
                 />
@@ -793,12 +840,12 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist }: Homepage
               {/* Col 3: Stacked Card 12 & Card 13 */}
               <div className="flex flex-col gap-4 h-full justify-between">
                 <CollectionCard 
-                  product={products[4] || mockProducts[4]} 
+                  product={products[4]} 
                   className={`w-full flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[6] ? 'reveal-active' : ''}`} 
                   style={{ transitionDelay: '250ms' } as React.CSSProperties}
                 />
                 <CollectionCard 
-                  product={products[5] || mockProducts[5]} 
+                  product={products[5]} 
                   className={`w-full flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[6] ? 'reveal-active' : ''}`} 
                   style={{ transitionDelay: '300ms' } as React.CSSProperties}
                 />
@@ -806,40 +853,41 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist }: Homepage
 
               {/* Col 4: Tall Card 14 (full height, 100% height) */}
               <div className={`h-full reveal-dashboard-item ${inViewSlides[6] ? 'reveal-active' : ''}`} style={{ transitionDelay: '350ms' } as React.CSSProperties}>
-                <CollectionCard product={products[6] || mockProducts[6]} className="w-full h-full" isTall={true} />
+                <CollectionCard product={products[6]} className="w-full h-full" isTall={true} />
               </div>
 
               {/* Col 5: Wide Card 15 (top, 50% height) + two small cards side-by-side (Card 16 & Card 17, 50% height) */}
               <div className="flex flex-col gap-4 h-full justify-between">
                 {/* Top Wide Product */}
                 <a 
-                  href={(products[7] || mockProducts[7]).url} 
+                  href={products[7].url} 
                   className={`flex-[1] min-h-0 pw-card group relative flex flex-col justify-end overflow-hidden bg-white text-[#0C0C0C] rounded-[5px] shadow-sm transition-all duration-300 reveal-dashboard-item ${inViewSlides[6] ? 'reveal-active' : ''}`}
                   style={{ transitionDelay: '400ms' } as React.CSSProperties}
                 >
                   <div className="absolute inset-0 w-full h-full overflow-hidden bg-gray-50">
-                    <img src={(products[7] || mockProducts[7]).image} alt={(products[7] || mockProducts[7]).title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <img src={products[7].image} alt={products[7].title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div className="relative z-10 p-3.5 bg-white/90 backdrop-blur-sm border-t border-[#0C0C0C]/5 flex justify-between items-center w-full">
-                    <span className="font-mono text-[10px] uppercase tracking-wider truncate font-semibold">{(products[7] || mockProducts[7]).title}</span>
-                    <span className="font-mono text-[10px] font-bold">{(products[7] || mockProducts[7]).price}</span>
+                    <span className="font-mono text-[10px] uppercase tracking-wider truncate font-semibold">{products[7].title}</span>
+                    <span className="font-mono text-[10px] font-bold">{products[7].price}</span>
                   </div>
                 </a>
                 
                 {/* Bottom Two side-by-side */}
                 <div className="flex-[1] flex gap-4 min-h-0">
                   <CollectionCard 
-                    product={products[8] || mockProducts[2]} 
+                    product={products[8]} 
                     className={`flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[6] ? 'reveal-active' : ''}`} 
                     style={{ transitionDelay: '450ms' } as React.CSSProperties}
                   />
                   <CollectionCard 
-                    product={products[0] || mockProducts[0]} 
+                    product={products[0]} 
                     className={`flex-1 min-h-0 reveal-dashboard-item ${inViewSlides[6] ? 'reveal-active' : ''}`} 
                     style={{ transitionDelay: '500ms' } as React.CSSProperties}
                   />
                 </div>
               </div>
+
 
             </div>
           </div>

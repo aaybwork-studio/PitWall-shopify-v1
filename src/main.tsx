@@ -14,14 +14,35 @@ function bootstrap() {
   // 0. Mount Homepage Interactive Scrollytelling (Takeover)
   const homepageRoot = document.getElementById('homepage-interactive-root');
   if (homepageRoot) {
-    const productsJson = homepageRoot.getAttribute('data-products-json') || '[]';
+    let productsJson = '[]';
+    const productsScript = document.getElementById('collection-products-data');
+    if (productsScript) {
+      productsJson = productsScript.textContent || '[]';
+    } else {
+      productsJson = homepageRoot.getAttribute('data-products-json') || '[]';
+    }
+
+    const fallbackImagesScript = document.getElementById('fallback-images-data');
+    let fallbackImages = {};
+    if (fallbackImagesScript) {
+      try {
+        fallbackImages = JSON.parse(fallbackImagesScript.textContent || '{}');
+      } catch (err) {
+        Logger.error('Failed to parse fallback images JSON', err);
+      }
+    }
+
     const videoPlaylist = homepageRoot.getAttribute('data-video-playlist') || '[]';
 
     try {
       const root = ReactDOM.createRoot(homepageRoot);
       root.render(
         <React.StrictMode>
-          <HomepageScrollytelling productsJson={productsJson} videoPlaylist={videoPlaylist} />
+          <HomepageScrollytelling 
+            productsJson={productsJson} 
+            videoPlaylist={videoPlaylist} 
+            fallbackImages={fallbackImages} 
+          />
         </React.StrictMode>
       );
     } catch (err) {
