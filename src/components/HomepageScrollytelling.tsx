@@ -61,6 +61,47 @@ function HeroTicker({ offset, itemRef }: TickerProps) {
   );
 }
 
+// ─── F1 Car Silhouette ────────────────────────────────────────────────────────
+function F1CarSilhouette({ color = '#EDE8E0' }: { color?: string }) {
+  return (
+    <svg
+      viewBox="0 0 800 200"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ width: '100%', height: '100%' }}
+      fill={color}
+      aria-hidden="true"
+    >
+      {/* Main chassis body */}
+      <rect x="80" y="110" width="580" height="45" rx="8" />
+      {/* Cockpit bump */}
+      <rect x="310" y="80" width="160" height="35" rx="12" />
+      {/* Halo (thin arc above cockpit) */}
+      <path d="M320 80 Q390 55 470 80" stroke={color} strokeWidth="6" fill="none" />
+      {/* Sidepods */}
+      <rect x="240" y="108" width="120" height="25" rx="4" />
+      <rect x="440" y="108" width="120" height="25" rx="4" />
+      {/* Front wing */}
+      <rect x="30" y="148" width="100" height="8" rx="2" />
+      <rect x="30" y="140" width="6" height="16" rx="1" />
+      <rect x="124" y="140" width="6" height="16" rx="1" />
+      {/* Front wing strut */}
+      <rect x="70" y="130" width="30" height="20" rx="2" />
+      {/* Rear wing */}
+      <rect x="640" y="85" width="110" height="8" rx="2" />
+      <rect x="680" y="93" width="6" height="25" rx="1" />
+      <rect x="704" y="93" width="6" height="25" rx="1" />
+      {/* Front wheel */}
+      <ellipse cx="150" cy="168" rx="32" ry="32" />
+      <ellipse cx="150" cy="168" rx="14" ry="14" fill={WM.bg} />
+      {/* Rear wheel */}
+      <ellipse cx="620" cy="168" rx="36" ry="36" />
+      <ellipse cx="620" cy="168" rx="16" ry="16" fill={WM.bg} />
+      {/* Nose cone */}
+      <path d="M80 125 L20 148 L80 155 Z" />
+    </svg>
+  );
+}
+
 // ─── Title Card ───────────────────────────────────────────────────────────────
 interface TitleCardProps { title: string; unit: string; isYellow?: boolean; subtitle?: string; }
 function DesignedTitleCard({ title, unit, isYellow = false, subtitle }: TitleCardProps) {
@@ -120,9 +161,37 @@ interface HomepageScrollytellingProps {
   productsJson: string;
   videoPlaylist: string;
   fallbackImages?: Record<string, string>;
+  aboutHeading?: string;
+  foundingStory?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  stat1Value?: string;
+  stat1Label?: string;
+  stat2Value?: string;
+  stat2Label?: string;
+  stat3Value?: string;
+  stat3Label?: string;
+  brandParagraph?: string;
+  exploreCta?: string;
 }
 
-export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackImages = {} }: HomepageScrollytellingProps) {
+export function HomepageScrollytelling({
+  productsJson,
+  videoPlaylist,
+  fallbackImages = {},
+  aboutHeading = 'ABOUT US',
+  foundingStory = 'Pitwall was born from obsession. We build objects that earn their place alongside the machines we worship.',
+  ctaLabel = 'OUR STORY',
+  ctaUrl = '/pages/about',
+  stat1Value = 'ZERO',
+  stat1Label = 'COMPROMISE',
+  stat2Value = 'ONE',
+  stat2Label = 'PURSUIT',
+  stat3Value = 'INFINITE',
+  stat3Label = 'PRECISION',
+  brandParagraph = 'Where every object we make is held to the same standards as the machines we obsess over.',
+  exploreCta = 'EXPLORE OUR STORY',
+}: HomepageScrollytellingProps) {
   // ── Products ────────────────────────────────────────────────────────────────
   const products: Product[] = React.useMemo(() => {
     let parsed: Product[] = [];
@@ -157,11 +226,14 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
   const containerRef = useRef<HTMLDivElement>(null);
   const group1Ref = useRef<HTMLDivElement>(null);
   const group2Ref = useRef<HTMLDivElement>(null);
+  const group3Ref = useRef<HTMLDivElement>(null);
   const tickerItemRef = useRef<HTMLDivElement>(null);
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [activeIndex1, setActiveIndex1] = useState(0);
   const [activeIndex2, setActiveIndex2] = useState(0);
+  const [activeIndex3, setActiveIndex3] = useState(0); // used for future reveal classes on Group 3 panels
+  const [group3ScrollLeft, setGroup3ScrollLeft] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [tickerOffset, setTickerOffset] = useState(0);
   const tickerVelocity = useRef(1.0);
@@ -279,14 +351,17 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
 
       const g1 = group1Ref.current;
       const g2 = group2Ref.current;
-      if (!g1 || !g2) return;
+      const g3 = group3Ref.current;
+      if (!g1 || !g2 || !g3) return;
 
       const g1Top = g1.offsetTop;
       const g2Top = g2.offsetTop;
+      const g3Top = g3.offsetTop;
 
       // Contiguous Scroll State Machine Containment
       const isInG1 = currentScrollTop >= g1Top - 10 && currentScrollTop < g1Top + 50;
       const isInG2 = currentScrollTop >= g2Top - 10 && currentScrollTop < g2Top + 50;
+      const isInG3 = currentScrollTop >= g3Top - 10 && currentScrollTop < g3Top + 50;
 
       // 1. Group 1 Locked Zone
       if (isInG1) {
@@ -347,7 +422,41 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           return;
         }
         if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
-          return; // Allow natural scroll to footer
+          e.preventDefault();
+          snapTo(g3Top); // Snap to Group 3
+          return;
+        }
+      }
+
+      // 3a. Group 3 Locked Zone
+      if (isInG3) {
+        if (Math.abs(currentScrollTop - g3Top) > 1) {
+          container.scrollTop = g3Top;
+        }
+        const maxScroll = g3.scrollWidth - g3.clientWidth;
+        const curScroll = g3.scrollLeft;
+
+        if (e.deltaY > 0 && curScroll < maxScroll - 2) {
+          e.preventDefault();
+          g3.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
+          setActiveIndex3(getSlideIndex(g3, g3.scrollLeft));
+          setGroup3ScrollLeft(g3.scrollLeft);
+          return;
+        }
+        if (e.deltaY < 0 && curScroll > 2) {
+          e.preventDefault();
+          g3.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
+          setActiveIndex3(getSlideIndex(g3, g3.scrollLeft));
+          setGroup3ScrollLeft(g3.scrollLeft);
+          return;
+        }
+        if (e.deltaY < 0 && curScroll <= 2) {
+          e.preventDefault();
+          snapTo(g2Top); // Snap back to Group 2
+          return;
+        }
+        if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
+          return; // Allow natural scroll to vertical stats
         }
       }
 
@@ -372,13 +481,25 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
         }
       }
 
-      // 5. Footer Snapping (After Group 2)
-      if (currentScrollTop >= g2Top + 50) {
-        if (e.deltaY < 0 && currentScrollTop < g2Top + currentVh * 0.4) {
-          e.preventDefault();
-          snapTo(g2Top);
-          return;
-        }
+      // 5. Snap-assist: down into Group 3
+      if (e.deltaY > 0 && currentScrollTop > g3Top - currentVh * 0.6 && currentScrollTop < g3Top - 10) {
+        e.preventDefault();
+        snapTo(g3Top);
+        return;
+      }
+
+      // 6. Snap-assist: up from vertical stats into Group 3
+      if (e.deltaY < 0 && currentScrollTop > g3Top + 10 && currentScrollTop < g3Top + currentVh * 0.4) {
+        e.preventDefault();
+        snapTo(g3Top);
+        return;
+      }
+
+      // 7. Snap-assist: up between Group 3 and Group 2
+      if (e.deltaY < 0 && currentScrollTop > g2Top + 10 && currentScrollTop < g3Top - 10) {
+        e.preventDefault();
+        snapTo(g2Top);
+        return;
       }
     };
 
@@ -412,6 +533,14 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
     }, 12000);
     return () => clearInterval(t);
   }, []);
+
+  // ── Group 3 car animation formula ───────────────────────────────────────────
+  const group3MaxScroll = group3Ref.current
+    ? group3Ref.current.scrollWidth - group3Ref.current.clientWidth
+    : 1;
+  const rawProgress = group3ScrollLeft / Math.max(1, group3MaxScroll);
+  const easedProgress = 1 - Math.pow(1 - rawProgress, 1.5);
+  const carX = -30 + easedProgress * 36; // vw units: -30vw (off-screen left) → +6vw (resting)
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  MOBILE LAYOUT
@@ -522,6 +651,47 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
             src={playlist[1] || playlist[0]}
           />
         </div>
+        {/* ── GROUP 3: About Us — Mobile stacked ──────────────────────────────────── */}
+        <section className="min-h-screen w-full flex flex-col justify-center items-center px-6 py-16 border-b border-white/10 gap-8" style={{ backgroundColor: WM.bg }}>
+          <span className="font-mono text-xs uppercase tracking-widest self-start" style={{ color: WM.gold }}>// ABOUT US</span>
+          {/* Static car — no scroll animation on mobile (D-15) */}
+          <div style={{ width: '80vw', maxWidth: '480px', height: 'auto' }}>
+            <F1CarSilhouette color={WM.text} />
+          </div>
+          <p className="font-body-strict text-base opacity-80 leading-relaxed text-center">
+            {foundingStory}
+          </p>
+          <a
+            href={ctaUrl}
+            className="h-12 px-8 border bg-transparent font-mono text-[11px] uppercase tracking-wider font-bold flex items-center justify-center gap-1.5 hover:opacity-70"
+            style={{ borderColor: WM.text, color: WM.text }}
+          >
+            {ctaLabel} →
+          </a>
+        </section>
+
+        {/* ── Stats + Brand — Mobile ─────────────────────────────────────────────── */}
+        <section className="w-full px-6 py-16 flex flex-col gap-8 border-b border-white/10" style={{ backgroundColor: WM.bg }}>
+          {[
+            { value: stat1Value, label: stat1Label },
+            { value: stat2Value, label: stat2Label },
+            { value: stat3Value, label: stat3Label },
+          ].map(({ value, label }, i) => (
+            <div key={i} className="flex flex-col gap-2 border-t border-white/10 pt-4">
+              <span className="font-display-strict text-4xl uppercase tracking-tighter" style={{ color: WM.text }}>{value}</span>
+              <span className="font-mono text-[10px] uppercase tracking-widest opacity-50" style={{ color: WM.gold }}>{label}</span>
+            </div>
+          ))}
+          <p className="font-body-strict text-sm opacity-55 leading-relaxed italic mt-4">{brandParagraph}</p>
+          <a
+            href={ctaUrl}
+            className="h-12 px-6 border bg-transparent font-mono text-[11px] uppercase tracking-wider font-bold flex items-center justify-center gap-1.5 hover:opacity-70 self-start"
+            style={{ borderColor: WM.text, color: WM.text }}
+          >
+            {exploreCta} <ArrowUpRight size={14} />
+          </a>
+        </section>
+
         <Footer />
       </div>
     );
@@ -768,6 +938,122 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           </div>
         </div>
 
+      </div>
+
+      {/* ── GROUP 3: About Us Car Scrollytelling (Horizontal, 3 panels) ──── */}
+      <div ref={group3Ref} id="scroll-group-3" className="horizontal-scroll-group z-10" style={{ backgroundColor: WM.bg }}>
+
+        {/* Panel 1 — About Us Entry */}
+        <div className={`horizontal-slide ${activeIndex3 >= 0 ? 'reveal-active' : ''}`} style={{ backgroundColor: WM.bg }}>
+          <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
+          {/* Background "ABOUT US" giant text — ESPN wallpaper style */}
+          <span
+            className="font-display-strict select-none absolute inset-0 flex items-center justify-center pointer-events-none z-0"
+            style={{ fontSize: 'clamp(120px, 22vw, 320px)', color: WM.text, opacity: 0.04, letterSpacing: '-0.04em' }}
+          >
+            {aboutHeading}
+          </span>
+          {/* Mono panel label — top-left */}
+          <span className="absolute top-8 left-8 font-mono text-[10px] uppercase tracking-widest opacity-40 z-10" style={{ color: WM.gold }}>
+            // ABOUT US / 01
+          </span>
+          {/* Car enters from left */}
+          <div className="car-silhouette z-10" style={{ transform: `translateX(${carX}vw)` }}>
+            <F1CarSilhouette color={WM.text} />
+          </div>
+        </div>
+
+        {/* Panel 2 — Race Track Separator */}
+        <div className="horizontal-slide" style={{ backgroundColor: WM.bg }}>
+          {/* Inline SVG telemetry visual — full-bleed */}
+          <svg viewBox="0 0 1920 1080" preserveAspectRatio="none"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+            {/* Primary telemetry waveform */}
+            <polyline stroke={WM.gold} strokeWidth="1.5" fill="none" opacity="0.35"
+              points="0,540 200,480 320,600 480,440 640,560 800,500 960,520 1200,460 1440,540 1680,500 1920,520" />
+            {/* Secondary reference line */}
+            <polyline stroke={WM.text} strokeWidth="1" fill="none" opacity="0.12"
+              points="0,600 200,540 400,620 600,500 800,580 1000,560 1200,520 1400,580 1600,540 1920,580" />
+            {/* Starting grid boxes */}
+            {[0,1,2,3,4,5].map(i => (
+              <rect key={i} x={80 + i * 60} y={820} width={48} height={40}
+                fill={i % 2 === 0 ? WM.gold : WM.text} opacity={i % 2 === 0 ? 0.25 : 0.08} rx="2" />
+            ))}
+            {/* Horizontal reference lines */}
+            <line x1="0" y1="400" x2="1920" y2="400" stroke={WM.text} strokeWidth="0.5" opacity="0.1" />
+            <line x1="0" y1="680" x2="1920" y2="680" stroke={WM.text} strokeWidth="0.5" opacity="0.1" />
+          </svg>
+          {/* Mono label */}
+          <span className="absolute top-8 left-8 font-mono text-[10px] uppercase tracking-widest opacity-40 z-10" style={{ color: WM.gold }}>
+            // LAP 01 / SECTOR 02
+          </span>
+          {/* Car continues across panel */}
+          <div className="car-silhouette z-10" style={{ transform: `translateX(${carX}vw)` }}>
+            <F1CarSilhouette color={WM.text} />
+          </div>
+        </div>
+
+        {/* Panel 3 — Founding Story + Car Stop */}
+        <div className="horizontal-slide" style={{ backgroundColor: WM.bg }}>
+          <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
+          <span className="absolute top-8 left-8 font-mono text-[10px] uppercase tracking-widest opacity-40 z-10" style={{ color: WM.gold }}>
+            // ABOUT US / 03
+          </span>
+          {/* Car stops left of text column */}
+          <div className="car-silhouette z-10" style={{ transform: `translateX(${carX}vw)` }}>
+            <F1CarSilhouette color={WM.text} />
+          </div>
+          {/* Text column — right side */}
+          <div className="absolute right-24 top-1/2 -translate-y-1/2 flex flex-col gap-6 max-w-sm z-10" style={{ color: WM.text }}>
+            <span className="font-mono text-xs uppercase tracking-widest" style={{ color: WM.gold }}>
+              // PITWALL / ORIGIN
+            </span>
+            <p className="font-body-strict text-base opacity-80 leading-relaxed">
+              {foundingStory}
+            </p>
+            <a
+              href={ctaUrl}
+              className="w-full max-w-[240px] h-12 border bg-transparent font-mono text-[11px] uppercase tracking-wider font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-70"
+              style={{ borderColor: WM.text, color: WM.text }}
+            >
+              {ctaLabel} →
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      {/* ── VERTICAL STATS + BRAND SECTION (after Group 3, before Footer) ─── */}
+      <div className="w-full flex flex-col items-center justify-center py-32 px-16 gap-20 z-10" style={{ backgroundColor: WM.bg, color: WM.text, minHeight: '100vh' }}>
+        {/* Stats Row — 3 typographic columns */}
+        <div className="w-full max-w-5xl grid grid-cols-3 gap-8">
+          {[
+            { value: stat1Value, label: stat1Label },
+            { value: stat2Value, label: stat2Label },
+            { value: stat3Value, label: stat3Label },
+          ].map(({ value, label }, i) => (
+            <div key={i} className="flex flex-col gap-3 border-t border-white/10 pt-6">
+              <span className="font-display-strict text-5xl uppercase tracking-tighter" style={{ color: WM.text }}>
+                {value}
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-widest opacity-50" style={{ color: WM.gold }}>
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+        {/* Brand paragraph */}
+        <p className="font-body-strict text-sm opacity-55 max-w-xl text-center leading-relaxed italic">
+          {brandParagraph}
+        </p>
+        {/* Explore CTA */}
+        <a
+          href={ctaUrl}
+          className="h-12 px-8 border bg-transparent font-mono text-[11px] uppercase tracking-wider font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-70"
+          style={{ borderColor: WM.text, color: WM.text }}
+        >
+          {exploreCta} <ArrowUpRight size={14} />
+        </a>
       </div>
 
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}

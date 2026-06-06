@@ -686,6 +686,18 @@ html:not(.homepage-scrollytelling-active) body {
   min-width: 100vw;
 }
 
+/* F1 car silhouette — absolutely positioned within .horizontal-slide */
+.car-silhouette {
+  position: absolute;
+  bottom: 20%;
+  left: 0;
+  width: 50vw;
+  max-width: 700px;
+  height: auto;
+  pointer-events: none;
+  will-change: transform;
+}
+
 /* Manifesto video strip at bottom of slide */
 .manifesto-video-strip {
   position: absolute;
@@ -733,6 +745,12 @@ html:not(.homepage-scrollytelling-active) body {
     height: auto;
     aspect-ratio: 16/9;
     border-radius: 0;
+  }
+  .car-silhouette {
+    position: static;
+    width: 80vw;
+    max-width: 480px;
+    will-change: auto;
   }
 }
 
