@@ -120,9 +120,37 @@ interface HomepageScrollytellingProps {
   productsJson: string;
   videoPlaylist: string;
   fallbackImages?: Record<string, string>;
+  aboutHeading?: string;
+  foundingStory?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  stat1Value?: string;
+  stat1Label?: string;
+  stat2Value?: string;
+  stat2Label?: string;
+  stat3Value?: string;
+  stat3Label?: string;
+  brandParagraph?: string;
+  exploreCta?: string;
 }
 
-export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackImages = {} }: HomepageScrollytellingProps) {
+export function HomepageScrollytelling({
+  productsJson,
+  videoPlaylist,
+  fallbackImages = {},
+  aboutHeading = 'ABOUT US',
+  ctaLabel = 'OUR STORY',
+  ctaUrl = '/pages/about',
+  stat1Value = 'ZERO',
+  stat1Label = 'COMPROMISE',
+  stat2Value = 'ONE',
+  stat2Label = 'PURSUIT',
+  stat3Value = 'INFINITE',
+  stat3Label = 'PRECISION',
+  foundingStory = 'Pitwall was born from obsession. We build objects that earn their place alongside the machines we worship.',
+  brandParagraph = 'Where every object we make is held to the same standards as the machines we obsess over.',
+  exploreCta = 'EXPLORE OUR STORY',
+}: HomepageScrollytellingProps) {
   // ── Products ────────────────────────────────────────────────────────────────
   const products: Product[] = React.useMemo(() => {
     let parsed: Product[] = [];
@@ -157,11 +185,14 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
   const containerRef = useRef<HTMLDivElement>(null);
   const group1Ref = useRef<HTMLDivElement>(null);
   const group2Ref = useRef<HTMLDivElement>(null);
+  const group3Ref = useRef<HTMLDivElement>(null);
   const tickerItemRef = useRef<HTMLDivElement>(null);
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [activeIndex1, setActiveIndex1] = useState(0);
   const [activeIndex2, setActiveIndex2] = useState(0);
+  const [activeIndex3, setActiveIndex3] = useState(0);
+  const [group3ScrollLeft, setGroup3ScrollLeft] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [tickerOffset, setTickerOffset] = useState(0);
   const tickerVelocity = useRef(1.0);
@@ -279,14 +310,17 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
 
       const g1 = group1Ref.current;
       const g2 = group2Ref.current;
-      if (!g1 || !g2) return;
+      const g3 = group3Ref.current;
+      if (!g1 || !g2 || !g3) return;
 
       const g1Top = g1.offsetTop;
       const g2Top = g2.offsetTop;
+      const g3Top = g3.offsetTop;
 
       // Contiguous Scroll State Machine Containment
       const isInG1 = currentScrollTop >= g1Top - 10 && currentScrollTop < g1Top + 50;
       const isInG2 = currentScrollTop >= g2Top - 10 && currentScrollTop < g2Top + 50;
+      const isAtG3 = Math.abs(currentScrollTop - g3Top) < 10;
 
       // 1. Group 1 Locked Zone
       if (isInG1) {
@@ -347,7 +381,39 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           return;
         }
         if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
-          return; // Allow natural scroll to footer
+          // End of Group 2 -> snap to Group 3
+          e.preventDefault();
+          container.scrollTo({ top: g3Top, behavior: 'smooth' });
+          return;
+        }
+      }
+
+      // Group 3 Zone: Lock and scroll horizontally
+      if (isAtG3) {
+        const maxScroll = g3.scrollWidth - g3.clientWidth;
+        const curScroll = g3.scrollLeft;
+
+        if (e.deltaY > 0 && curScroll < maxScroll - 2) {
+          e.preventDefault();
+          g3.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
+          setActiveIndex3(getSlideIndex(g3, g3.scrollLeft));
+          setGroup3ScrollLeft(g3.scrollLeft);
+          return;
+        }
+        if (e.deltaY < 0 && curScroll > 2) {
+          e.preventDefault();
+          g3.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
+          setActiveIndex3(getSlideIndex(g3, g3.scrollLeft));
+          setGroup3ScrollLeft(g3.scrollLeft);
+          return;
+        }
+        if (e.deltaY < 0 && curScroll <= 2) {
+          e.preventDefault();
+          container.scrollTo({ top: g2Top, behavior: 'smooth' });
+          return;
+        }
+        if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
+          return;
         }
       }
 
@@ -372,13 +438,27 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
         }
       }
 
-      // 5. Footer Snapping (After Group 2)
-      if (currentScrollTop >= g2Top + 50) {
-        if (e.deltaY < 0 && currentScrollTop < g2Top + currentVh * 0.4) {
-          e.preventDefault();
-          snapTo(g2Top);
-          return;
-        }
+      // 5. Proximity snapping for Group 3
+
+      // Scrolling down into Group 3:
+      if (e.deltaY > 0 && currentScrollTop > g3Top - currentVh * 0.6 && currentScrollTop < g3Top - 10) {
+        e.preventDefault();
+        container.scrollTo({ top: g3Top, behavior: 'smooth' });
+        return;
+      }
+
+      // Scrolling up from vertical section into Group 3:
+      if (e.deltaY < 0 && currentScrollTop > g3Top + 10 && currentScrollTop < g3Top + currentVh * 0.4) {
+        e.preventDefault();
+        container.scrollTo({ top: g3Top, behavior: 'smooth' });
+        return;
+      }
+
+      // Scrolling up between Group 3 and Group 2:
+      if (e.deltaY < 0 && currentScrollTop > g2Top + 10 && currentScrollTop < g3Top - 10) {
+        e.preventDefault();
+        container.scrollTo({ top: g2Top, behavior: 'smooth' });
+        return;
       }
     };
 
@@ -412,6 +492,12 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
     }, 12000);
     return () => clearInterval(t);
   }, []);
+
+  // ── Forward declarations for Wave 2 plans (group3Ref consumed by Plan 03 JSX) ──
+  // These refs/state/props are intentionally unused here — Plan 02, 03, 04 read them.
+  void [aboutHeading, ctaLabel, ctaUrl, stat1Value, stat1Label, stat2Value, stat2Label,
+        stat3Value, stat3Label, foundingStory, brandParagraph, exploreCta,
+        activeIndex3, group3ScrollLeft];
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  MOBILE LAYOUT
