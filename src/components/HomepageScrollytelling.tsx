@@ -435,16 +435,13 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
         <section className="min-h-[70vh] w-full relative flex flex-col justify-center px-6 py-16 border-b border-white/10">
           <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
           <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.52)' }} />
-          <div className="relative z-20 max-w-lg mx-auto w-full text-center">
+          <div className="relative z-20 max-w-4xl mx-auto w-full text-center">
             <p
-              className="text-3xl italic leading-relaxed"
+              className="text-3xl md:text-[72px] font-normal leading-normal text-center"
               style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
             >
-              "Where every object we make is held to the same standards as the machines we obsess over."
+              “Where every object we make is held to the same standards as the machines we obsess over.”
             </p>
-            <div className="border-t border-white/10 pt-3 mt-8 font-mono text-[8px] opacity-40 flex justify-between uppercase tracking-widest">
-              <span>PITWALL ENGINEERING</span><span>BECAUSE CARS ARE NOT OBJECTS</span>
-            </div>
           </div>
         </section>
         {/* Featured Product 1 */}
@@ -556,7 +553,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
       {/* ── SECTION 2: MANIFESTO (Vertical, 100vh) ───────────────────────── */}
       <div className="relative w-full h-screen flex items-center justify-center px-16 overflow-hidden z-10">
         <div
-          className="max-w-2xl text-center"
+          className="max-w-5xl text-center"
           style={{
             opacity: Math.min(1, Math.max(0, (scrollTop - vh * 0.7) / (vh * 0.4))),
             transform: `translateY(${Math.max(0, 40 - ((scrollTop - vh * 0.7) / (vh * 0.4)) * 40)}px)`,
@@ -564,15 +561,11 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           }}
         >
           <p
-            className="text-4xl italic leading-relaxed"
+            className="text-3xl md:text-[72px] font-normal leading-normal text-center"
             style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
           >
-            "Where every object we make is held to the same standards as the machines we obsess over."
+            “Where every object we make is held to the same standards as the machines we obsess over.”
           </p>
-          <div className="border-t border-white/10 pt-4 mt-8 font-mono text-[9px] opacity-40 flex justify-between uppercase tracking-widest">
-            <span>PITWALL ENGINEERING</span>
-            <span>BECAUSE CARS ARE NOT OBJECTS</span>
-          </div>
         </div>
       </div>
 
