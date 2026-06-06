@@ -13,6 +13,7 @@
 - [x] **Phase 2: All Products Page** — Deliver a complete, shippable `/collections/all` page in Pitwall brand identity, wired to the existing SHOP nav links, with a placeholder product grid
 - [x] **Phase 02.1: Redesign Hero Page (INSERTED)** — Redesign the homepage (hero page) with a 4-section snapping layout, rotating collections grid, and cinematic video player separators
 - [ ] **Phase 02.2: Homepage Interaction Overhaul (INSERTED)** — Deliver an advanced scrollytelling experience on the homepage featuring scroll-locking, mirrored featured products, continuous video backgrounds, interactive ticker, and custom columns collections grids
+- [ ] **Phase 02.3: About Us Car Scrollytelling (INSERTED)** — Add a Group 3 horizontal scrollytelling section with an animated F1 car traveling across 3 panels, followed by a vertical About Us content section, inserted between Group 2 and Footer
 - [ ] **Phase 3: Helmets PDP & Dynamic Routing** — Deliver a complete, shippable helmets product page with autocalibrated WebGL helmet models, zero-lag browser URL state switches via HTML5 History API, and separate catalog listings in `/collections/all`
 
 ---
@@ -30,7 +31,7 @@
   3. The layout uses only Pitwall design tokens (no raw hex, no new colors, zero border-radius, grain overlay preserved, correct Syne/Barlow/IBM Plex Mono fonts)
   4. Contact links (email, social) render with accent-yellow hover states consistent with the rest of the brand
   5. The page is single-column on mobile (below 767px), with 100px desktop / 20px mobile horizontal padding; text and image content is editable via section schema settings
-**Plans**: TBD
+**Plans**: 2 plans (Plan 01 & Plan 02) completed.
 **UI hint**: yes
 
 ---
@@ -63,6 +64,34 @@
   4. Separator video player plays autoplaying, looping cinematic wide videos.
 **Plans**: 2 plans (Plan 01 & Plan 02) completed.
 
+---
+
+### Phase 02.2: Homepage Interaction Overhaul (INSERTED)
+**Goal**: Deliver an advanced scrollytelling experience on the homepage featuring scroll-locking, horizontal scroll groups, mirrored featured products, continuous video backgrounds, interactive ticker, and custom columns collections grids.
+**Mode**: mvp
+**Depends on**: Phase 02.1
+**Requirements**: (inline with phase)
+**Plans**: Completed.
+
+---
+
+### Phase 02.3: About Us Car Scrollytelling (INSERTED)
+**Goal**: Add a Group 3 horizontal-then-vertical scrollytelling section between Group 2 and Footer. The section features a placeholder F1 car SVG animating across 3 horizontal panels driven by scrollLeft, then transitions to a vertical About Us content section. All text is editable via Shopify theme customizer schema.
+**Mode**: standard
+**Depends on**: Phase 02.2
+**Requirements**: (inline — D-01 through D-17 from 02.3-CONTEXT.md)
+**Plans**: 6 plans
+
+Plans:
+- [ ] 02.3-01-PLAN.md — Fix Group 2 exit + add Group 3 wheel zone handler + props interface expansion
+- [ ] 02.3-02-PLAN.md — F1CarSilhouette inline SVG component + .car-silhouette CSS + carX formula
+- [ ] 02.3-03-PLAN.md — Group 3 desktop JSX (3 panels) + mobile stacked sections
+- [ ] 02.3-04-PLAN.md — Shopify schema fields + JSON script tag + data-* attributes + main.tsx wiring
+- [ ] 02.3-05-PLAN.md — Mobile CSS audit + human verification checkpoint
+- [ ] 02.3-06-PLAN.md — End-to-end scroll chain verification + final production build
+
+---
+
 ### Phase 3: Helmets PDP & Dynamic Routing
 **Goal**: Integrate two F1 Helmet WebGL models (`f1_helmet_lando_norris.glb` and `michael_schumacher_2002_helmet.glb`) into a dedicated Helmet Product page, with zero-lag URL switches using HTML5 History API and separated grid items in `/collections/all`
 **Mode:** mvp
@@ -86,6 +115,8 @@
 | 1. About Page | 1/1 | Completed | 2026-05-31 |
 | 2. All Products Page | 1/1 | Completed | 2026-05-31 |
 | 02.1. Redesign Hero Page | 2/2 | Completed | 2026-06-06 |
+| 02.2. Homepage Interaction Overhaul | - | Completed | 2026-06-07 |
+| 02.3. About Us Car Scrollytelling | 0/6 | In planning | - |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
 ---
@@ -116,4 +147,4 @@
 
 ---
 
-*Roadmap generated: 2026-05-30*
+*Roadmap generated: 2026-05-30 | Updated: 2026-06-07 (Phase 02.3 added)*
