@@ -670,35 +670,35 @@ html, body {
   }
 }
 
-/* Contextual Section Backdrops (Mode-adaptive) */
+/* Contextual Section Backdrops (Mode-adaptive - all standardizing to black background) */
 .section-manifesto {
-  background-color: #F6C917 !important;
-  color: #0C0C0C !important;
-  --bg: #F6C917;
-  --fg: #0C0C0C;
-  --surface: #FFFFFF;
-  --border: rgba(12, 12, 12, 0.15);
-  --muted: rgba(12, 12, 12, 0.6);
+  background-color: #0c0c0c !important;
+  color: #edebe5 !important;
+  --bg: #0c0c0c;
+  --fg: #edebe5;
+  --surface: #1a1a1a;
+  --border: rgba(237, 235, 229, 0.10);
+  --muted: rgba(237, 235, 229, 0.50);
 }
 
 .section-collection {
-  background-color: #0C0C0C !important;
-  color: #EDEBE5 !important;
-  --bg: #0C0C0C;
-  --fg: #EDEBE5;
-  --surface: #1A1A1A;
+  background-color: #0c0c0c !important;
+  color: #edebe5 !important;
+  --bg: #0c0c0c;
+  --fg: #edebe5;
+  --surface: #1a1a1a;
   --border: rgba(237, 235, 229, 0.10);
   --muted: rgba(237, 235, 229, 0.50);
 }
 
 .section-about {
-  background-color: #EDEBE5 !important;
-  color: #0C0C0C !important;
-  --bg: #EDEBE5;
-  --fg: #0C0C0C;
-  --surface: #F5F4F0;
-  --border: rgba(12, 12, 12, 0.10);
-  --muted: rgba(12, 12, 12, 0.50);
+  background-color: #0c0c0c !important;
+  color: #edebe5 !important;
+  --bg: #0c0c0c;
+  --fg: #edebe5;
+  --surface: #1a1a1a;
+  --border: rgba(237, 235, 229, 0.10);
+  --muted: rgba(237, 235, 229, 0.50);
 }
 
 /* Card layout helper classes with thin padding */
@@ -799,22 +799,28 @@ html, body {
   color: var(--accent) !important;
 }
 
-/* Bottom Dropdown Wordmark Image */
-.menu-wordmark-img {
-  height: 18px !important; /* Reduced size per user request */
-  width: auto !important;
+/* Bottom Dropdown Wordmark Logo Text (using BTSE PS2 font, centered, size reduced, color inverted dynamically) */
+.menu-wordmark-text {
+  font-family: var(--font-branding), 'BTSE PS2', sans-serif !important;
+  font-size: 20px !important; /* Reduced size per user request */
+  font-weight: 800 !important;
+  letter-spacing: 0.18em !important;
+  text-align: center !important;
   display: block !important;
   margin: 0 auto !important;
-  transition: filter 0.3s ease;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
 }
 
-/* Invert the color according to the light/dark setting */
-html:not(.dark-mode) .menu-wordmark-img {
-  filter: invert(1); /* Invert to white for dark takeover background in light mode */
+/* Color inverting for light/dark theme: dark menu background means text should be white,
+   but we can toggle the exact shade based on page mode settings */
+html:not(.dark-mode) .menu-wordmark-text {
+  color: #FFFFFF !important; /* Pure white in light mode */
 }
-html.dark-mode .menu-wordmark-img {
-  filter: invert(0); /* Keep default/white in dark mode */
+html.dark-mode .menu-wordmark-text {
+  color: #EDEBE5 !important; /* Off-white in dark mode */
 }
+
 
 
 

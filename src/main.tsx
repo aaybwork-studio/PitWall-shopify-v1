@@ -166,12 +166,21 @@ function bootstrap() {
     const collectionsLink = collectionsItem?.querySelector('.menu-link');
     const submenuCol = menuOverlay.querySelector('.menu-submenu-col');
 
+    let submenuTimeout: ReturnType<typeof setTimeout> | null = null;
+
     const showSubmenu = () => {
+      if (submenuTimeout) {
+        clearTimeout(submenuTimeout);
+        submenuTimeout = null;
+      }
       menuOverlay.classList.add('show-collections-submenu');
     };
 
     const hideSubmenu = () => {
-      menuOverlay.classList.remove('show-collections-submenu');
+      if (submenuTimeout) clearTimeout(submenuTimeout);
+      submenuTimeout = setTimeout(() => {
+        menuOverlay.classList.remove('show-collections-submenu');
+      }, 300); // 300ms window to cross visual column gaps
     };
 
     if (collectionsItem) {

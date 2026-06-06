@@ -11,6 +11,22 @@ export function Navbar({ logoUrl = '', cartCount = 0 }: NavbarProps) {
   const [liveCartCount, setLiveCartCount] = useState(cartCount);
   const [isHoveringCollections, setIsHoveringCollections] = useState(false);
   const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showSubmenu = () => {
+    if (hoverTimeout.current) {
+      clearTimeout(hoverTimeout.current);
+      hoverTimeout.current = null;
+    }
+    setIsHoveringCollections(true);
+  };
+
+  const hideSubmenu = () => {
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+    hoverTimeout.current = setTimeout(() => {
+      setIsHoveringCollections(false);
+    }, 300);
+  };
 
   const menuItems = [
     { label: 'Home', href: '/' },
@@ -66,6 +82,10 @@ export function Navbar({ logoUrl = '', cartCount = 0 }: NavbarProps) {
   const closeMenu = () => {
     setIsOpen(false);
     setIsHoveringCollections(false);
+    if (hoverTimeout.current) {
+      clearTimeout(hoverTimeout.current);
+      hoverTimeout.current = null;
+    }
     document.body.style.overflow = '';
   };
 
@@ -140,14 +160,14 @@ export function Navbar({ logoUrl = '', cartCount = 0 }: NavbarProps) {
                       setActiveItem(idx);
                       keepOpen();
                       if (item.label === 'Collections') {
-                        setIsHoveringCollections(true);
+                        showSubmenu();
                       } else {
-                        setIsHoveringCollections(false);
+                        hideSubmenu();
                       }
                     }}
                     onMouseLeave={() => {
                       if (item.label === 'Collections') {
-                        setIsHoveringCollections(false);
+                        hideSubmenu();
                       }
                     }}
                     style={{ alignItems: 'center' }}
@@ -171,7 +191,12 @@ export function Navbar({ logoUrl = '', cartCount = 0 }: NavbarProps) {
           </div>
 
           {/* Column 2 (30%): Mid-shifted subcategories */}
-          <div className="menu-submenu-col" style={{ opacity: isHoveringCollections ? 1 : 0, pointerEvents: isHoveringCollections ? 'auto' : 'none', transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', transform: isHoveringCollections ? 'translateX(0)' : 'translateX(-10px)' }}>
+          <div 
+            className="menu-submenu-col" 
+            style={{ opacity: isHoveringCollections ? 1 : 0, pointerEvents: isHoveringCollections ? 'auto' : 'none', transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', transform: isHoveringCollections ? 'translateX(0)' : 'translateX(-10px)' }}
+            onMouseEnter={showSubmenu}
+            onMouseLeave={hideSubmenu}
+          >
             <span className="pw-menu-contact-label">COLLECTIONS</span>
             <ul className="menu-submenu-middle" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px', listStyle: 'none', padding: 0 }}>
               <li><a href="/collections/chassis" className="menu-submenu-middle-link" onClick={closeMenu}>CHASSIS</a></li>
@@ -194,7 +219,7 @@ export function Navbar({ logoUrl = '', cartCount = 0 }: NavbarProps) {
         </div>
         {/* Bottom wordmark logo */}
         <div className="menu-bottom-bar" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', padding: '16px 0' }}>
-          <img src="/assets/wordmark-footer.png" alt="PITWALL" className="menu-wordmark-img" />
+          <span className="menu-wordmark-text">PITWALL</span>
         </div>
       </div>
     </>
