@@ -6,10 +6,29 @@ import { CarCanvas } from './components/CarCanvas';
 import { VideoBackground } from './components/VideoBackground';
 import { ProductScrollytelling } from './components/ProductScrollytelling';
 import { CollectionGrid } from './components/CollectionGrid';
+import { HomepageScrollytelling } from './components/HomepageScrollytelling';
 import { Logger } from './utils/logger';
 
 // ─── Bootstrap Integration on DOM Load ──────────────────────────────────────
 function bootstrap() {
+  // 0. Mount Homepage Interactive Scrollytelling (Takeover)
+  const homepageRoot = document.getElementById('homepage-interactive-root');
+  if (homepageRoot) {
+    const productsJson = homepageRoot.getAttribute('data-products-json') || '[]';
+    const videoPlaylist = homepageRoot.getAttribute('data-video-playlist') || '[]';
+
+    try {
+      const root = ReactDOM.createRoot(homepageRoot);
+      root.render(
+        <React.StrictMode>
+          <HomepageScrollytelling productsJson={productsJson} videoPlaylist={videoPlaylist} />
+        </React.StrictMode>
+      );
+    } catch (err) {
+      Logger.error('Failed to mount HomepageScrollytelling', err);
+    }
+  }
+
   // 1. Mount Three.js Product Chassis Canvas
   const canvasRoot = document.getElementById('car-canvas-root');
   if (canvasRoot) {
@@ -59,68 +78,71 @@ function bootstrap() {
     );
   }
 
-  // 2. Mount Video Playlist Background
-  const videoRoot = document.getElementById('hero-video-root');
-  if (videoRoot) {
-    let playlist: string[] = [];
-    try {
-      const dataPlaylist = videoRoot.getAttribute('data-video-playlist');
-      if (dataPlaylist) {
-        // Parse liquid-formatted single quoted string array safely
-        playlist = JSON.parse(dataPlaylist.replace(/'/g, '"'));
-      }
-    } catch {
-      playlist = [
-        "/video/F1_helmet_orbiting_white_void_202605251628.mp4",
-        "/video/F1_helmet_orbiting_white_void_202605251636.mp4",
-        "/video/Formula_1_car_accelerates_white_202605251629.mp4"
-      ];
-    }
-
-    const root = ReactDOM.createRoot(videoRoot);
-    root.render(<VideoBackground playlist={playlist} />);
-  }
-
-  // 2.5 Mount Separator Video Background
-  const separatorVideoRoot = document.getElementById('separator-video-root');
-  if (separatorVideoRoot) {
-    let playlist: string[] = [];
-    try {
-      const dataPlaylist = separatorVideoRoot.getAttribute('data-video-playlist');
-      if (dataPlaylist) {
-        // Parse liquid-formatted single quoted string array safely
-        playlist = JSON.parse(dataPlaylist.replace(/'/g, '"'));
-      }
-    } catch {
-      playlist = [
-        "/assets/F1_car_slides_on_surface_202606011707.mp4",
-        "/assets/Formula_1_car_approaches_camera_202606011705.mp4",
-        "/assets/Formula_1_car_braking_and_202606011705.mp4"
-      ];
-    }
-
-    const root = ReactDOM.createRoot(separatorVideoRoot);
-    root.render(<VideoBackground playlist={playlist} />);
-  }
-
-  // 3. Mount Collection Grid
-  const collectionRoot = document.getElementById('collection-grid-root');
-  if (collectionRoot) {
-    let products = [];
-    const productsScript = document.getElementById('collection-products-data');
-    if (productsScript) {
+  // Only run legacy mounts if we are NOT on the interactive scrollytelling homepage
+  if (!homepageRoot) {
+    // 2. Mount Video Playlist Background
+    const videoRoot = document.getElementById('hero-video-root');
+    if (videoRoot) {
+      let playlist: string[] = [];
       try {
-        products = JSON.parse(productsScript.textContent || '[]');
-      } catch (err) {
-        Logger.error('Failed to parse collection product data JSON in main.tsx', err);
+        const dataPlaylist = videoRoot.getAttribute('data-video-playlist');
+        if (dataPlaylist) {
+          // Parse liquid-formatted single quoted string array safely
+          playlist = JSON.parse(dataPlaylist.replace(/'/g, '"'));
+        }
+      } catch {
+        playlist = [
+          "/video/F1_helmet_orbiting_white_void_202605251628.mp4",
+          "/video/F1_helmet_orbiting_white_void_202605251636.mp4",
+          "/video/Formula_1_car_accelerates_white_202605251629.mp4"
+        ];
       }
+
+      const root = ReactDOM.createRoot(videoRoot);
+      root.render(<VideoBackground playlist={playlist} />);
     }
-    const root = ReactDOM.createRoot(collectionRoot);
-    root.render(
-      <React.StrictMode>
-        <CollectionGrid products={products} />
-      </React.StrictMode>
-    );
+
+    // 2.5 Mount Separator Video Background
+    const separatorVideoRoot = document.getElementById('separator-video-root');
+    if (separatorVideoRoot) {
+      let playlist: string[] = [];
+      try {
+        const dataPlaylist = separatorVideoRoot.getAttribute('data-video-playlist');
+        if (dataPlaylist) {
+          // Parse liquid-formatted single quoted string array safely
+          playlist = JSON.parse(dataPlaylist.replace(/'/g, '"'));
+        }
+      } catch {
+        playlist = [
+          "/assets/F1_car_slides_on_surface_202606011707.mp4",
+          "/assets/Formula_1_car_approaches_camera_202606011705.mp4",
+          "/assets/Formula_1_car_braking_and_202606011705.mp4"
+        ];
+      }
+
+      const root = ReactDOM.createRoot(separatorVideoRoot);
+      root.render(<VideoBackground playlist={playlist} />);
+    }
+
+    // 3. Mount Collection Grid
+    const collectionRoot = document.getElementById('collection-grid-root');
+    if (collectionRoot) {
+      let products = [];
+      const productsScript = document.getElementById('collection-products-data');
+      if (productsScript) {
+        try {
+          products = JSON.parse(productsScript.textContent || '[]');
+        } catch (err) {
+          Logger.error('Failed to parse collection product data JSON in main.tsx', err);
+        }
+      }
+      const root = ReactDOM.createRoot(collectionRoot);
+      root.render(
+        <React.StrictMode>
+          <CollectionGrid products={products} />
+        </React.StrictMode>
+      );
+    }
   }
 
   // 4. Bind Brutalist Navigation Interactions

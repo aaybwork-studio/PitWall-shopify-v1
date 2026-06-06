@@ -12,6 +12,7 @@
 - [x] **Phase 1: About Page** — Deliver a complete, shippable `/pages/about` page in Pitwall brand identity, wired to the existing ABOUT nav link, including all shared foundation constraints (tokens, responsiveness, grain overlay)
 - [x] **Phase 2: All Products Page** — Deliver a complete, shippable `/collections/all` page in Pitwall brand identity, wired to the existing SHOP nav links, with a placeholder product grid
 - [x] **Phase 02.1: Redesign Hero Page (INSERTED)** — Redesign the homepage (hero page) with a 4-section snapping layout, rotating collections grid, and cinematic video player separators
+- [ ] **Phase 02.2: Homepage Interaction Overhaul (INSERTED)** — Deliver an advanced scrollytelling experience on the homepage featuring scroll-locking, mirrored featured products, continuous video backgrounds, interactive ticker, and custom columns collections grids
 - [ ] **Phase 3: Helmets PDP & Dynamic Routing** — Deliver a complete, shippable helmets product page with autocalibrated WebGL helmet models, zero-lag browser URL state switches via HTML5 History API, and separate catalog listings in `/collections/all`
 
 ---

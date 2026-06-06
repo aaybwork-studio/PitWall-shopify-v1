@@ -13,9 +13,10 @@ interface CollectionCardProps {
   product: Product;
   className?: string;
   isTall?: boolean;
+  style?: React.CSSProperties;
 }
 
-export function CollectionCard({ product, className = '', isTall = false }: CollectionCardProps) {
+export function CollectionCard({ product, className = '', isTall = false, style }: CollectionCardProps) {
   const [displayedProduct, setDisplayedProduct] = useState<Product>(product);
   const [isFading, setIsFading] = useState<boolean>(false);
 
@@ -45,6 +46,7 @@ export function CollectionCard({ product, className = '', isTall = false }: Coll
       className={`pw-card group relative flex flex-col justify-end overflow-hidden bg-white text-[#0C0C0C] rounded-[5px] shadow-sm transition-all duration-300 ${
         isTall ? 'h-full w-full' : 'aspect-square md:aspect-auto md:flex-1 md:h-full md:min-h-0 w-full'
       } ${className}`}
+      style={style}
     >
       <div
         className={`w-full h-full flex flex-col justify-end min-h-0 transition-opacity duration-300 ${
