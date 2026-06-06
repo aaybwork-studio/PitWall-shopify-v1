@@ -73,6 +73,47 @@ function HeroTicker({ offset, itemRef }: TickerProps) {
   );
 }
 
+// ─── F1 Car Silhouette ────────────────────────────────────────────────────────
+export function F1CarSilhouette({ color = '#EDE8E0' }: { color?: string }) {
+  return (
+    <svg
+      viewBox="0 0 800 200"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ width: '100%', height: '100%' }}
+      fill={color}
+      aria-hidden="true"
+    >
+      {/* Main chassis body */}
+      <rect x="80" y="110" width="580" height="45" rx="8" />
+      {/* Cockpit bump */}
+      <rect x="310" y="80" width="160" height="35" rx="12" />
+      {/* Halo (thin arc above cockpit) */}
+      <path d="M320 80 Q390 55 470 80" stroke={color} strokeWidth="6" fill="none" />
+      {/* Sidepods */}
+      <rect x="240" y="108" width="120" height="25" rx="4" />
+      <rect x="440" y="108" width="120" height="25" rx="4" />
+      {/* Front wing */}
+      <rect x="30" y="148" width="100" height="8" rx="2" />
+      <rect x="30" y="140" width="6" height="16" rx="1" />
+      <rect x="124" y="140" width="6" height="16" rx="1" />
+      {/* Front wing strut */}
+      <rect x="70" y="130" width="30" height="20" rx="2" />
+      {/* Rear wing */}
+      <rect x="640" y="85" width="110" height="8" rx="2" />
+      <rect x="680" y="93" width="6" height="25" rx="1" />
+      <rect x="704" y="93" width="6" height="25" rx="1" />
+      {/* Front wheel */}
+      <ellipse cx="150" cy="168" rx="32" ry="32" />
+      <ellipse cx="150" cy="168" rx="14" ry="14" fill={WM.bg} />
+      {/* Rear wheel */}
+      <ellipse cx="620" cy="168" rx="36" ry="36" />
+      <ellipse cx="620" cy="168" rx="16" ry="16" fill={WM.bg} />
+      {/* Nose cone */}
+      <path d="M80 125 L20 148 L80 155 Z" />
+    </svg>
+  );
+}
+
 // ─── Title Card ───────────────────────────────────────────────────────────────
 interface TitleCardProps { title: string; unit: string; isYellow?: boolean; subtitle?: string; }
 function DesignedTitleCard({ title, unit, isYellow = false, subtitle }: TitleCardProps) {
