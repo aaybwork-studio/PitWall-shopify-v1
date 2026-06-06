@@ -37,10 +37,10 @@ function AnimatedPrice({ priceString }: { priceString: string }) {
 }
 
 // ─── Hero Ticker ──────────────────────────────────────────────────────────────
-interface TickerProps { offset: number; }
-function HeroTicker({ offset }: TickerProps) {
+interface TickerProps { offset: number; itemRef: React.RefObject<any>; }
+function HeroTicker({ offset, itemRef }: TickerProps) {
   const text = "PITWALL ENGINEERING / SPEED CALIBRATION / ";
-  const repeats = Array(12).fill(text);
+  const repeats = Array(6).fill(text);
   return (
     <div
       className="ticker-bar absolute bottom-0 left-0 w-full z-20 overflow-hidden py-3"
@@ -50,7 +50,12 @@ function HeroTicker({ offset }: TickerProps) {
         className="flex whitespace-nowrap font-mono text-xs uppercase tracking-widest text-[#0C0C0C] font-bold"
         style={{ transform: `translate3d(${offset}px, 0, 0)` }}
       >
-        {repeats.map((t, i) => <span key={i} className="inline-block px-4">{t}</span>)}
+        <div ref={itemRef} className="inline-flex">
+          {repeats.map((t, i) => <span key={i} className="inline-block px-4">{t}</span>)}
+        </div>
+        <div className="inline-flex">
+          {repeats.map((t, i) => <span key={i} className="inline-block px-4">{t}</span>)}
+        </div>
       </div>
     </div>
   );
@@ -148,10 +153,11 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
     catch { return ["/video/F1_helmet_orbiting_white_void_202605251628.mp4", "/video/Formula_1_car_accelerates_white_202605251629.mp4"]; }
   }, [videoPlaylist]);
 
-  // ── Refs ────────────────────────────────────────────────────────────────────
+    // ── Refs ────────────────────────────────────────────────────────────────────
   const containerRef = useRef<HTMLDivElement>(null);
   const group1Ref = useRef<HTMLDivElement>(null);
   const group2Ref = useRef<HTMLDivElement>(null);
+  const tickerItemRef = useRef<HTMLDivElement>(null);
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [activeIndex1, setActiveIndex1] = useState(0);
@@ -200,7 +206,14 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
       const increment = 1.5 * tickerVelocity.current * tickerDirection.current * dt;
       setTickerOffset(prev => {
         const next = prev - increment;
-        return next < -320 ? 0 : next;
+        const limit = tickerItemRef.current ? tickerItemRef.current.offsetWidth : 450;
+        if (next < -limit) {
+          return next + limit;
+        }
+        if (next > 0) {
+          return next - limit;
+        }
+        return next;
       });
       frameId = requestAnimationFrame(tick);
     };
@@ -384,21 +397,22 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           <div className="relative z-20 text-center px-4 w-full h-full flex flex-col items-center justify-center">
             {/* Tagline 1 on Mobile */}
             <div 
-              className="absolute transition-opacity duration-300 px-4"
+              className="absolute transition-opacity duration-300 w-full flex justify-center px-4"
               style={{
+                bottom: '90px',
                 opacity: Math.max(0, 1 - (scrollTop / (vh * 0.4))),
               }}
             >
-              <p className="hero-tagline uppercase tracking-widest text-xs font-mono" style={{ color: WM.gold }}>
+              <p className="hero-tagline uppercase tracking-widest text-xs font-mono text-center" style={{ color: WM.gold }}>
                 Because cars are not objects
               </p>
             </div>
 
             {/* Tagline 2 on Mobile */}
             <div 
-              className="absolute transition-opacity duration-300 w-full px-4"
+              className="absolute transition-opacity duration-300 w-full flex justify-center px-4"
               style={{
-                bottom: '70px',
+                bottom: '90px',
                 opacity: Math.min(1, Math.max(0, (scrollTop - vh * 0.15) / (vh * 0.35))),
               }}
             >
@@ -407,7 +421,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
               </p>
             </div>
           </div>
-          <HeroTicker offset={tickerOffset} />
+          <HeroTicker offset={tickerOffset} itemRef={tickerItemRef} />
         </section>
 
         {/* Manifesto */}
@@ -505,12 +519,12 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
 
       {/* ── SECTION 1: HERO (Vertical, 100vh) ────────────────────────────── */}
       <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
-        {/* Tagline 1: "Because cars are not objects" (Centered, fades out as we scroll) */}
+        {/* Tagline 1: "Because cars are not objects" */}
         <div 
           className="absolute flex items-center justify-center transition-all duration-300"
           style={{
+            bottom: '90px',
             opacity: Math.max(0, 1 - (scrollTop / (vh * 0.4))),
-            transform: `translateY(${-scrollTop * 0.25}px)`
           }}
         >
           <p className="hero-tagline uppercase tracking-widest text-sm font-mono text-center px-4" style={{ color: WM.gold }}>
@@ -518,11 +532,11 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           </p>
         </div>
 
-        {/* Tagline 2: "and life has always been a race." (Fades in, placed 35px above ticker) */}
+        {/* Tagline 2: "and life has always been a race." */}
         <div 
           className="absolute w-full flex justify-center transition-all duration-300"
           style={{
-            bottom: '75px', // 35px above bottom ticker
+            bottom: '90px',
             opacity: Math.min(1, Math.max(0, (scrollTop - vh * 0.15) / (vh * 0.35))),
           }}
         >
@@ -531,7 +545,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           </p>
         </div>
 
-        <HeroTicker offset={tickerOffset} />
+        <HeroTicker offset={tickerOffset} itemRef={tickerItemRef} />
       </div>
 
       {/* ── SECTION 2: MANIFESTO (Vertical, 100vh) ───────────────────────── */}
