@@ -431,7 +431,7 @@ html:not(.homepage-scrollytelling-active) body {
   padding-top: 64px;
   padding-left: 80px;
   padding-right: 80px;
-  padding-bottom: 24px;
+  padding-bottom: 0px !important;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -460,6 +460,13 @@ html:not(.homepage-scrollytelling-active) body {
   gap: 16px;
   padding: 0;
   margin: 0;
+}
+@media (min-width: 768px) {
+  .pw-menu-links-list {
+    height: 100%;
+    justify-content: space-between;
+    gap: 0;
+  }
 }
 
 .pw-menu-link-item {
@@ -909,6 +916,7 @@ html:not(.homepage-scrollytelling-active) body {
   margin: 0 auto !important;
   text-transform: uppercase;
   transition: color 0.3s ease;
+  line-height: 1 !important;
 }
 
 /* Color inverting for light/dark theme: dark menu background means text should be white,
