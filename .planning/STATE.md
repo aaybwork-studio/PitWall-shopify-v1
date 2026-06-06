@@ -3,25 +3,25 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-06T10:51:39.034Z"
+last_updated: "2026-06-06T10:55:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 0
-  total_plans: 2
-  completed_plans: 0
-  percent: 0
+  completed_phases: 3
+  total_plans: 4
+  completed_plans: 4
+  percent: 75
 ---
 
 # Project State
 
 **Project:** Pitwall Shopify Theme — About & All Products Pages
-**Last Updated:** 2026-05-30
+**Last Updated:** 2026-06-06
 
 ---
 
 ## Project Reference
 
-**Core Value:** The two new pages must look unmistakably Pitwall (brutalist F1 aesthetic + existing tokens) while delivering the editorial structure of the reference designs.
+**Core Value:** The homepage redesign and new pages must look unmistakably Pitwall (brutalist F1 aesthetic + existing tokens) while delivering the editorial structure of the reference designs.
 
 **Current Focus:** Phase 3 — Helmets PDP & Dynamic Routing
 
@@ -39,11 +39,12 @@ progress:
 **Progress:**
 
 ```
-[ Phase 1: About Page    ] █▓▓▓▓▓▓▓▓▓ 100%
-[ Phase 2: All Products  ] █▓▓▓▓▓▓▓▓▓ 100%
-[ Phase 3: Helmets PDP   ] ░░░░░░░░░░   0%
+[ Phase 1: About Page     ] █▓▓▓▓▓▓▓▓▓ 100%
+[ Phase 2: All Products   ] █▓▓▓▓▓▓▓▓▓ 100%
+[ Phase 02.1: Hero Page   ] █▓▓▓▓▓▓▓▓▓ 100%
+[ Phase 3: Helmets PDP    ] ░░░░░░░░░░   0%
 
-Overall: 2/3 phases complete
+Overall: 3/4 phases complete
 ```
 
 ---
@@ -52,10 +53,10 @@ Overall: 2/3 phases complete
 
 | Metric | Value |
 |--------|-------|
-| Phases defined | 2 |
-| Requirements mapped | 15/15 |
-| Phases complete | 2/2 |
-| Plans created | 2 |
+| Phases defined | 4 |
+| Requirements mapped | 18/18 |
+| Phases complete | 3/4 |
+| Plans created | 4 |
 
 ---
 
@@ -63,7 +64,7 @@ Overall: 2/3 phases complete
 
 ### Roadmap Evolution
 
-- Phase 02.1 inserted after Phase 2: Redesign Hero Page (URGENT)
+- Phase 02.1 inserted after Phase 2: Redesign Hero Page (URGENT) — Completed 2026-06-06.
 
 ### Key Decisions
 
@@ -89,9 +90,10 @@ None.
 - Roadmap created fresh on 2026-05-30 via `/gsd-new-project` orchestrator.
 - Phase 1: About Page completed and pushed to remote on 2026-05-31.
 - Phase 2: All Products Page completed and pushed to remote on 2026-05-31.
+- Phase 02.1: Redesign Hero Page completed and verified on 2026-06-06.
 - Phase 3: Helmets PDP & Dynamic Routing context gathered on 2026-05-31.
 - Next action: `/gsd-plan-phase 3` to design the technical implementation plan for Helmets.
 
 ---
 
-*State initialized: 2026-05-30*
+*State updated: 2026-06-06*

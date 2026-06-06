@@ -1,6 +1,5 @@
-
 <!-- 1. Hero Section Container -->
-<section class="hero-section">
+<section class="snap-section section-dark hero-section">
   <!-- Video background container (React/Vite Mount point for playlist & mute state) -->
   <div 
     id="hero-video-root" 
@@ -10,9 +9,7 @@
       {%- if section.settings.video_2 != blank -%}'{{ section.settings.video_2 }}'{%- else -%}'{{ 'F1_car_overtakes_camera_overhead_202606011707.mp4' | asset_url }}'{%- endif -%},
       {%- if section.settings.video_3 != blank -%}'{{ section.settings.video_3 }}'{%- else -%}'{{ 'F1_car_slides_on_surface_202606011707.mp4' | asset_url }}'{%- endif -%},
       '{{ 'Formula_1_car_approaches_camera_202606011705.mp4' | asset_url }}',
-      '{{ 'Formula_1_car_braking_and_202606011705.mp4' | asset_url }}',
-      '{{ 'Formula_1_cars_braking_fast_202605301840.mp4' | asset_url }}',
-      '{{ 'Formula_1_cars_racing_wheel-to-wheel_202606011705.mp4' | asset_url }}'
+      '{{ 'Formula_1_car_braking_and_202606011705.mp4' | asset_url }}'
     ]"
   >
     <div class="hero-video-fallback"></div>
@@ -20,233 +17,137 @@
 
   <div class="hero-overlay"></div>
 
-  <!-- Hero Logo Text -->
-  <div class="hero-logo-wrapper">
-    <h1 class="hero-title">{{ section.settings.title_text }}</h1>
+  <!-- Hero Content Wrapper -->
+  <div class="hero-content-wrapper flex items-center justify-center h-full relative z-10">
+    <div class="hero-text-container text-center">
+      <h2 class="hero-tagline uppercase tracking-widest text-sm md:text-base font-mono mb-2 text-[#F6C917]">Because cars are not objects</h2>
+      <h1 class="hero-title-text leading-none uppercase font-extrabold">
+        {{ section.settings.title_text | default: "PITWALL" }}
+      </h1>
+    </div>
   </div>
-
-  <!-- Interactive React Mute Mount Point -->
-  <div id="mute-button-root"></div>
-</section>
-
-<!-- 2. Ticker / Marquee Section -->
-<section class="ticker-bar">
-  <div class="ticker-track">
-    <div class="ticker-item-1">XYZ <span class="ticker-sep-1">/</span></div>
-    <div class="ticker-item-1">XYZ <span class="ticker-sep-1">/</span></div>
-    <div class="ticker-item-1">XYZ <span class="ticker-sep-1">/</span></div>
-    <div class="ticker-item-1">XYZ <span class="ticker-sep-1">/</span></div>
-    <div class="ticker-item-1">XYZ <span class="ticker-sep-1">/</span></div>
-    <div class="ticker-item-1">XYZ <span class="ticker-sep-1">/</span></div>
-    <div class="ticker-item-1">XYZ <span class="ticker-sep-1">/</span></div>
-    <div class="ticker-item-1">XYZ <span class="ticker-sep-1">/</span></div>
-  </div>
-</section>
-
-<!-- 3. Product Showcase Section
-     NOTE: background-color is transparent so the hero video bleeds through.
-     All non-McLaren links use ?model= param — the PDP reads this via URL query to
-     set the initial active model without requiring separate Shopify products. -->
-<section class="showcase-section" id="showcase">
-  <div class="showcase-header scroll-reveal">
-    <span class="showcase-label">THE COLLECTION</span>
-    <div class="showcase-divider"></div>
-  </div>
-
-  <div class="product-grid">
-
-    <!-- CAR 1: McLaren MCL39 — grid-a -->
-    <a href="/products/mclaren-mcl39" class="product-card product-a scroll-reveal cursor-pointer">
-      <div class="product-image-container">
-        <div class="product-sketch-overlay">
-          <svg class="product-sketch-svg" viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <path d="M 40 120 L 360 120 M 100 80 L 180 100 L 300 100 L 330 135" stroke-dasharray="3,3" />
-            <rect x="50" y="60" width="10" height="110" stroke-width="2" opacity="0.4" />
-            <circle cx="120" cy="120" r="32" stroke-width="2" />
-            <circle cx="280" cy="120" r="35" stroke-width="2" />
-            <path d="M 190 70 L 220 30 H 260 L 280 70 Z" fill="rgba(255,128,0,0.08)" />
-            <path d="M 180 100 L 200 80 L 310 80 L 330 100" stroke="#FF8000" stroke-width="1.5" />
-          </svg>
-        </div>
-        <div class="product-hover-info">
-          <span class="product-hover-title">MCLAREN MCL39</span>
-          <div class="product-hover-meta">
-            <span class="product-hover-specs">1:18 SCALE / PRE-PREG CARBON</span>
-            <span class="product-hover-price">₹12,499</span>
-          </div>
-        </div>
-      </div>
-    </a>
-
-    <!-- CAR 2: Red Bull RB19 — grid-b -->
-    <a href="/products/red-bull-rb19" class="product-card product-b scroll-reveal cursor-pointer">
-      <div class="product-image-container">
-        <div class="product-sketch-overlay">
-          <svg class="product-sketch-svg" viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <path d="M 40 120 L 360 120 M 80 90 L 200 95 L 320 90 L 340 130" stroke-dasharray="3,3" />
-            <circle cx="110" cy="120" r="30" stroke-width="2" />
-            <circle cx="285" cy="120" r="33" stroke-width="2" />
-            <path d="M 185 65 L 210 35 H 250 L 268 65 Z" fill="rgba(252,213,0,0.1)" />
-            <path d="M 160 95 L 185 65 L 268 65 L 290 90" stroke="#FCD500" stroke-width="1.5" />
-          </svg>
-        </div>
-        <div class="product-hover-info">
-          <span class="product-hover-title">RED BULL RB19</span>
-          <div class="product-hover-meta">
-            <span class="product-hover-specs">1:18 SCALE / ANODIZED ALLOY</span>
-            <span class="product-hover-price">₹12,499</span>
-          </div>
-        </div>
-      </div>
-    </a>
-
-    <!-- CAR 3: Ferrari SF-23 — grid-c -->
-    <a href="/products/ferrari-sf23" class="product-card product-c scroll-reveal cursor-pointer">
-      <div class="product-image-container">
-        <div class="product-sketch-overlay">
-          <svg class="product-sketch-svg" viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <path d="M 50 120 L 350 120 M 90 85 L 190 92 L 310 88 L 335 128" stroke-dasharray="3,3" />
-            <circle cx="115" cy="120" r="31" stroke-width="2" />
-            <circle cx="275" cy="120" r="34" stroke-width="2" />
-            <path d="M 175 68 L 200 38 H 240 L 258 68 Z" fill="rgba(225,6,0,0.08)" />
-            <path d="M 150 92 L 180 68 L 258 68 L 280 88" stroke="#E10600" stroke-width="1.5" />
-          </svg>
-        </div>
-        <div class="product-hover-info">
-          <span class="product-hover-title">FERRARI SF-23</span>
-          <div class="product-hover-meta">
-            <span class="product-hover-specs">1:18 SCALE / PRECISION DIE-CAST</span>
-            <span class="product-hover-price">₹12,499</span>
-          </div>
-        </div>
-      </div>
-    </a>
-
-    <!-- CAR 4: Mercedes W14 — grid-d -->
-    <a href="/products/mercedes-w14" class="product-card product-d scroll-reveal cursor-pointer">
-      <div class="product-image-container">
-        <div class="product-sketch-overlay">
-          <svg class="product-sketch-svg" viewBox="0 0 400 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <path d="M 45 120 L 355 120 M 85 88 L 195 94 L 315 90 L 338 132" stroke-dasharray="3,3" />
-            <circle cx="112" cy="120" r="31" stroke-width="2" />
-            <circle cx="278" cy="120" r="34" stroke-width="2" />
-            <path d="M 178 70 L 202 40 H 244 L 260 70 Z" fill="rgba(0,161,155,0.08)" />
-            <path d="M 155 94 L 182 70 L 260 70 L 282 90" stroke="#00A19B" stroke-width="1.5" />
-          </svg>
-        </div>
-        <div class="product-hover-info">
-          <span class="product-hover-title">MERCEDES W14</span>
-          <div class="product-hover-meta">
-            <span class="product-hover-specs">1:18 SCALE / EXPOSED CARBON</span>
-            <span class="product-hover-price">₹12,499</span>
-          </div>
-        </div>
-      </div>
-    </a>
-
-    <!-- HELMET 1: Norris — grid-a (cycle restart) -->
-    <a href="/products/lando-norris-helmet" class="product-card product-a scroll-reveal cursor-pointer">
-      <div class="product-image-container">
-        <div class="product-sketch-overlay">
-          <svg class="product-sketch-svg" viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <circle cx="150" cy="115" r="65" stroke-width="2" />
-            <path d="M 150 50 C 215 50 215 180 150 180 Z" stroke-width="2" />
-            <rect x="148" y="88" width="65" height="26" fill="rgba(255,128,0,0.1)" />
-            <path d="M 85 115 H 150" stroke-dasharray="4,4" />
-            <path d="M 150 98 L 198 106" stroke="#FF8000" stroke-width="1.5" />
-          </svg>
-        </div>
-        <div class="product-hover-info">
-          <span class="product-hover-title">NORRIS REPLICA HELMET</span>
-          <div class="product-hover-meta">
-            <span class="product-hover-specs">1:2 SCALE / MATTE CARBON</span>
-            <span class="product-hover-price">₹7,999</span>
-          </div>
-        </div>
-      </div>
-    </a>
-
-    <!-- HELMET 2: Schumacher — grid-b -->
-    <a href="/products/schumacher-helmet" class="product-card product-b scroll-reveal cursor-pointer">
-      <div class="product-image-container">
-        <div class="product-sketch-overlay">
-          <svg class="product-sketch-svg" viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <circle cx="150" cy="115" r="65" stroke-width="2" />
-            <path d="M 150 50 C 215 50 215 180 150 180 Z" stroke-width="2" />
-            <rect x="148" y="88" width="65" height="26" fill="rgba(225,6,0,0.1)" />
-            <path d="M 85 115 H 150" stroke-dasharray="4,4" />
-            <path d="M 150 98 L 198 106" stroke="#E10600" stroke-width="1.5" />
-          </svg>
-        </div>
-        <div class="product-hover-info">
-          <span class="product-hover-title">SCHUMACHER REPLICA HELMET</span>
-          <div class="product-hover-meta">
-            <span class="product-hover-specs">1:2 SCALE / GLOSS CARBON</span>
-            <span class="product-hover-price">₹7,999</span>
-          </div>
-        </div>
-      </div>
-    </a>
-
-    <!-- HELMET 3: Verstappen — grid-c -->
-    <a href="/products/verstappen-helmet" class="product-card product-c scroll-reveal cursor-pointer">
-      <div class="product-image-container">
-        <div class="product-sketch-overlay">
-          <svg class="product-sketch-svg" viewBox="0 0 300 240" style="width: 80%; height: 80%; stroke: var(--fg); fill: none; stroke-width: 1.2">
-            <circle cx="150" cy="115" r="65" stroke-width="2" />
-            <path d="M 150 50 C 215 50 215 180 150 180 Z" stroke-width="2" />
-            <rect x="148" y="88" width="65" height="26" fill="rgba(252,213,0,0.1)" />
-            <path d="M 85 115 H 150" stroke-dasharray="4,4" />
-            <path d="M 150 98 L 198 106" stroke="#FCD500" stroke-width="1.5" />
-          </svg>
-        </div>
-        <div class="product-hover-info">
-          <span class="product-hover-title">VERSTAPPEN REPLICA HELMET</span>
-          <div class="product-hover-meta">
-            <span class="product-hover-specs">1:2 SCALE / MATTE CARBON</span>
-            <span class="product-hover-price">₹7,999</span>
-          </div>
-        </div>
-      </div>
-    </a>
-
-  </div>
-</section>
-
-<!-- 4. Manifesto Section -->
-<section class="manifesto-section manifesto-punch" id="manifesto">
-  <div class="manifesto-header-row">
-    <span class="manifesto-label">MANIFESTO</span>
-    <div class="manifesto-line-border"></div>
-  </div>
-  <h2 class="manifesto-headline">
-    <span class="manifesto-line-small">WE DON'T MAKE FAN MERCH.</span>
-    <span class="manifesto-line-large">WE MAKE OBJECTS WORTH OWNING.</span>
-  </h2>
-</section>
-
-<!-- 5. About Strip Section -->
-<section class="about-strip-section">
-  <div class="about-left slide-from-left">
-    <span class="about-label">ABOUT PITWALL</span>
-    <h2 class="about-headline">PRECISION IS ITS OWN AESTHETIC.</h2>
-    <p class="about-body">
-      PITWALL is an India-first F1 collectibles brand for fans who understand the sport at the level of the pitwall. Not the grandstand. The wall. Where every object we make is held to the same standard as the machines we obsess over.
-    </p>
-    <button class="about-btn" onclick="location.href='/pages/about'">OUR STORY</button>
-  </div>
-
-  <div class="about-right slide-from-right">
-    <div class="about-img-placeholder">
-      <svg viewBox="0 0 400 500" style="width: 90%; height: 90%; opacity: 0.22; stroke: var(--fg); fill: none; stroke-width: 0.8">
-        <path d="M 0 50 H 400 M 0 100 H 400 M 0 150 H 400 M 0 200 H 400 M 0 250 H 400 M 0 300 H 400 M 0 350 H 400 M 0 400 H 400 M 0 450 H 400" />
-        <path d="M 50 0 V 500 M 100 0 V 500 M 150 0 V 500 M 200 0 V 500 M 250 0 V 500 M 300 0 V 500 M 350 0 V 500" />
-        <path d="M 50 150 L 150 300 L 250 200 L 350 400" stroke="#F6C917" stroke-width="2.5" />
-      </svg>
+  
+  <!-- Ticker / Marquee Section -->
+  <div class="ticker-bar absolute bottom-0 left-0 w-full z-20">
+    <div class="ticker-track">
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
+      <div class="ticker-item-1">PITWALL ENGINEERING <span class="ticker-sep-1">/</span></div>
     </div>
   </div>
 </section>
 
+<!-- 2. Manifesto Section -->
+<section class="snap-section section-manifesto flex items-center justify-center" id="manifesto">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full h-full max-h-[85vh] md:max-h-none overflow-y-auto md:overflow-hidden p-3 md:p-4">
+    <!-- Left Column: large Brand Image card -->
+    <div class="pw-white-card !p-0 flex items-center justify-center overflow-hidden h-full min-h-[250px] md:min-h-0">
+      <img src="{{ 'desk_accessories.png' | asset_url }}" alt="Pitwall Engineering Manifesto" class="w-full h-full object-cover rounded-[5px]" />
+    </div>
+    
+    <!-- Right Column: Title card and text card -->
+    <div class="flex flex-col gap-3 h-full min-h-0">
+      <!-- Top: title card (short and wide) -->
+      <div class="pw-white-card flex items-center justify-center p-4 flex-[1] min-h-[64px] select-none">
+        <h2 class="font-display-strict text-2xl lowercase tracking-tighter text-[#0C0C0C] font-bold">the manifesto</h2>
+      </div>
+      
+      <!-- Bottom: body/text card (tall) -->
+      <div class="pw-white-card flex flex-col justify-center p-4 md:p-6 flex-[4] min-h-0">
+        <p class="font-body-strict text-sm md:text-base leading-relaxed text-[#0C0C0C]/80 italic">
+          "Where every object we make is held to the same standards as the machines we obsess over."
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2.5 Separator Video Player -->
+<div 
+  id="separator-video-root" 
+  class="separator-video-container"
+  data-video-playlist="[
+    {%- if section.settings.separator_video_1 != blank -%}'{{ section.settings.separator_video_1 }}'{%- else -%}'{{ 'F1_car_slides_on_surface_202606011707.mp4' | asset_url }}'{%- endif -%},
+    {%- if section.settings.separator_video_2 != blank -%}'{{ section.settings.separator_video_2 }}'{%- else -%}'{{ 'Formula_1_car_approaches_camera_202606011705.mp4' | asset_url }}'{%- endif -%},
+    {%- if section.settings.separator_video_3 != blank -%}'{{ section.settings.separator_video_3 }}'{%- else -%}'{{ 'Formula_1_car_braking_and_202606011705.mp4' | asset_url }}'{%- endif -%}
+  ]"
+></div>
+
+<!-- 3. The Collection Section -->
+<section class="snap-section section-collection section-dark flex items-center justify-center" id="collection">
+  <!-- Products data script -->
+  <script id="collection-products-data" type="application/json">
+    [
+      {%- assign selected_collection = collections[section.settings.collection] -%}
+      {%- if selected_collection != blank and selected_collection.products_count > 0 -%}
+        {%- for product in selected_collection.products limit: 20 -%}
+          {
+            "title": {{ product.title | json }},
+            "url": {{ product.url | json }},
+            "price": {{ product.price | money | json }},
+            "image": {{ product.featured_image | img_url: '600x' | json }},
+            "specs": {{ product.metafields.custom.specs | default: "1:18 SCALE / PRECISION DETAIL" | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      {%- endif -%}
+    ]
+  </script>
+  
+  <div id="collection-grid-root" class="w-full h-full"></div>
+</section>
+
+<!-- 4. About Us Section -->
+<section class="snap-section section-about flex items-center justify-center" id="about">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full h-full max-h-[85vh] md:max-h-none overflow-y-auto md:overflow-hidden p-3 md:p-4">
+    <!-- Left Column -->
+    <div class="flex flex-col gap-3 h-full min-h-0">
+      <!-- Title Card (short and wide) -->
+      <div class="pw-white-card flex items-center justify-center p-4 flex-[1] min-h-[64px] select-none">
+        <h2 class="font-display-strict text-2xl lowercase tracking-tighter text-[#0C0C0C] font-bold">About us</h2>
+      </div>
+      
+      <!-- Photo Card 1 (Hidden on Mobile) -->
+      <div class="pw-white-card !p-0 hidden md:flex items-center justify-center overflow-hidden flex-[4] min-h-0">
+        <img src="{{ 'driver_figurine.png' | asset_url }}" alt="Pitwall Engineering Driver" class="w-full h-full object-cover rounded-[5px]" />
+      </div>
+    </div>
+    
+    <!-- Right Column -->
+    <div class="flex flex-col gap-3 h-full min-h-0">
+      <!-- Photo Card 2 (Hidden on Mobile) -->
+      <div class="pw-white-card !p-0 hidden md:flex items-center justify-center overflow-hidden flex-[4] min-h-0">
+        <img src="{{ 'layered_art.png' | asset_url }}" alt="Pitwall Layered Art" class="w-full h-full object-cover rounded-[5px]" />
+      </div>
+      
+      <!-- Quote / CTA Card (short and wide) -->
+      <div class="pw-white-card flex flex-col justify-between p-4 md:p-6 flex-[1] min-h-[120px]">
+        <p class="font-body-strict text-xs md:text-sm leading-relaxed text-[#0C0C0C]/80 italic mb-2">
+          "Where every object we make is held to the same standards as the machines we obsess over."
+        </p>
+        <div>
+          <button class="w-full md:max-w-[150px] h-8 border border-[#0C0C0C] bg-[#0C0C0C] text-[#EDEBE5] hover:bg-[#F6C917] hover:text-[#0C0C0C] hover:border-[#F6C917] font-mono text-[9px] uppercase tracking-wider font-bold transition-all duration-200 flex items-center justify-center gap-1 cursor-pointer" onclick="location.href='/pages/about'">
+            OUR STORY
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 {% schema %}
 {
@@ -272,6 +173,26 @@
       "type": "text",
       "id": "video_3",
       "label": "Video Playlist URL 3 (mp4)"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Rotator Collection"
+    },
+    {
+      "type": "text",
+      "id": "separator_video_1",
+      "label": "Separator Video URL 1 (mp4)"
+    },
+    {
+      "type": "text",
+      "id": "separator_video_2",
+      "label": "Separator Video URL 2 (mp4)"
+    },
+    {
+      "type": "text",
+      "id": "separator_video_3",
+      "label": "Separator Video URL 3 (mp4)"
     }
   ],
   "presets": [

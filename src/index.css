@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@700;800&family=Space+Grotesk:wght@400;700&display=swap');
 
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,7 +13,7 @@
   --font-mono: 'IBM Plex Mono', monospace;
   --font-display: 'Syne', sans-serif;
   --font-body: 'Inter', sans-serif;
-  --font-branding: 'btseps2', sans-serif;
+  --font-branding: 'BTSE PS2', 'btseps2', sans-serif;
 
   --background: #EDEBE5;
   --foreground: #0C0C0C;
@@ -27,6 +29,23 @@
   --surface-2: #E5E3DD;
   --border: rgba(12, 12, 12, 0.10);
   --muted: rgba(12, 12, 12, 0.50);
+}
+
+html.dark-mode {
+  --background: #0C0C0C;
+  --foreground: #EDEBE5;
+  --brand-black: #EDEBE5;
+  --brand-white: #0C0C0C;
+  --brand-red: #F6C917;
+  --brand-surface: #1A1A1A;
+
+  --bg: #0C0C0C;
+  --fg: #EDEBE5;
+  --accent: #F6C917;
+  --surface: #1A1A1A;
+  --surface-2: #242424;
+  --border: rgba(237, 235, 229, 0.10);
+  --muted: rgba(237, 235, 229, 0.50);
 }
 
 /* Force all Shopify parent wrappers to be 100% full-bleed and full-width */
@@ -64,6 +83,12 @@ main[role="main"],
 /* Custom styles for layout and scrolling integration */
 html, body {
   overscroll-behavior-y: auto !important;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 @layer utilities {
@@ -92,10 +117,12 @@ html, body {
   }
 }
 
-/* ─── Universal Footer Styles ─────────────────────────────────────── */
+/* GLOBAL FOOTER (Always dark text) */
 .pw-footer-section {
   background-color: var(--accent, #F6C917);
-  color: var(--fg, #0C0C0C);
+  color: #0C0C0C;
+  --fg: #0C0C0C; /* Override locally so variables cascade the static black */
+  --bg: #EDEBE5;
   padding: 72px 100px 0;
   display: flex;
   flex-direction: column;
@@ -222,7 +249,7 @@ html, body {
 }
 
 .pw-footer-ghost-text {
-  font-family: var(--font-branding, 'btseps2', sans-serif);
+  font-family: var(--font-branding, 'BTSE PS2', sans-serif);
   font-weight: 800;
   font-size: clamp(80px, 14vw, 200px);
   line-height: 0.85;
@@ -360,18 +387,25 @@ html, body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
-  background-color: var(--surface, #F5F4F0);
+  height: 66vh;
+  border-bottom: 1px solid rgba(237, 235, 229, 0.15);
+  background-color: rgba(12, 12, 12, 0.9) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  --fg: #EDEBE5;
+  --muted: rgba(237, 235, 229, 0.6);
+  --border: rgba(237, 235, 229, 0.15);
+  --surface-2: #242424;
   z-index: 200;
   transform: translateY(-110%);
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
   transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1), visibility 400ms step-end, opacity 400ms ease;
-  padding-top: 100px;
-  padding-left: 100px;
-  padding-right: 100px;
-  padding-bottom: 40px;
+  padding-top: 64px;
+  padding-left: 80px;
+  padding-right: 80px;
+  padding-bottom: 24px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -387,9 +421,9 @@ html, body {
 
 .pw-menu-content {
   display: grid;
-  grid-template-columns: 4fr 3fr 3fr;
-  gap: 40px;
-  margin-top: 40px;
+  grid-template-columns: 4.5fr 2.75fr 2.75fr;
+  gap: 32px;
+  margin-top: 24px;
   flex: 1;
 }
 
@@ -397,14 +431,14 @@ html, body {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 16px;
   padding: 0;
   margin: 0;
 }
 
 .pw-menu-link-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
 }
 
@@ -418,10 +452,10 @@ html, body {
 .pw-menu-link {
   font-family: var(--font-display, 'Syne', sans-serif);
   font-weight: 800;
-  font-size: 64px;
-  line-height: 1.25;
+  font-size: clamp(28px, 3.5vw, 44px);
+  line-height: 1.1;
   text-transform: uppercase;
-  color: var(--fg, #0C0C0C);
+  color: var(--fg, #EDEBE5);
   text-decoration: none;
   transition: color 200ms ease, transform 200ms ease;
   display: inline-block;
@@ -439,10 +473,48 @@ html, body {
   transform: translateX(8px);
 }
 
+/* React Submenu Styles */
+.pw-menu-submenu {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 300ms ease;
+}
+
+.pw-menu-link-item:hover .pw-menu-submenu,
+.pw-menu-link-item.is-expanded .pw-menu-submenu {
+  max-height: 150px;
+  opacity: 1;
+}
+
+.pw-submenu-link {
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 200ms ease, padding-left 200ms ease;
+  display: inline-block;
+  padding: 2px 0;
+}
+
+.pw-submenu-link:hover {
+  color: var(--accent, #F6C917);
+  padding-left: 6px;
+}
+
 .pw-menu-contact-col {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
 }
 
 .pw-menu-contact-label {
@@ -456,16 +528,16 @@ html, body {
 
 .pw-menu-contact-details {
   font-family: var(--font-mono, 'IBM Plex Mono', monospace);
-  font-size: 12px;
-  line-height: 2;
-  color: rgba(12, 12, 12, 0.45);
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--muted);
   margin: 0;
 }
 
 .pw-menu-images-col {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
 }
 
 .pw-menu-image-panel {
@@ -476,9 +548,10 @@ html, body {
 
 .pw-menu-img-placeholder {
   aspect-ratio: 16/9;
-  background-color: var(--surface-2, #E5E3DD);
+  background-color: var(--surface-2, #242424);
   width: 100%;
-  border: 1px solid rgba(12, 12, 12, 0.15);
+  max-height: 120px;
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -490,14 +563,14 @@ html, body {
   content: 'PITWALL // CHASSIS';
   font-family: var(--font-mono, 'IBM Plex Mono', monospace);
   font-size: 8px;
-  color: rgba(12, 12, 12, 0.08);
+  color: rgba(237, 235, 229, 0.08);
   letter-spacing: 0.15em;
 }
 
 .pw-menu-img-caption {
   font-family: var(--font-mono, 'IBM Plex Mono', monospace);
   font-size: 10px;
-  color: rgba(12, 12, 12, 0.45);
+  color: var(--muted);
   text-transform: uppercase;
 }
 
@@ -507,22 +580,242 @@ html, body {
   }
 
   .pw-menu-overlay {
-    padding-top: 96px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-top: 80px;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-bottom: 24px;
+    height: 100vh;
   }
 
   .pw-menu-content {
     grid-template-columns: 1fr;
-    gap: 40px;
-    margin-top: 20px;
+    gap: 24px;
+    margin-top: 16px;
   }
 
   .pw-menu-link {
-    font-size: 48px;
+    font-size: 32px;
   }
 
   .pw-menu-images-col {
     display: none;
   }
 }
+
+/* ─── Homepage Snap & Redesign Layout Styles ───────────────────────── */
+
+@media (min-width: 768px) {
+  html.homepage-snap {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-padding-top: 64px; /* Offset snap position by navbar height */
+  }
+  
+  html.homepage-snap body {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .snap-section {
+    height: calc(100vh - 64px); /* Fits exactly below navbar */
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    min-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .hero-section.snap-section {
+    height: 100vh !important;
+    scroll-margin-top: -64px !important; /* Snap to very top of screen */
+    padding-top: 0 !important;
+  }
+
+  .separator-video-container {
+    height: 33.333vh;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    /* Snapping properties removed so it doesn't snap */
+  }
+
+  .footer-section {
+    scroll-snap-align: end;
+  }
+}
+
+@media (max-width: 767px) {
+  html.homepage-snap {
+    scroll-snap-type: none;
+    height: auto;
+    overflow-y: visible;
+  }
+  
+  .snap-section {
+    height: auto;
+    scroll-snap-align: none;
+    overflow: visible;
+  }
+
+  .separator-video-container {
+    height: auto;
+    aspect-ratio: 21 / 9;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+/* Contextual Section Backdrops (Mode-adaptive) */
+.section-manifesto {
+  background-color: #F6C917 !important;
+  color: #0C0C0C !important;
+  --bg: #F6C917;
+  --fg: #0C0C0C;
+  --surface: #FFFFFF;
+  --border: rgba(12, 12, 12, 0.15);
+  --muted: rgba(12, 12, 12, 0.6);
+}
+
+.section-collection {
+  background-color: #0C0C0C !important;
+  color: #EDEBE5 !important;
+  --bg: #0C0C0C;
+  --fg: #EDEBE5;
+  --surface: #1A1A1A;
+  --border: rgba(237, 235, 229, 0.10);
+  --muted: rgba(237, 235, 229, 0.50);
+}
+
+.section-about {
+  background-color: #EDEBE5 !important;
+  color: #0C0C0C !important;
+  --bg: #EDEBE5;
+  --fg: #0C0C0C;
+  --surface: #F5F4F0;
+  --border: rgba(12, 12, 12, 0.10);
+  --muted: rgba(12, 12, 12, 0.50);
+}
+
+/* Card layout helper classes with thin padding */
+.pw-white-card {
+  background-color: #FFFFFF !important;
+  color: #0C0C0C !important;
+  border-radius: 5px !important; /* Sharper but rounded (5px) */
+  padding: 12px !important; /* Thinner padding per user request */
+  border: none !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  overflow: hidden !important; /* Clip children to the rounded boundaries */
+}
+
+@media (min-width: 768px) {
+  .pw-white-card {
+    padding: 16px !important; /* Thinner padding on desktop */
+  }
+}
+
+/* Override any global zero border-radius constraint selectively on homepage snapped cards */
+.homepage-snap .card,
+.homepage-snap [class*="card"],
+.homepage-snap .pw-white-card,
+.homepage-snap .pw-card {
+  border-radius: 5px !important;
+  overflow: hidden !important;
+}
+
+/* Hero Branding Title (BTSE PS2 font, size 250px, black, blend mode difference, push up 20px, +6px letter-spacing) */
+.hero-title-text {
+  font-family: var(--font-branding), 'BTSE PS2', sans-serif !important;
+  font-size: clamp(50px, 12vw, 250px) !important;
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: 6px !important; /* +6 letter spacing */
+  text-transform: uppercase;
+  mix-blend-mode: difference !important; /* Blend mode */
+  color: #FFFFFF !important; /* Color white to allow difference blending to invert over car texture */
+  transform: translateY(-20px) !important; /* Push up 20px */
+}
+
+/* Tagline Slogan Visibility Adjustments */
+.hero-tagline {
+  font-size: clamp(14px, 1.5vw, 18px) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.25em !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important; /* Subtle shadow for readability over background video */
+}
+
+/* Enforce ticker item no-shrink to make looping animation work seamlessly */
+.ticker-item-1 {
+  flex-shrink: 0 !important;
+}
+
+.ticker-track {
+  display: flex !important;
+  width: max-content !important;
+}
+
+/* Mid-shifted subcategories in Dropdown Menu */
+.menu-submenu-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(-10px);
+}
+
+.menu-overlay.show-collections-submenu .menu-submenu-col,
+#full-menu-overlay.show-collections-submenu .menu-submenu-col {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.menu-submenu-middle {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+}
+
+.menu-submenu-middle-link {
+  font-family: var(--font-display), 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 2.5vw, 28px);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--fg);
+  transition: color 200ms ease;
+}
+
+.menu-submenu-middle-link:hover {
+  color: var(--accent) !important;
+}
+
+/* Bottom Dropdown Wordmark Image */
+.menu-wordmark-img {
+  height: 18px !important; /* Reduced size per user request */
+  width: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+  transition: filter 0.3s ease;
+}
+
+/* Invert the color according to the light/dark setting */
+html:not(.dark-mode) .menu-wordmark-img {
+  filter: invert(1); /* Invert to white for dark takeover background in light mode */
+}
+html.dark-mode .menu-wordmark-img {
+  filter: invert(0); /* Keep default/white in dark mode */
+}
+
+
+
+

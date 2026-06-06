@@ -1,36 +1,12 @@
 import './index.css';
-import React, { useState } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Volume2, VolumeX } from 'lucide-react';
 
 import { CarCanvas } from './components/CarCanvas';
 import { VideoBackground } from './components/VideoBackground';
 import { ProductScrollytelling } from './components/ProductScrollytelling';
-
-// ─── Universal Mute Button Module ──────────────────────────────────────────
-function UniversalMuteButton() {
-  const [muted, setMuted] = useState(true);
-
-  const toggleMute = () => {
-    const nextState = !muted;
-    setMuted(nextState);
-    
-    // Broadcast state to custom video listener context
-    const event = new CustomEvent('pitwall:mute', { detail: { muted: nextState } });
-    window.dispatchEvent(event);
-  };
-
-  return (
-    <button onClick={toggleMute} className="universal-mute-btn" aria-label="Toggle sound">
-      <span className="mute-text-box">
-        {muted ? 'ACTIVATE SOUND' : 'MUTE STUDIO'}
-      </span>
-      <div className="mute-icon-box">
-        {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-      </div>
-    </button>
-  );
-}
+import { CollectionGrid } from './components/CollectionGrid';
+import { Logger } from './utils/logger';
 
 // ─── Bootstrap Integration on DOM Load ──────────────────────────────────────
 function bootstrap() {
@@ -105,11 +81,46 @@ function bootstrap() {
     root.render(<VideoBackground playlist={playlist} />);
   }
 
-  // 3. Mount Universal Mute Toggle
-  const muteRoot = document.getElementById('mute-button-root');
-  if (muteRoot) {
-    const root = ReactDOM.createRoot(muteRoot);
-    root.render(<UniversalMuteButton />);
+  // 2.5 Mount Separator Video Background
+  const separatorVideoRoot = document.getElementById('separator-video-root');
+  if (separatorVideoRoot) {
+    let playlist: string[] = [];
+    try {
+      const dataPlaylist = separatorVideoRoot.getAttribute('data-video-playlist');
+      if (dataPlaylist) {
+        // Parse liquid-formatted single quoted string array safely
+        playlist = JSON.parse(dataPlaylist.replace(/'/g, '"'));
+      }
+    } catch {
+      playlist = [
+        "/assets/F1_car_slides_on_surface_202606011707.mp4",
+        "/assets/Formula_1_car_approaches_camera_202606011705.mp4",
+        "/assets/Formula_1_car_braking_and_202606011705.mp4"
+      ];
+    }
+
+    const root = ReactDOM.createRoot(separatorVideoRoot);
+    root.render(<VideoBackground playlist={playlist} />);
+  }
+
+  // 3. Mount Collection Grid
+  const collectionRoot = document.getElementById('collection-grid-root');
+  if (collectionRoot) {
+    let products = [];
+    const productsScript = document.getElementById('collection-products-data');
+    if (productsScript) {
+      try {
+        products = JSON.parse(productsScript.textContent || '[]');
+      } catch (err) {
+        Logger.error('Failed to parse collection product data JSON in main.tsx', err);
+      }
+    }
+    const root = ReactDOM.createRoot(collectionRoot);
+    root.render(
+      <React.StrictMode>
+        <CollectionGrid products={products} />
+      </React.StrictMode>
+    );
   }
 
   // 4. Bind Brutalist Navigation Interactions
@@ -124,13 +135,14 @@ function bootstrap() {
     isMenuOpen = true;
     menuOverlay?.classList.add('is-active');
     if (menuTrigger) menuTrigger.innerText = 'CLOSE';
-    document.body.style.overflow = 'hidden';
+    if (menuTrigger) menuTrigger.innerText = 'CLOSE';
   }
   function closeMenu() {
     isMenuOpen = false;
     menuOverlay?.classList.remove('is-active');
     if (menuTrigger) menuTrigger.innerText = 'MENU';
-    document.body.style.overflow = '';
+    const collectionsItem = menuOverlay?.querySelector('.menu-link-item-collections');
+    if (collectionsItem) collectionsItem.classList.remove('is-expanded');
   }
   function delayClose() {
     if (closeTimeout) clearTimeout(closeTimeout);
@@ -149,6 +161,35 @@ function bootstrap() {
       e.preventDefault();
       isMenuOpen ? closeMenu() : openMenu();
     });
+
+    const collectionsItem = menuOverlay.querySelector('.menu-link-item-collections');
+    const collectionsLink = collectionsItem?.querySelector('.menu-link');
+    const submenuCol = menuOverlay.querySelector('.menu-submenu-col');
+
+    const showSubmenu = () => {
+      menuOverlay.classList.add('show-collections-submenu');
+    };
+
+    const hideSubmenu = () => {
+      menuOverlay.classList.remove('show-collections-submenu');
+    };
+
+    if (collectionsItem) {
+      collectionsItem.addEventListener('mouseenter', showSubmenu);
+      collectionsItem.addEventListener('mouseleave', hideSubmenu);
+    }
+    
+    if (submenuCol) {
+      submenuCol.addEventListener('mouseenter', showSubmenu);
+      submenuCol.addEventListener('mouseleave', hideSubmenu);
+    }
+
+    if (collectionsLink && collectionsItem) {
+      collectionsLink.addEventListener('click', () => {
+        // Since we hover to show on desktop, click can navigate directly to collections page
+        closeMenu();
+      });
+    }
   }
 
   // Add scroll headers intersection handlers for color adaptive dynamic header
@@ -182,7 +223,82 @@ function bootstrap() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
   }
+
+  // 5. Scroll-locked tagline animation ("Because cars are not objects" -> "and life has always been a race.")
+  const taglineEl = document.querySelector('.hero-tagline') as HTMLElement | null;
+  const heroSection = document.querySelector('.hero-section') as HTMLElement | null;
+  
+  if (taglineEl && heroSection) {
+    const originalText = "Because cars are not objects";
+    const targetText = "and life has always been a race.";
+    let hasTransitioned = false;
+    let isTransitioning = false;
+
+    // Apply inline style to ensure smooth transitions
+    taglineEl.style.transition = 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+
+    const transitionText = (direction: 'down' | 'up') => {
+      isTransitioning = true;
+      taglineEl.style.opacity = '0';
+      
+      setTimeout(() => {
+        if (direction === 'down') {
+          taglineEl.textContent = targetText;
+        } else {
+          taglineEl.textContent = originalText;
+        }
+        taglineEl.style.opacity = '1';
+        
+        setTimeout(() => {
+          isTransitioning = false;
+          if (direction === 'down') {
+            hasTransitioned = true;
+          } else {
+            hasTransitioned = false;
+          }
+        }, 400);
+      }, 400);
+    };
+
+    // Scroll lock handler for wheel and touchmove events
+    let touchStartY = 0;
+    
+    const handleScrollLock = (e: WheelEvent | TouchEvent) => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      
+      let isScrollingDown = false;
+      if (e instanceof WheelEvent) {
+        isScrollingDown = e.deltaY > 0;
+      } else if (e instanceof TouchEvent && e.touches.length > 0) {
+        const touch = e.touches[0];
+        isScrollingDown = touchStartY - touch.pageY > 5;
+      }
+
+      if (scrollY <= 10 && isScrollingDown && !hasTransitioned && !isTransitioning) {
+        e.preventDefault();
+        transitionText('down');
+      }
+    };
+
+    window.addEventListener('wheel', handleScrollLock, { passive: false });
+    window.addEventListener('touchmove', handleScrollLock, { passive: false });
+
+    window.addEventListener('touchstart', (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        touchStartY = e.touches[0].pageY;
+      }
+    }, { passive: true });
+
+    // Revert transition when scrolling back to the very top
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      if (scrollY <= 5 && hasTransitioned && !isTransitioning) {
+        transitionText('up');
+      }
+    }, { passive: true });
+  }
 }
+
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', bootstrap);

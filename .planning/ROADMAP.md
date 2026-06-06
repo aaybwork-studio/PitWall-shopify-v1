@@ -11,6 +11,7 @@
 
 - [x] **Phase 1: About Page** — Deliver a complete, shippable `/pages/about` page in Pitwall brand identity, wired to the existing ABOUT nav link, including all shared foundation constraints (tokens, responsiveness, grain overlay)
 - [x] **Phase 2: All Products Page** — Deliver a complete, shippable `/collections/all` page in Pitwall brand identity, wired to the existing SHOP nav links, with a placeholder product grid
+- [x] **Phase 02.1: Redesign Hero Page (INSERTED)** — Redesign the homepage (hero page) with a 4-section snapping layout, rotating collections grid, and cinematic video player separators
 - [ ] **Phase 3: Helmets PDP & Dynamic Routing** — Deliver a complete, shippable helmets product page with autocalibrated WebGL helmet models, zero-lag browser URL state switches via HTML5 History API, and separate catalog listings in `/collections/all`
 
 ---
@@ -49,6 +50,18 @@
 
 ---
 
+### Phase 02.1: Redesign Hero Page (INSERTED)
+**Goal**: Redesign the homepage (hero page) of the dev server to include 4 full-screen snapping sections (Hero, Manifesto, Collection, About Us) with dynamic product rotation grids and separator video players.
+**Mode**: mvp
+**Depends on**: Phase 2
+**Requirements**: FND-01, FND-02, FND-03
+**Success Criteria** (what must be TRUE):
+  1. Desktop snaps to 100vh height boundaries, falling back to a stacked natural vertical scroll on mobile below 767px.
+  2. The Collection section rotates products every 6 seconds, pausing on hover to display detail slide-ups with yellow highlights and checkout CTA.
+  3. About Us section hides the photo cards on mobile, displaying only the Title and Quote cards.
+  4. Separator video player plays autoplaying, looping cinematic wide videos.
+**Plans**: 2 plans (Plan 01 & Plan 02) completed.
+
 ### Phase 3: Helmets PDP & Dynamic Routing
 **Goal**: Integrate two F1 Helmet WebGL models (`f1_helmet_lando_norris.glb` and `michael_schumacher_2002_helmet.glb`) into a dedicated Helmet Product page, with zero-lag URL switches using HTML5 History API and separated grid items in `/collections/all`
 **Mode:** mvp
@@ -71,6 +84,7 @@
 |-------|----------------|--------|-----------|
 | 1. About Page | 1/1 | Completed | 2026-05-31 |
 | 2. All Products Page | 1/1 | Completed | 2026-05-31 |
+| 02.1. Redesign Hero Page | 2/2 | Completed | 2026-06-06 |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
 ---
