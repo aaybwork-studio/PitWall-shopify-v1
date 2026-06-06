@@ -4,6 +4,18 @@ import { CollectionCard, Product } from './CollectionGrid';
 import { ArrowUpRight, ChevronRight } from 'lucide-react';
 import { Footer } from './Footer';
 
+function getImmersivePDPUrl(product: Product): string {
+  const title = product.title.toLowerCase();
+  if (title.includes('mclaren')) return '/products/mclaren-mcl39';
+  if (title.includes('red bull') || title.includes('redbull') || title.includes('rb19')) return '/products/red-bull-rb19';
+  if (title.includes('ferrari') || title.includes('sf-23')) return '/products/ferrari-sf-23';
+  if (title.includes('mercedes') || title.includes('w14')) return '/products/mercedes-w14';
+  if (title.includes('norris') && title.includes('helmet')) return '/products/lando-norris-helmet';
+  if (title.includes('schumacher') && title.includes('helmet')) return '/products/schumacher-helmet';
+  if (title.includes('verstappen') && title.includes('helmet')) return '/products/verstappen-helmet';
+  return product.url || '/collections/all';
+}
+
 // ─── Palette ──────────────────────────────────────────────────────────────────
 const WM = {
   bg:   '#0F0C09',
@@ -303,162 +315,176 @@ export function HomepageScrollytelling({
       }
 
       const container = containerRef.current;
-      if (!container) return;
-
-      const currentScrollTop = container.scrollTop;
-      const currentVh = container.clientHeight;
-
       const g1 = group1Ref.current;
       const g2 = group2Ref.current;
       const g3 = group3Ref.current;
-      if (!g1 || !g2 || !g3) return;
+      if (!container || !g1 || !g2 || !g3) return;
 
+      const currentScrollTop = container.scrollTop;
+      const vh = container.clientHeight;
       const g1Top = g1.offsetTop;
       const g2Top = g2.offsetTop;
       const g3Top = g3.offsetTop;
 
-      // Contiguous Scroll State Machine Containment
-      const isInG1 = currentScrollTop >= g1Top - 10 && currentScrollTop < g1Top + 50;
-      const isInG2 = currentScrollTop >= g2Top - 10 && currentScrollTop < g2Top + 50;
-      const isAtG3 = Math.abs(currentScrollTop - g3Top) < 10;
+      // Define target scroll heights for the 7 states
+      const sections = [
+        0,              // 0: Hero
+        g1Top - vh,     // 1: Manifesto
+        g1Top,          // 2: Group 1 (Horizontal)
+        g1Top + vh,     // 3: Video Divider (starts immediately after Group 1)
+        g2Top,          // 4: Group 2 (Horizontal)
+        g3Top,          // 5: Group 3 (Horizontal — About Us)
+        g3Top + vh      // 6: Footer (starts immediately after Group 3)
+      ];
 
-      // 1. Group 1 Locked Zone
-      if (isInG1) {
-        if (Math.abs(currentScrollTop - g1Top) > 1) {
+      // Identify which section index we are currently closest to
+      let currentIdx = 0;
+      let minDiff = Infinity;
+      for (let i = 0; i < sections.length; i++) {
+        const diff = Math.abs(currentScrollTop - sections[i]);
+        if (diff < minDiff) {
+          minDiff = diff;
+          currentIdx = i;
+        }
+      }
+
+      // 1. Group 1 Horizontal Lock
+      if (currentIdx === 2) {
+        if (Math.abs(currentScrollTop - g1Top) > 2) {
           container.scrollTop = g1Top;
         }
         const maxScroll = g1.scrollWidth - g1.clientWidth;
         const curScroll = g1.scrollLeft;
 
-        if (e.deltaY > 0 && curScroll < maxScroll - 2) {
+        if (e.deltaY > 0 && curScroll < maxScroll - 5) {
           e.preventDefault();
           g1.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
           setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
           return;
         }
-        if (e.deltaY < 0 && curScroll > 2) {
+        if (e.deltaY < 0 && curScroll > 5) {
           e.preventDefault();
           g1.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
           setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
           return;
         }
-        if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
+        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
           e.preventDefault();
-          snapTo(g1Top + currentVh); // Snap to Video Divider
+          snapTo(sections[3]); // Snap to Video Divider
           return;
         }
-        if (e.deltaY < 0 && curScroll <= 2) {
+        if (e.deltaY < 0 && curScroll <= 5) {
           e.preventDefault();
-          snapTo(g1Top - currentVh); // Snap back to Manifesto
+          snapTo(sections[1]); // Snap back to Manifesto
           return;
         }
         return;
       }
 
-      // 2. Group 2 Locked Zone
-      if (isInG2) {
-        if (Math.abs(currentScrollTop - g2Top) > 1) {
+      // 2. Group 2 Horizontal Lock
+      if (currentIdx === 4) {
+        if (Math.abs(currentScrollTop - g2Top) > 2) {
           container.scrollTop = g2Top;
         }
         const maxScroll = g2.scrollWidth - g2.clientWidth;
         const curScroll = g2.scrollLeft;
 
-        if (e.deltaY > 0 && curScroll < maxScroll - 2) {
+        if (e.deltaY > 0 && curScroll < maxScroll - 5) {
           e.preventDefault();
           g2.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
           setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
           return;
         }
-        if (e.deltaY < 0 && curScroll > 2) {
+        if (e.deltaY < 0 && curScroll > 5) {
           e.preventDefault();
           g2.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
           setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
           return;
         }
-        if (e.deltaY < 0 && curScroll <= 2) {
+        if (e.deltaY < 0 && curScroll <= 5) {
           e.preventDefault();
-          snapTo(g2Top - currentVh * 0.333); // Snap back to Video Divider
+          snapTo(sections[3]); // Snap back to Video Divider
           return;
         }
-        if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
+        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
           // End of Group 2 -> snap to Group 3
           e.preventDefault();
-          container.scrollTo({ top: g3Top, behavior: 'smooth' });
+          snapTo(sections[5]);
           return;
         }
+        return;
       }
 
-      // Group 3 Zone: Lock and scroll horizontally
-      if (isAtG3) {
+      // 3. Group 3 Horizontal Lock (isAtG3)
+      if (Math.abs(currentScrollTop - g3Top) < 10) {
+        if (Math.abs(currentScrollTop - g3Top) > 2) {
+          container.scrollTop = g3Top;
+        }
         const maxScroll = g3.scrollWidth - g3.clientWidth;
         const curScroll = g3.scrollLeft;
 
-        if (e.deltaY > 0 && curScroll < maxScroll - 2) {
+        if (e.deltaY > 0 && curScroll < maxScroll - 5) {
           e.preventDefault();
           g3.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
           setActiveIndex3(getSlideIndex(g3, g3.scrollLeft));
           setGroup3ScrollLeft(g3.scrollLeft);
           return;
         }
-        if (e.deltaY < 0 && curScroll > 2) {
+        if (e.deltaY < 0 && curScroll > 5) {
           e.preventDefault();
           g3.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
           setActiveIndex3(getSlideIndex(g3, g3.scrollLeft));
           setGroup3ScrollLeft(g3.scrollLeft);
           return;
         }
-        if (e.deltaY < 0 && curScroll <= 2) {
+        if (e.deltaY < 0 && curScroll <= 5) {
           e.preventDefault();
-          container.scrollTo({ top: g2Top, behavior: 'smooth' });
+          snapTo(sections[4]); // Snap back to Group 2
           return;
         }
-        if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
-          return;
+        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
+          return; // Allow natural scroll to footer/vertical section
         }
+        return;
       }
 
-      // 3. Video Divider Zone (Between Group 1 and Group 2)
-      const isInDivider = currentScrollTop >= g1Top + 50 && currentScrollTop < g2Top - 10;
-      if (isInDivider) {
+      // 3. Video Divider Snapping
+      if (currentIdx === 3) {
         e.preventDefault();
         if (e.deltaY > 0) {
-          snapTo(g2Top); // Scroll down to Group 2
+          snapTo(sections[4]); // Snap to Group 2
         } else if (e.deltaY < 0) {
-          snapTo(g1Top); // Scroll up to Group 1
+          snapTo(sections[2]); // Snap to Group 1
         }
         return;
       }
 
-      // 4. Hero/Manifesto Snapping (Before Group 1)
-      if (currentScrollTop < g1Top - 10) {
-        if (e.deltaY > 0 && currentScrollTop > g1Top - currentVh * 0.4) {
+      // 4. Hero Snapping
+      if (currentIdx === 0) {
+        if (e.deltaY > 0) {
           e.preventDefault();
-          snapTo(g1Top);
-          return;
+          snapTo(sections[1]); // Snap to Manifesto
         }
-      }
-
-      // 5. Proximity snapping for Group 3
-
-      // Scrolling down into Group 3:
-      if (e.deltaY > 0 && currentScrollTop > g3Top - currentVh * 0.6 && currentScrollTop < g3Top - 10) {
-        e.preventDefault();
-        container.scrollTo({ top: g3Top, behavior: 'smooth' });
         return;
       }
 
-      // Scrolling up from vertical section into Group 3:
-      if (e.deltaY < 0 && currentScrollTop > g3Top + 10 && currentScrollTop < g3Top + currentVh * 0.4) {
+      // 5. Manifesto Snapping
+      if (currentIdx === 1) {
         e.preventDefault();
-        container.scrollTo({ top: g3Top, behavior: 'smooth' });
+        if (e.deltaY > 0) {
+          snapTo(sections[2]); // Snap to Group 1
+        } else if (e.deltaY < 0) {
+          snapTo(sections[0]); // Snap to Hero
+        }
         return;
       }
 
-      // Scrolling up between Group 3 and Group 2:
-      if (e.deltaY < 0 && currentScrollTop > g2Top + 10 && currentScrollTop < g3Top - 10) {
-        e.preventDefault();
-        container.scrollTo({ top: g2Top, behavior: 'smooth' });
-        return;
+      // 7. Footer Snapping
+      if (currentIdx === 6) {
+        if (e.deltaY < 0 && currentScrollTop <= sections[6] + 10) {
+          e.preventDefault();
+          snapTo(sections[5]); // Snap to Group 3
+        }
       }
     };
 
@@ -556,15 +582,18 @@ export function HomepageScrollytelling({
         <section className="min-h-screen w-full flex flex-col justify-center px-6 py-16 border-b border-white/10" style={{ backgroundColor: WM.bg }}>
           <div className="max-w-md mx-auto flex flex-col gap-6 w-full">
             <span className="font-mono text-xs uppercase tracking-widest" style={{ color: WM.gold }}>// SEASON SPECIMEN</span>
-            <div className="aspect-square overflow-hidden rounded-[5px] bg-white">
-              <img src={featProduct1.image} alt={featProduct1.title} className="w-full h-full object-cover" />
+            <div 
+              onClick={() => window.location.href = getImmersivePDPUrl(featProduct1)}
+              className="aspect-square overflow-hidden rounded-[5px] bg-white cursor-pointer"
+            >
+              <img src={featProduct1.image} alt={featProduct1.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="flex flex-col gap-2">
               <h3 className="font-display-strict text-xl uppercase tracking-tighter font-extrabold" style={{ color: WM.text }}>{featProduct1.title}</h3>
               <span className="font-mono text-sm font-bold" style={{ color: WM.gold }}>{featProduct1.price}</span>
               <p className="font-body-strict text-xs opacity-70 italic mt-2 leading-relaxed">{featProduct1.specs || "1:18 Scale / Precision Collectible"}</p>
               <button
-                onClick={() => window.location.href = featProduct1.url}
+                onClick={() => window.location.href = getImmersivePDPUrl(featProduct1)}
                 className="w-full h-10 border bg-transparent font-mono text-[10px] uppercase tracking-wider font-bold transition-all mt-4 flex items-center justify-center gap-1 cursor-pointer hover:opacity-70"
                 style={{ borderColor: WM.text, color: WM.text }}
               >
@@ -686,7 +715,10 @@ export function HomepageScrollytelling({
           <div className="relative z-10 w-full h-full flex items-center justify-center px-24">
             <div className="flex gap-12 max-w-6xl w-full h-[70vh] items-center">
               {/* Image */}
-              <div className={`flex-[4] h-full rounded-[5px] overflow-hidden bg-white shadow-2xl transition-all duration-700 ${activeIndex1 >= 0 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+              <div 
+                onClick={() => window.location.href = getImmersivePDPUrl(featProduct1)}
+                className={`flex-[4] h-full rounded-[5px] overflow-hidden bg-white shadow-2xl cursor-pointer transition-all duration-700 ${activeIndex1 >= 0 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}
+              >
                 <img src={featProduct1.image} alt={featProduct1.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
               </div>
               {/* Info */}
@@ -709,7 +741,7 @@ export function HomepageScrollytelling({
                   </p>
                 </div>
                 <button
-                  onClick={() => window.location.href = featProduct1.url}
+                  onClick={() => window.location.href = getImmersivePDPUrl(featProduct1)}
                   className="w-full max-w-[240px] h-12 border bg-transparent font-mono text-[11px] uppercase tracking-wider font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-70"
                   style={{ borderColor: WM.text, color: WM.text }}
                 >
@@ -799,7 +831,7 @@ export function HomepageScrollytelling({
                   </p>
                 </div>
                 <button
-                  onClick={() => window.location.href = featProduct2.url}
+                  onClick={() => window.location.href = getImmersivePDPUrl(featProduct2)}
                   className="w-full max-w-[240px] h-12 border bg-transparent font-mono text-[11px] uppercase tracking-wider font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-70"
                   style={{ borderColor: WM.text, color: WM.text }}
                 >
@@ -807,7 +839,10 @@ export function HomepageScrollytelling({
                 </button>
               </div>
               {/* Image (right — flipped) */}
-              <div className={`flex-[4] h-full rounded-[5px] overflow-hidden bg-white shadow-2xl transition-all duration-700 delay-150 ${activeIndex2 === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
+              <div 
+                onClick={() => window.location.href = getImmersivePDPUrl(featProduct2)}
+                className={`flex-[4] h-full rounded-[5px] overflow-hidden bg-white shadow-2xl cursor-pointer transition-all duration-700 delay-150 ${activeIndex2 === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}
+              >
                 <img src={featProduct2.image} alt={featProduct2.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
               </div>
             </div>
