@@ -287,16 +287,16 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
           return;
         }
-        // End of Group 1 -> snap down to Group 2
+        // End of Group 1 -> snap down to Video Divider
         if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
           e.preventDefault();
-          container.scrollTo({ top: g2Top, behavior: 'smooth' });
+          container.scrollTo({ top: g1Top + currentVh, behavior: 'smooth' });
           return;
         }
-        // Start of Group 1 -> scroll back up vertically to Video Divider
+        // Start of Group 1 -> scroll back up vertically to Manifesto
         if (e.deltaY < 0 && curScroll <= 2) {
           e.preventDefault();
-          container.scrollTo({ top: g1Top - currentVh * 0.33, behavior: 'smooth' });
+          container.scrollTo({ top: g1Top - currentVh, behavior: 'smooth' });
           return;
         }
         return;
@@ -321,10 +321,10 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
           return;
         }
-        // Start of Group 2 -> snap back to Group 1
+        // Start of Group 2 -> snap back to Video Divider
         if (e.deltaY < 0 && curScroll <= 2) {
           e.preventDefault();
-          container.scrollTo({ top: g1Top, behavior: 'smooth' });
+          container.scrollTo({ top: g2Top - currentVh * 0.333, behavior: 'smooth' });
           return;
         }
         // End of Group 2 -> let it scroll naturally to footer
@@ -341,6 +341,13 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
         return;
       }
 
+      // Scrolling down into Group 2 (from Video Divider):
+      if (e.deltaY > 0 && currentScrollTop > g2Top - currentVh * 0.25 && currentScrollTop < g2Top - 10) {
+        e.preventDefault();
+        container.scrollTo({ top: g2Top, behavior: 'smooth' });
+        return;
+      }
+
       // Scrolling up from footer/Group 2 bottom:
       if (e.deltaY < 0 && currentScrollTop > g2Top + 10 && currentScrollTop < g2Top + currentVh * 0.4) {
         e.preventDefault();
@@ -348,8 +355,8 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
         return;
       }
 
-      // Scrolling up between Group 2 and Group 1:
-      if (e.deltaY < 0 && currentScrollTop > g1Top + 10 && currentScrollTop < g2Top - 10) {
+      // Scrolling up from Video Divider to Group 1:
+      if (e.deltaY < 0 && currentScrollTop > g1Top + 10 && currentScrollTop < g2Top - currentVh * 0.15) {
         e.preventDefault();
         container.scrollTo({ top: g1Top, behavior: 'smooth' });
         return;
@@ -440,16 +447,6 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
             </div>
           </div>
         </section>
-
-        {/* Video Strip */}
-        <div className="w-full" style={{ height: '33vh' }}>
-          <video
-            autoPlay muted loop playsInline
-            className="w-full h-full object-cover"
-            src={playlist[1] || playlist[0]}
-          />
-        </div>
-
         {/* Featured Product 1 */}
         <section className="min-h-screen w-full flex flex-col justify-center px-6 py-16 border-b border-white/10" style={{ backgroundColor: WM.bg }}>
           <div className="max-w-md mx-auto flex flex-col gap-6 w-full">
@@ -498,6 +495,14 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
             </button>
           </div>
         </section>
+        {/* Video Strip */}
+        <div className="w-full" style={{ height: '33vh' }}>
+          <video
+            autoPlay muted loop playsInline
+            className="w-full h-full object-cover"
+            src={playlist[1] || playlist[0]}
+          />
+        </div>
         <Footer />
       </div>
     );
@@ -569,15 +574,6 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
             <span>BECAUSE CARS ARE NOT OBJECTS</span>
           </div>
         </div>
-      </div>
-
-      {/* ── SECTION 3: 1/3 VIDEO DIVIDER (Vertical, 33.333vh) ───────────── */}
-      <div className="relative w-full overflow-hidden z-10" style={{ height: '33.333vh' }}>
-        <video
-          autoPlay muted loop playsInline
-          className="w-full h-full object-cover"
-          src={playlist[1] || playlist[0]}
-        />
       </div>
 
       {/* ── GROUP 1: Featured Product → Collection Grid 1 (Horizontal) ─── */}
@@ -663,6 +659,15 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           </div>
         </div>
 
+      </div>
+
+      {/* ── SECTION 3: 1/3 VIDEO DIVIDER (Vertical, 33.333vh) ───────────── */}
+      <div className="relative w-full overflow-hidden z-10" style={{ height: '33.333vh' }}>
+        <video
+          autoPlay muted loop playsInline
+          className="w-full h-full object-cover"
+          src={playlist[1] || playlist[0]}
+        />
       </div>
 
       {/* ── GROUP 2: Flipped Featured → Flipped Grid 2 (Horizontal) ─────── */}
