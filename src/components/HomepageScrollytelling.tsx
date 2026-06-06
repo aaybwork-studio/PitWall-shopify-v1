@@ -440,7 +440,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
               className="text-3xl md:text-[72px] font-normal leading-normal text-center"
               style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
             >
-              “Where every object we make is held to the same standards as the machines we obsess over.”
+              “Where every object we make is held to the<br className="hidden md:inline" /> same standards as the machines we obsess over.”
             </p>
           </div>
         </section>
@@ -564,7 +564,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
             className="text-3xl md:text-[72px] font-normal leading-normal text-center"
             style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
           >
-            “Where every object we make is held to the same standards as the machines we obsess over.”
+            “Where every object we make is held to the<br className="hidden md:inline" /> same standards as the machines we obsess over.”
           </p>
         </div>
       </div>
