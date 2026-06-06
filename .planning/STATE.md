@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-02T20:20:25.219Z"
+last_updated: "2026-06-06T10:44:26.519Z"
 progress:
-  total_phases: 3
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -59,6 +59,10 @@ Overall: 2/3 phases complete
 ---
 
 ## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 02.1 inserted after Phase 2: Redesign Hero Page (URGENT)
 
 ### Key Decisions
 
