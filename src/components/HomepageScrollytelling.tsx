@@ -251,7 +251,26 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
   useEffect(() => {
     if (isMobile) return;
 
+    const isSnapping = { current: false }; // lightweight snapping state
+    let snapTimer: any = null;
+
+    const snapTo = (top: number) => {
+      const container = containerRef.current;
+      if (!container) return;
+      isSnapping.current = true;
+      container.scrollTo({ top, behavior: 'smooth' });
+      if (snapTimer) clearTimeout(snapTimer);
+      snapTimer = setTimeout(() => {
+        isSnapping.current = false;
+      }, 700);
+    };
+
     const handleWheel = (e: WheelEvent) => {
+      if (isSnapping.current) {
+        e.preventDefault();
+        return;
+      }
+
       const container = containerRef.current;
       if (!container) return;
 
@@ -266,10 +285,13 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
       const g2Top = g2.offsetTop;
 
       // Group 1 Zone: Lock and scroll horizontally
-      const isAtG1 = Math.abs(currentScrollTop - g1Top) < 10;
-      const isAtG2 = Math.abs(currentScrollTop - g2Top) < 10;
+      const isInG1 = currentScrollTop >= g1Top - 10 && currentScrollTop < g1Top + 50;
+      const isInG2 = currentScrollTop >= g2Top - 10 && currentScrollTop < g2Top + 50;
 
-      if (isAtG1) {
+      if (isInG1) {
+        if (Math.abs(currentScrollTop - g1Top) > 1) {
+          container.scrollTop = g1Top;
+        }
         const maxScroll = g1.scrollWidth - g1.clientWidth;
         const curScroll = g1.scrollLeft;
 
@@ -290,20 +312,23 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
         // End of Group 1 -> snap down to Video Divider
         if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
           e.preventDefault();
-          container.scrollTo({ top: g1Top + currentVh, behavior: 'smooth' });
+          snapTo(g1Top + currentVh);
           return;
         }
         // Start of Group 1 -> scroll back up vertically to Manifesto
         if (e.deltaY < 0 && curScroll <= 2) {
           e.preventDefault();
-          container.scrollTo({ top: g1Top - currentVh, behavior: 'smooth' });
+          snapTo(g1Top - currentVh);
           return;
         }
         return;
       }
 
       // Group 2 Zone: Lock and scroll horizontally
-      if (isAtG2) {
+      if (isInG2) {
+        if (Math.abs(currentScrollTop - g2Top) > 1) {
+          container.scrollTop = g2Top;
+        }
         const maxScroll = g2.scrollWidth - g2.clientWidth;
         const curScroll = g2.scrollLeft;
 
@@ -324,7 +349,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
         // Start of Group 2 -> snap back to Video Divider
         if (e.deltaY < 0 && curScroll <= 2) {
           e.preventDefault();
-          container.scrollTo({ top: g2Top - currentVh * 0.333, behavior: 'smooth' });
+          snapTo(g2Top - currentVh * 0.333);
           return;
         }
         // End of Group 2 -> let it scroll naturally to footer
@@ -337,35 +362,38 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
       // Scrolling down into Group 1:
       if (e.deltaY > 0 && currentScrollTop > g1Top - currentVh * 0.6 && currentScrollTop < g1Top - 10) {
         e.preventDefault();
-        container.scrollTo({ top: g1Top, behavior: 'smooth' });
+        snapTo(g1Top);
         return;
       }
 
       // Scrolling down into Group 2 (from Video Divider):
       if (e.deltaY > 0 && currentScrollTop > g2Top - currentVh * 0.25 && currentScrollTop < g2Top - 10) {
         e.preventDefault();
-        container.scrollTo({ top: g2Top, behavior: 'smooth' });
+        snapTo(g2Top);
         return;
       }
 
       // Scrolling up from footer/Group 2 bottom:
       if (e.deltaY < 0 && currentScrollTop > g2Top + 10 && currentScrollTop < g2Top + currentVh * 0.4) {
         e.preventDefault();
-        container.scrollTo({ top: g2Top, behavior: 'smooth' });
+        snapTo(g2Top);
         return;
       }
 
       // Scrolling up from Video Divider to Group 1:
       if (e.deltaY < 0 && currentScrollTop > g1Top + 10 && currentScrollTop < g2Top - currentVh * 0.15) {
         e.preventDefault();
-        container.scrollTo({ top: g1Top, behavior: 'smooth' });
+        snapTo(g1Top);
         return;
       }
     };
 
     const el = containerRef.current;
     if (el) el.addEventListener('wheel', handleWheel, { passive: false });
-    return () => { if (el) el.removeEventListener('wheel', handleWheel); };
+    return () => {
+      if (el) el.removeEventListener('wheel', handleWheel);
+      if (snapTimer) clearTimeout(snapTimer);
+    };
   }, [isMobile]);
 
   // ── Product swap on featured slide entry ─────────────────────────────────────
