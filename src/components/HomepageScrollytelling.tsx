@@ -284,10 +284,11 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
       const g1Top = g1.offsetTop;
       const g2Top = g2.offsetTop;
 
-      // Group 1 Zone: Lock and scroll horizontally
+      // Contiguous Scroll State Machine Containment
       const isInG1 = currentScrollTop >= g1Top - 10 && currentScrollTop < g1Top + 50;
       const isInG2 = currentScrollTop >= g2Top - 10 && currentScrollTop < g2Top + 50;
 
+      // 1. Group 1 Locked Zone
       if (isInG1) {
         if (Math.abs(currentScrollTop - g1Top) > 1) {
           container.scrollTop = g1Top;
@@ -295,36 +296,32 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
         const maxScroll = g1.scrollWidth - g1.clientWidth;
         const curScroll = g1.scrollLeft;
 
-        // Scroll forward inside Group 1
         if (e.deltaY > 0 && curScroll < maxScroll - 2) {
           e.preventDefault();
           g1.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
           setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
           return;
         }
-        // Scroll backward inside Group 1
         if (e.deltaY < 0 && curScroll > 2) {
           e.preventDefault();
           g1.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
           setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
           return;
         }
-        // End of Group 1 -> snap down to Video Divider
         if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
           e.preventDefault();
-          snapTo(g1Top + currentVh);
+          snapTo(g1Top + currentVh); // Snap to Video Divider
           return;
         }
-        // Start of Group 1 -> scroll back up vertically to Manifesto
         if (e.deltaY < 0 && curScroll <= 2) {
           e.preventDefault();
-          snapTo(g1Top - currentVh);
+          snapTo(g1Top - currentVh); // Snap back to Manifesto
           return;
         }
         return;
       }
 
-      // Group 2 Zone: Lock and scroll horizontally
+      // 2. Group 2 Locked Zone
       if (isInG2) {
         if (Math.abs(currentScrollTop - g2Top) > 1) {
           container.scrollTop = g2Top;
@@ -332,59 +329,56 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
         const maxScroll = g2.scrollWidth - g2.clientWidth;
         const curScroll = g2.scrollLeft;
 
-        // Scroll forward inside Group 2
         if (e.deltaY > 0 && curScroll < maxScroll - 2) {
           e.preventDefault();
           g2.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
           setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
           return;
         }
-        // Scroll backward inside Group 2
         if (e.deltaY < 0 && curScroll > 2) {
           e.preventDefault();
           g2.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
           setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
           return;
         }
-        // Start of Group 2 -> snap back to Video Divider
         if (e.deltaY < 0 && curScroll <= 2) {
           e.preventDefault();
-          snapTo(g2Top - currentVh * 0.333);
+          snapTo(g2Top - currentVh * 0.333); // Snap back to Video Divider
           return;
         }
-        // End of Group 2 -> let it scroll naturally to footer
         if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
+          return; // Allow natural scroll to footer
+        }
+      }
+
+      // 3. Video Divider Zone (Between Group 1 and Group 2)
+      const isInDivider = currentScrollTop >= g1Top + 50 && currentScrollTop < g2Top - 10;
+      if (isInDivider) {
+        e.preventDefault();
+        if (e.deltaY > 0) {
+          snapTo(g2Top); // Scroll down to Group 2
+        } else if (e.deltaY < 0) {
+          snapTo(g1Top); // Scroll up to Group 1
+        }
+        return;
+      }
+
+      // 4. Hero/Manifesto Snapping (Before Group 1)
+      if (currentScrollTop < g1Top - 10) {
+        if (e.deltaY > 0 && currentScrollTop > g1Top - currentVh * 0.4) {
+          e.preventDefault();
+          snapTo(g1Top);
           return;
         }
       }
 
-      // Snapping transitions while scrolling vertically:
-      // Scrolling down into Group 1:
-      if (e.deltaY > 0 && currentScrollTop > g1Top - currentVh * 0.6 && currentScrollTop < g1Top - 10) {
-        e.preventDefault();
-        snapTo(g1Top);
-        return;
-      }
-
-      // Scrolling down into Group 2 (from Video Divider):
-      if (e.deltaY > 0 && currentScrollTop > g2Top - currentVh * 0.25 && currentScrollTop < g2Top - 10) {
-        e.preventDefault();
-        snapTo(g2Top);
-        return;
-      }
-
-      // Scrolling up from footer/Group 2 bottom:
-      if (e.deltaY < 0 && currentScrollTop > g2Top + 10 && currentScrollTop < g2Top + currentVh * 0.4) {
-        e.preventDefault();
-        snapTo(g2Top);
-        return;
-      }
-
-      // Scrolling up from Video Divider to Group 1:
-      if (e.deltaY < 0 && currentScrollTop > g1Top + 10 && currentScrollTop < g2Top - currentVh * 0.15) {
-        e.preventDefault();
-        snapTo(g1Top);
-        return;
+      // 5. Footer Snapping (After Group 2)
+      if (currentScrollTop >= g2Top + 50) {
+        if (e.deltaY < 0 && currentScrollTop < g2Top + currentVh * 0.4) {
+          e.preventDefault();
+          snapTo(g2Top);
+          return;
+        }
       }
     };
 
