@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { VideoBackground } from './VideoBackground';
 import { CollectionCard, Product } from './CollectionGrid';
 import { ArrowUpRight, ChevronRight } from 'lucide-react';
+import { Footer } from './Footer';
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 const WM = {
@@ -161,7 +162,8 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
   const tickerDirection = useRef(1);
   const [featProduct1, setFeatProduct1] = useState<Product>(products[0] || mockProducts[0]);
   const [featProduct2, setFeatProduct2] = useState<Product>(products[4] || mockProducts[4]);
-  const [manifestoVisible, setManifestoVisible] = useState(false);
+  const [scrollTop, setScrollTop] = useState(0);
+  const [vh, setVh] = useState(window.innerHeight);
 
   useEffect(() => {
     if (products && products.length > 0) {
@@ -172,7 +174,10 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
 
   // ── Responsive ──────────────────────────────────────────────────────────────
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
+    const check = () => {
+      setIsMobile(window.innerWidth < 768);
+      setVh(window.innerHeight);
+    };
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
@@ -214,74 +219,127 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
     return () => window.removeEventListener('wheel', onWheel);
   }, []);
 
+  // ── Scroll Listener for scrollytelling state ───────────────────────────────
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      setScrollTop(container.scrollTop);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   // ── Main wheel handler — single scrollLeft system ────────────────────────────
   useEffect(() => {
     if (isMobile) return;
 
     const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
       const container = containerRef.current;
       if (!container) return;
 
-      const scrollTop = container.scrollTop;
-      const vh = container.clientHeight;
+      const currentScrollTop = container.scrollTop;
+      const currentVh = container.clientHeight;
 
-      // ── Group 1 ─────────────────────────────────────────────────────────
-      if (scrollTop < vh / 2) {
-        const g1 = group1Ref.current;
-        if (!g1) return;
+      const g1 = group1Ref.current;
+      const g2 = group2Ref.current;
+      if (!g1 || !g2) return;
+
+      const g1Top = g1.offsetTop;
+      const g2Top = g2.offsetTop;
+
+      // Group 1 Zone: Lock and scroll horizontally
+      const isAtG1 = Math.abs(currentScrollTop - g1Top) < 10;
+      const isAtG2 = Math.abs(currentScrollTop - g2Top) < 10;
+
+      if (isAtG1) {
         const maxScroll = g1.scrollWidth - g1.clientWidth;
         const curScroll = g1.scrollLeft;
 
-        // Scroll forward within Group 1
+        // Scroll forward inside Group 1
         if (e.deltaY > 0 && curScroll < maxScroll - 2) {
+          e.preventDefault();
           g1.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
           setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
           return;
         }
-        // Scroll backward within Group 1
+        // Scroll backward inside Group 1
         if (e.deltaY < 0 && curScroll > 2) {
+          e.preventDefault();
           g1.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
           setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
           return;
         }
-        // End of Group 1 → snap down to Group 2
+        // End of Group 1 -> snap down to Group 2
         if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
-          container.scrollTo({ top: vh, behavior: 'smooth' });
+          e.preventDefault();
+          container.scrollTo({ top: g2Top, behavior: 'smooth' });
+          return;
+        }
+        // Start of Group 1 -> scroll back up vertically to Video Divider
+        if (e.deltaY < 0 && curScroll <= 2) {
+          e.preventDefault();
+          container.scrollTo({ top: g1Top - currentVh * 0.33, behavior: 'smooth' });
           return;
         }
         return;
       }
 
-      // ── Group 2 ─────────────────────────────────────────────────────────
-      if (scrollTop >= vh / 2) {
-        const g2 = group2Ref.current;
-        if (!g2) return;
+      // Group 2 Zone: Lock and scroll horizontally
+      if (isAtG2) {
         const maxScroll = g2.scrollWidth - g2.clientWidth;
         const curScroll = g2.scrollLeft;
 
-        // Scroll forward within Group 2
+        // Scroll forward inside Group 2
         if (e.deltaY > 0 && curScroll < maxScroll - 2) {
+          e.preventDefault();
           g2.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
           setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
           return;
         }
-        // Scroll backward within Group 2
+        // Scroll backward inside Group 2
         if (e.deltaY < 0 && curScroll > 2) {
+          e.preventDefault();
           g2.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
           setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
           return;
         }
-        // Start of Group 2 scrolling left → snap back to Group 1
+        // Start of Group 2 -> snap back to Group 1
         if (e.deltaY < 0 && curScroll <= 2) {
-          container.scrollTo({ top: 0, behavior: 'smooth' });
+          e.preventDefault();
+          container.scrollTo({ top: g1Top, behavior: 'smooth' });
           return;
         }
-        // End of Group 2 → scroll container down to footer
+        // End of Group 2 -> let it scroll naturally to footer
         if (e.deltaY > 0 && curScroll >= maxScroll - 2) {
-          container.scrollBy({ top: 80, behavior: 'smooth' });
           return;
         }
+      }
+
+      // Snapping transitions while scrolling vertically:
+      // Scrolling down into Group 1:
+      if (e.deltaY > 0 && currentScrollTop > g1Top - currentVh * 0.6 && currentScrollTop < g1Top - 10) {
+        e.preventDefault();
+        container.scrollTo({ top: g1Top, behavior: 'smooth' });
+        return;
+      }
+
+      // Scrolling up from footer/Group 2 bottom:
+      if (e.deltaY < 0 && currentScrollTop > g2Top + 10 && currentScrollTop < g2Top + currentVh * 0.4) {
+        e.preventDefault();
+        container.scrollTo({ top: g2Top, behavior: 'smooth' });
+        return;
+      }
+
+      // Scrolling up between Group 2 and Group 1:
+      if (e.deltaY < 0 && currentScrollTop > g1Top + 10 && currentScrollTop < g2Top - 10) {
+        e.preventDefault();
+        container.scrollTo({ top: g1Top, behavior: 'smooth' });
+        return;
       }
     };
 
@@ -290,13 +348,6 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
     return () => { if (el) el.removeEventListener('wheel', handleWheel); };
   }, [isMobile]);
 
-  // ── Slide visibility triggers ────────────────────────────────────────────────
-  useEffect(() => {
-    if (isMobile) return;
-    // Manifesto (slide index 1 in group 1)
-    setManifestoVisible(activeIndex1 >= 1);
-  }, [activeIndex1, isMobile]);
-
   // ── Product swap on featured slide entry ─────────────────────────────────────
   const getRandomProduct = (exclude: Product | null): Product => {
     const pool = products.filter(p => !exclude || p.url !== exclude.url);
@@ -304,7 +355,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
   };
 
   useEffect(() => {
-    if (activeIndex1 === 2) setFeatProduct1(prev => getRandomProduct(prev));
+    if (activeIndex1 === 0) setFeatProduct1(prev => getRandomProduct(prev));
   }, [activeIndex1]);
 
   useEffect(() => {
@@ -330,10 +381,31 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
         <section className="h-screen w-full relative flex items-center justify-center border-b border-white/10">
           <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
           <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.52)' }} />
-          <div className="relative z-20 text-center px-4">
-            <p className="hero-tagline uppercase tracking-widest text-[11px] font-mono mt-4" style={{ color: WM.gold }}>
-              Because cars are not objects
-            </p>
+          <div className="relative z-20 text-center px-4 w-full h-full flex flex-col items-center justify-center">
+            {/* Tagline 1 on Mobile */}
+            <div 
+              className="absolute transition-opacity duration-300 px-4"
+              style={{
+                opacity: Math.max(0, 1 - (scrollTop / (vh * 0.4))),
+              }}
+            >
+              <p className="hero-tagline uppercase tracking-widest text-xs font-mono" style={{ color: WM.gold }}>
+                Because cars are not objects
+              </p>
+            </div>
+
+            {/* Tagline 2 on Mobile */}
+            <div 
+              className="absolute transition-opacity duration-300 w-full px-4"
+              style={{
+                bottom: '70px',
+                opacity: Math.min(1, Math.max(0, (scrollTop - vh * 0.15) / (vh * 0.35))),
+              }}
+            >
+              <p className="hero-tagline uppercase tracking-widest text-xs font-mono text-center" style={{ color: WM.gold }}>
+                and life has always been a race.
+              </p>
+            </div>
           </div>
           <HeroTicker offset={tickerOffset} />
         </section>
@@ -386,7 +458,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           </div>
         </section>
 
-        {/* Collection Grid (mobile: simple 2-col) */}
+        {/* Collection Grid */}
         <section className="min-h-screen w-full px-4 py-16 flex flex-col gap-8" style={{ backgroundColor: WM.bg }}>
           <div className="max-w-md mx-auto w-full flex flex-col gap-6">
             <span className="font-mono text-xs uppercase tracking-widest" style={{ color: WM.gold }}>// THE COLLECTION</span>
@@ -412,6 +484,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
             </button>
           </div>
         </section>
+        <Footer />
       </div>
     );
   }
@@ -422,73 +495,91 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
   return (
     <div ref={containerRef} className="homepage-scroll-container">
 
-      {/* ── GROUP 1: Hero → Manifesto → Featured → Grid 1 ─────────────────── */}
-      <div ref={group1Ref} id="scroll-group-1" className="horizontal-scroll-group">
+      {/* ── Fixed Video Background (For Hero & Manifesto scroll zone) ────────── */}
+      {scrollTop < (vh * 2.3) && (
+        <div className="fixed inset-0 z-0 pointer-events-none transition-opacity duration-500">
+          <VideoBackground playlist={playlist} />
+          <div className="absolute inset-0" style={{ backgroundColor: 'rgba(15,12,9,0.58)' }} />
+        </div>
+      )}
 
-        {/* ── Slide 1: Hero ────────────────────────────────────────────────── */}
-        <div className="horizontal-slide">
-          <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
-          <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.58)' }} />
-          <div className="relative z-20 text-center">
-            <p className="hero-tagline uppercase tracking-widest text-sm font-mono mt-3" style={{ color: WM.gold }}>
-              Because cars are not objects
-            </p>
-          </div>
-          <HeroTicker offset={tickerOffset} />
+      {/* ── SECTION 1: HERO (Vertical, 100vh) ────────────────────────────── */}
+      <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
+        {/* Tagline 1: "Because cars are not objects" (Centered, fades out as we scroll) */}
+        <div 
+          className="absolute flex items-center justify-center transition-all duration-300"
+          style={{
+            opacity: Math.max(0, 1 - (scrollTop / (vh * 0.4))),
+            transform: `translateY(${-scrollTop * 0.25}px)`
+          }}
+        >
+          <p className="hero-tagline uppercase tracking-widest text-sm font-mono text-center px-4" style={{ color: WM.gold }}>
+            Because cars are not objects
+          </p>
         </div>
 
-        {/* ── Slide 2: Manifesto ───────────────────────────────────────────── */}
-        <div className="horizontal-slide" style={{ flexDirection: 'column', justifyContent: 'flex-start' }}>
-          {/* Video background (continues from hero) */}
-          <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
-          <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.55)' }} />
+        {/* Tagline 2: "and life has always been a race." (Fades in, placed 35px above ticker) */}
+        <div 
+          className="absolute w-full flex justify-center transition-all duration-300"
+          style={{
+            bottom: '75px', // 35px above bottom ticker
+            opacity: Math.min(1, Math.max(0, (scrollTop - vh * 0.15) / (vh * 0.35))),
+          }}
+        >
+          <p className="hero-tagline uppercase tracking-widest text-sm font-mono text-center px-4" style={{ color: WM.gold }}>
+            and life has always been a race.
+          </p>
+        </div>
 
-          {/* Manifesto text — takes top 2/3 */}
-          <div
-            className="relative z-20 flex-1 flex items-center justify-center px-16 w-full"
-            style={{ minHeight: '66.666vh' }}
+        <HeroTicker offset={tickerOffset} />
+      </div>
+
+      {/* ── SECTION 2: MANIFESTO (Vertical, 100vh) ───────────────────────── */}
+      <div className="relative w-full h-screen flex items-center justify-center px-16 overflow-hidden z-10">
+        <div
+          className="max-w-2xl text-center"
+          style={{
+            opacity: Math.min(1, Math.max(0, (scrollTop - vh * 0.7) / (vh * 0.4))),
+            transform: `translateY(${Math.max(0, 40 - ((scrollTop - vh * 0.7) / (vh * 0.4)) * 40)}px)`,
+            transition: 'opacity 0.5s ease, transform 0.5s ease'
+          }}
+        >
+          <p
+            className="text-4xl italic leading-relaxed"
+            style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
           >
-            <div
-              className="max-w-2xl text-center"
-              style={{
-                opacity: manifestoVisible ? 1 : 0,
-                transform: manifestoVisible ? 'translateY(0)' : 'translateY(40px)',
-                transition: 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
-            >
-              <p
-                className="text-4xl italic leading-relaxed"
-                style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
-              >
-                "Where every object we make is held to the same standards as the machines we obsess over."
-              </p>
-              <div className="border-t border-white/10 pt-4 mt-8 font-mono text-[9px] opacity-40 flex justify-between uppercase tracking-widest">
-                <span>PITWALL ENGINEERING</span>
-                <span>BECAUSE CARS ARE NOT OBJECTS</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Video strip element — bottom 1/3 */}
-          <div className="manifesto-video-strip">
-            <video
-              autoPlay muted loop playsInline
-              src={playlist[1] || playlist[0]}
-            />
+            "Where every object we make is held to the same standards as the machines we obsess over."
+          </p>
+          <div className="border-t border-white/10 pt-4 mt-8 font-mono text-[9px] opacity-40 flex justify-between uppercase tracking-widest">
+            <span>PITWALL ENGINEERING</span>
+            <span>BECAUSE CARS ARE NOT OBJECTS</span>
           </div>
         </div>
+      </div>
 
-        {/* ── Slide 3: Featured Product ────────────────────────────────────── */}
+      {/* ── SECTION 3: 1/3 VIDEO DIVIDER (Vertical, 33.333vh) ───────────── */}
+      <div className="relative w-full overflow-hidden z-10" style={{ height: '33.333vh' }}>
+        <video
+          autoPlay muted loop playsInline
+          className="w-full h-full object-cover"
+          src={playlist[1] || playlist[0]}
+        />
+      </div>
+
+      {/* ── GROUP 1: Featured Product → Collection Grid 1 (Horizontal) ─── */}
+      <div ref={group1Ref} id="scroll-group-1" className="horizontal-scroll-group z-10" style={{ backgroundColor: WM.bg }}>
+
+        {/* Featured Product */}
         <div className="horizontal-slide" style={{ backgroundColor: WM.bg }}>
           <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
           <div className="relative z-10 w-full h-full flex items-center justify-center px-24">
             <div className="flex gap-12 max-w-6xl w-full h-[70vh] items-center">
               {/* Image */}
-              <div className={`flex-[4] h-full rounded-[5px] overflow-hidden bg-white shadow-2xl transition-all duration-700 ${activeIndex1 >= 2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+              <div className={`flex-[4] h-full rounded-[5px] overflow-hidden bg-white shadow-2xl transition-all duration-700 ${activeIndex1 >= 0 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
                 <img src={featProduct1.image} alt={featProduct1.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
               </div>
               {/* Info */}
-              <div className={`flex-[3] flex flex-col justify-between h-full py-6 transition-all duration-700 delay-150 ${activeIndex1 >= 2 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`} style={{ color: WM.text }}>
+              <div className={`flex-[3] flex flex-col justify-between h-full py-6 transition-all duration-700 delay-150 ${activeIndex1 >= 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`} style={{ color: WM.text }}>
                 <div className="flex flex-col gap-4">
                   <span className="font-mono text-xs uppercase tracking-widest" style={{ color: WM.gold }}>
                     // SEASON SPECIMEN
@@ -499,7 +590,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
                   <div className="border-t border-b border-white/10 py-3 my-2 flex items-baseline justify-between font-mono">
                     <span className="text-[10px] opacity-45 uppercase">PRICE:</span>
                     <span className="text-2xl font-bold" style={{ color: WM.gold }}>
-                      {activeIndex1 >= 2 ? <AnimatedPrice priceString={featProduct1.price} /> : featProduct1.price}
+                      {activeIndex1 >= 0 ? <AnimatedPrice priceString={featProduct1.price} /> : featProduct1.price}
                     </span>
                   </div>
                   <p className="font-body-strict text-sm opacity-60 italic leading-relaxed">
@@ -518,40 +609,40 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           </div>
         </div>
 
-        {/* ── Slide 4: Collection Grid 1 (wider than viewport) ────────────── */}
+        {/* Collection Grid 1 (wider than viewport) */}
         <div className="horizontal-slide grid-slide-wide" style={{ backgroundColor: WM.bg }}>
           <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
           <div className="relative z-10 h-full flex items-center px-12">
             <div className="grid-cols-custom-1">
               {/* Col 1: two stacked */}
               <div className="flex flex-col gap-4 h-full justify-between">
-                <CollectionCard product={products[0]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 3 ? 'reveal-active' : ''}`} />
-                <CollectionCard product={products[1]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 3 ? 'reveal-active' : ''}`} style={{ transitionDelay: '100ms' } as React.CSSProperties} />
+                <CollectionCard product={products[0]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} />
+                <CollectionCard product={products[1]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '100ms' } as React.CSSProperties} />
               </div>
               {/* Col 2: two stacked */}
               <div className="flex flex-col gap-4 h-full justify-between">
-                <CollectionCard product={products[2]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 3 ? 'reveal-active' : ''}`} style={{ transitionDelay: '150ms' } as React.CSSProperties} />
-                <CollectionCard product={products[3]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 3 ? 'reveal-active' : ''}`} style={{ transitionDelay: '200ms' } as React.CSSProperties} />
+                <CollectionCard product={products[2]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '150ms' } as React.CSSProperties} />
+                <CollectionCard product={products[3]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '200ms' } as React.CSSProperties} />
               </div>
               {/* Col 3: tall + title card */}
               <div className="flex flex-col gap-4 h-full justify-between">
-                <div className={`flex-[7] min-h-0 reveal-dashboard-item ${activeIndex1 >= 3 ? 'reveal-active' : ''}`} style={{ transitionDelay: '250ms' } as React.CSSProperties}>
+                <div className={`flex-[7] min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '250ms' } as React.CSSProperties}>
                   <CollectionCard product={products[4]} className="w-full h-full" isTall={true} />
                 </div>
-                <div className={`flex-[3] min-h-0 reveal-dashboard-item ${activeIndex1 >= 3 ? 'reveal-active' : ''}`} style={{ transitionDelay: '300ms' } as React.CSSProperties}>
+                <div className={`flex-[3] min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '300ms' } as React.CSSProperties}>
                   <DesignedTitleCard title="chassis" unit="01" isYellow={true} subtitle="PITWALL 1:18 SCALE" />
                 </div>
               </div>
               {/* Col 4: large + two small */}
               <div className="flex flex-col gap-4 h-full justify-between">
-                <CollectionCard product={products[5]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 3 ? 'reveal-active' : ''}`} style={{ transitionDelay: '350ms' } as React.CSSProperties} />
+                <CollectionCard product={products[5]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '350ms' } as React.CSSProperties} />
                 <div className="flex-[1] flex gap-4 min-h-0">
-                  <CollectionCard product={products[6]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 3 ? 'reveal-active' : ''}`} style={{ transitionDelay: '400ms' } as React.CSSProperties} />
-                  <CollectionCard product={products[7]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 3 ? 'reveal-active' : ''}`} style={{ transitionDelay: '450ms' } as React.CSSProperties} />
+                  <CollectionCard product={products[6]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '400ms' } as React.CSSProperties} />
+                  <CollectionCard product={products[7]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '450ms' } as React.CSSProperties} />
                 </div>
               </div>
               {/* Col 5: tall product */}
-              <div className={`h-full reveal-dashboard-item ${activeIndex1 >= 3 ? 'reveal-active' : ''}`} style={{ transitionDelay: '500ms' } as React.CSSProperties}>
+              <div className={`h-full reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '500ms' } as React.CSSProperties}>
                 <CollectionCard product={products[8]} className="w-full h-full" isTall={true} />
               </div>
             </div>
@@ -560,10 +651,10 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
 
       </div>
 
-      {/* ── GROUP 2: Flipped Featured → Flipped Grid 2 ─────────────────────── */}
-      <div ref={group2Ref} id="scroll-group-2" className="horizontal-scroll-group">
+      {/* ── GROUP 2: Flipped Featured → Flipped Grid 2 (Horizontal) ─────── */}
+      <div ref={group2Ref} id="scroll-group-2" className="horizontal-scroll-group z-10" style={{ backgroundColor: WM.bg2 }}>
 
-        {/* ── Slide 5: Flipped Featured Product ────────────────────────────── */}
+        {/* Flipped Featured Product */}
         <div className="horizontal-slide" style={{ backgroundColor: WM.bg2 }}>
           <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
           <div className="relative z-10 w-full h-full flex items-center justify-center px-24">
@@ -603,7 +694,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           </div>
         </div>
 
-        {/* ── Slide 6: Flipped Collection Grid 2 (wider than viewport) ────── */}
+        {/* Flipped Collection Grid 2 (wider than viewport) */}
         <div className="horizontal-slide grid-slide-wide" style={{ backgroundColor: WM.bg2 }}>
           <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
           <div className="relative z-10 h-full flex items-center px-12">
@@ -644,6 +735,9 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
         </div>
 
       </div>
+
+      {/* ── FOOTER ────────────────────────────────────────────────────────── */}
+      <Footer />
     </div>
   );
 }
