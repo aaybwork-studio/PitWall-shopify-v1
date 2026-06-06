@@ -437,7 +437,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.52)' }} />
           <div className="relative z-20 max-w-4xl mx-auto w-full text-center">
             <p
-              className="text-3xl md:text-[72px] font-normal leading-normal text-center"
+              className="text-3xl md:text-[54px] font-normal leading-normal text-center"
               style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
             >
               “Where every object we make is held to the<br className="hidden md:inline" /> same standards as the machines we obsess over.”
@@ -561,7 +561,7 @@ export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackIm
           }}
         >
           <p
-            className="text-3xl md:text-[72px] font-normal leading-normal text-center"
+            className="text-3xl md:text-[54px] font-normal leading-normal text-center"
             style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
           >
             “Where every object we make is held to the<br className="hidden md:inline" /> same standards as the machines we obsess over.”
