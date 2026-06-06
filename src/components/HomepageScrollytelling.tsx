@@ -120,9 +120,21 @@ interface HomepageScrollytellingProps {
   productsJson: string;
   videoPlaylist: string;
   fallbackImages?: Record<string, string>;
+  aboutHeading?: string;
+  foundingStory?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  stat1Value?: string;
+  stat1Label?: string;
+  stat2Value?: string;
+  stat2Label?: string;
+  stat3Value?: string;
+  stat3Label?: string;
+  brandParagraph?: string;
+  exploreCta?: string;
 }
 
-export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackImages = {} }: HomepageScrollytellingProps) {
+export function HomepageScrollytelling({ productsJson, videoPlaylist, fallbackImages = {}, aboutHeading: _aboutHeading = 'ABOUT US', foundingStory: _foundingStory = 'Pitwall was born from obsession. We build objects that earn their place alongside the machines we worship.', ctaLabel: _ctaLabel = 'OUR STORY', ctaUrl: _ctaUrl = '/pages/about', stat1Value: _stat1Value = 'ZERO', stat1Label: _stat1Label = 'COMPROMISE', stat2Value: _stat2Value = 'ONE', stat2Label: _stat2Label = 'PURSUIT', stat3Value: _stat3Value = 'INFINITE', stat3Label: _stat3Label = 'PRECISION', brandParagraph: _brandParagraph = 'Where every object we make is held to the same standards as the machines we obsess over.', exploreCta: _exploreCta = 'EXPLORE OUR STORY' }: HomepageScrollytellingProps) {
   // ── Products ────────────────────────────────────────────────────────────────
   const products: Product[] = React.useMemo(() => {
     let parsed: Product[] = [];
