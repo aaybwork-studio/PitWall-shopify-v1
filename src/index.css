@@ -705,6 +705,128 @@ html:not(.homepage-scrollytelling-active) body {
   will-change: transform;
 }
 
+/* ── Group 3: continuous "drive" scene ─────────────────────────────── */
+.group3-stage { position: relative; }
+
+/* Invisible horizontal scrubber — provides scroll distance, no visuals */
+.g3-track {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: transparent;
+}
+.g3-track .horizontal-slide { background: transparent; }
+
+/* Parallax giant wordmark backdrop */
+.g3-wordmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: clamp(140px, 26vw, 440px);
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  opacity: 0.05;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+}
+
+/* Parallax telemetry — over-wide so drift never reveals edges */
+.g3-telemetry {
+  position: absolute;
+  top: 0;
+  left: -15%;
+  width: 130%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  will-change: transform;
+}
+
+/* Continuous road + speed dashes */
+.g3-road {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 20%;
+  height: 2px;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+.g3-road-line { position: absolute; inset: 0; opacity: 0.14; }
+.g3-road-dashes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 320%;
+  opacity: 0.55;
+  will-change: transform;
+}
+
+/* The single car */
+.g3-car {
+  position: absolute;
+  left: 0;
+  bottom: 21%;
+  width: 46vw;
+  max-width: 680px;
+  height: auto;
+  pointer-events: none;
+  z-index: 3;
+  will-change: transform;
+}
+
+/* Foreground content */
+.g3-fg-label {
+  position: absolute;
+  top: 2.25rem;
+  left: 2.25rem;
+  z-index: 4;
+  pointer-events: none;
+}
+.g3-story {
+  position: absolute;
+  top: 50%;
+  right: 8vw;
+  max-width: 26rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  z-index: 4;
+}
+.g3-cta {
+  width: 100%;
+  max-width: 240px;
+  height: 3rem;
+  border: 1px solid;
+  background: transparent;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+.g3-cta:hover { opacity: 0.7; }
+.g3-hint {
+  position: absolute;
+  bottom: 2rem;
+  right: 2.5rem;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  z-index: 4;
+  pointer-events: none;
+}
+
 /* Manifesto video strip at bottom of slide */
 .manifesto-video-strip {
   position: absolute;

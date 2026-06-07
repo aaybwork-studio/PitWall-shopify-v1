@@ -3,6 +3,7 @@ import { VideoBackground } from './VideoBackground';
 import { CollectionCard, Product } from './CollectionGrid';
 import { ArrowUpRight, ChevronRight } from 'lucide-react';
 import { Footer } from './Footer';
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'motion/react';
 
 function getImmersivePDPUrl(product: Product): string {
   const title = product.title.toLowerCase();
@@ -239,13 +240,15 @@ export function HomepageScrollytelling({
   const group1Ref = useRef<HTMLDivElement>(null);
   const group2Ref = useRef<HTMLDivElement>(null);
   const group3Ref = useRef<HTMLDivElement>(null);
+  const group3StageRef = useRef<HTMLDivElement>(null);
   const tickerItemRef = useRef<HTMLDivElement>(null);
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [activeIndex1, setActiveIndex1] = useState(0);
   const [activeIndex2, setActiveIndex2] = useState(0);
-  const [activeIndex3, setActiveIndex3] = useState(0);
-  const [group3ScrollLeft, setGroup3ScrollLeft] = useState(0);
+  // Group 3 scroll progress (0→1) as a motion value — drives the drive-scene
+  // directly from the rAF loop, so scroll animation never re-renders React.
+  const progressMV = useMotionValue(0);
   const [isMobile, setIsMobile] = useState(false);
   const [tickerOffset, setTickerOffset] = useState(0);
   const tickerVelocity = useRef(1.0);
@@ -349,6 +352,30 @@ export function HomepageScrollytelling({
       }, 700);
     };
 
+    // ── Group 3 smooth horizontal scrubber (rAF lerp for flowing motion) ──
+    let g3Target = 0;
+    let g3RafId: number | null = null;
+    const syncProgress = (g3: HTMLDivElement) => {
+      const max = Math.max(1, g3.scrollWidth - g3.clientWidth);
+      progressMV.set(Math.min(1, Math.max(0, g3.scrollLeft / max)));
+    };
+    const g3Lerp = () => {
+      const g3 = group3Ref.current;
+      if (!g3) { g3RafId = null; return; }
+      const cur = g3.scrollLeft;
+      const diff = g3Target - cur;
+      if (Math.abs(diff) < 0.4) {
+        g3.scrollLeft = g3Target;
+        syncProgress(g3);
+        g3RafId = null;
+        return;
+      }
+      g3.scrollLeft = cur + diff * 0.16;
+      syncProgress(g3);
+      g3RafId = requestAnimationFrame(g3Lerp);
+    };
+    const startG3Lerp = () => { if (g3RafId == null) g3RafId = requestAnimationFrame(g3Lerp); };
+
     const handleWheel = (e: WheelEvent) => {
       if (isSnapping.current) {
         e.preventDefault();
@@ -365,7 +392,7 @@ export function HomepageScrollytelling({
       const vh = container.clientHeight;
       const g1Top = g1.offsetTop;
       const g2Top = g2.offsetTop;
-      const g3Top = g3.offsetTop;
+      const g3Top = group3StageRef.current ? group3StageRef.current.offsetTop : g3.offsetTop;
 
       // Define target scroll heights for the 7 states
       const sections = [
@@ -456,35 +483,36 @@ export function HomepageScrollytelling({
         return;
       }
 
-      // 3. Group 3 Horizontal Lock (isAtG3)
+      // 3. Group 3 Horizontal Lock — smooth scrubber drives the continuous drive-scene
       if (Math.abs(currentScrollTop - g3Top) < 10) {
         if (Math.abs(currentScrollTop - g3Top) > 2) {
           container.scrollTop = g3Top;
         }
         const maxScroll = g3.scrollWidth - g3.clientWidth;
+        if (g3RafId == null) g3Target = g3.scrollLeft; // resync target when idle
         const curScroll = g3.scrollLeft;
 
         if (e.deltaY > 0 && curScroll < maxScroll - 5) {
           e.preventDefault();
-          g3.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
-          setActiveIndex3(getSlideIndex(g3, g3.scrollLeft));
-          setGroup3ScrollLeft(g3.scrollLeft);
+          g3Target = Math.min(maxScroll, g3Target + e.deltaY * 0.9);
+          startG3Lerp();
           return;
         }
         if (e.deltaY < 0 && curScroll > 5) {
           e.preventDefault();
-          g3.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
-          setActiveIndex3(getSlideIndex(g3, g3.scrollLeft));
-          setGroup3ScrollLeft(g3.scrollLeft);
+          g3Target = Math.max(0, g3Target + e.deltaY * 0.9);
+          startG3Lerp();
           return;
         }
         if (e.deltaY < 0 && curScroll <= 5) {
           e.preventDefault();
+          g3Target = 0;
           snapTo(sections[4]); // Snap back to Group 2
           return;
         }
         if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
-          return; // Allow natural scroll to footer/vertical section
+          g3Target = maxScroll;
+          return; // Release to vertical (stats/footer)
         }
         return;
       }
@@ -556,6 +584,7 @@ export function HomepageScrollytelling({
     return () => {
       if (el) el.removeEventListener('wheel', handleWheel);
       if (snapTimer) clearTimeout(snapTimer);
+      if (g3RafId != null) cancelAnimationFrame(g3RafId);
     };
   }, [isMobile]);
 
@@ -582,20 +611,33 @@ export function HomepageScrollytelling({
     return () => clearInterval(t);
   }, []);
 
-  // ── Group 3 car animation formula ───────────────────────────────────────────
-  const [group3MaxScroll, setGroup3MaxScroll] = useState(1);
-  useEffect(() => {
-    const el = group3Ref.current;
-    if (!el) return;
-    const update = () => setGroup3MaxScroll(Math.max(1, el.scrollWidth - el.clientWidth));
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-  const rawProgress = group3ScrollLeft / Math.max(1, group3MaxScroll);
-  const easedProgress = 1 - Math.pow(1 - rawProgress, 1.5);
-  const carX = -30 + easedProgress * 36; // vw units: -30vw (off-screen left) → +6vw (resting)
+  // ── Group 3 car animation ───────────────────────────────────────────────────
+  // Spring-smoothed scroll progress → one continuous, flowing drive scene.
+  // progressMV is set live inside the rAF scrubber (see handleWheel), and reads
+  // scrollWidth/clientWidth fresh each frame, so it is resize-safe with no
+  // stale-ref or first-paint glitch.
+  const driveProgress = useSpring(progressMV, { stiffness: 110, damping: 30, mass: 0.7 });
+
+  // Single car: travels off-screen-left → resting, with subtle bob + settle lean
+  const carXvw = useTransform(driveProgress, [0, 1], [-30, 6]);
+  const carBobVh = useTransform(driveProgress, [0, 0.45, 0.75, 1], [0.8, -0.5, 0.4, 0]);
+  const carLeanDeg = useTransform(driveProgress, [0, 0.12, 0.9, 1], [-2.2, 0, 0, 0.5]);
+  const carTransform = useMotionTemplate`translate3d(${carXvw}vw, ${carBobVh}vh, 0) rotate(${carLeanDeg}deg)`;
+
+  // Parallax depth layers (background drifts slower, road dashes faster → speed)
+  const wordmarkX = useTransform(driveProgress, [0, 1], [10, -22]);
+  const wordmarkTransform = useMotionTemplate`translate3d(calc(-50% + ${wordmarkX}vw), -50%, 0)`;
+  const telemetryX = useTransform(driveProgress, [0, 1], [6, -10]);
+  const telemetryTransform = useMotionTemplate`translate3d(${telemetryX}vw, 0, 0)`;
+  const roadDashX = useTransform(driveProgress, [0, 1], [0, -140]);
+  const roadDashTransform = useMotionTemplate`translate3d(${roadDashX}vw, 0, 0)`;
+
+  // Progress-driven foreground reveals
+  const introOpacity = useTransform(driveProgress, [0, 0.14], [1, 0]);
+  const storyOpacity = useTransform(driveProgress, [0.5, 0.82], [0, 1]);
+  const storyX = useTransform(driveProgress, [0.5, 0.85], [48, 0]);
+  const storyTransform = useMotionTemplate`translate3d(${storyX}px, -50%, 0)`;
+  const hintOpacity = useTransform(driveProgress, [0, 0.1, 0.85, 1], [1, 0.55, 0.55, 0]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  MOBILE LAYOUT
@@ -1004,87 +1046,86 @@ export function HomepageScrollytelling({
 
       </div>
 
-      {/* ── GROUP 3: About Us Car Scrollytelling (Horizontal, 3 panels) ──── */}
-      <div ref={group3Ref} id="scroll-group-3" className="horizontal-scroll-group z-10" style={{ backgroundColor: WM.bg }}>
+      {/* ── GROUP 3: About Us — single continuous "drive" scene ─────────── */}
+      <div
+        ref={group3StageRef}
+        className="group3-stage z-10"
+        style={{ position: 'relative', height: '100vh', overflow: 'hidden', backgroundColor: WM.bg }}
+      >
+        {/* Ambient depth gradient */}
+        <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
 
-        {/* Panel 1 — About Us Entry */}
-        <div className={`horizontal-slide ${activeIndex3 >= 0 ? 'reveal-active' : ''}`} style={{ backgroundColor: WM.bg }}>
-          <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
-          {/* Background "ABOUT US" giant text — ESPN wallpaper style */}
-          <span
-            className="font-display-strict select-none absolute inset-0 flex items-center justify-center pointer-events-none z-0"
-            style={{ fontSize: 'clamp(120px, 22vw, 320px)', color: WM.text, opacity: 0.04, letterSpacing: '-0.04em' }}
-          >
-            {aboutHeading}
-          </span>
-          {/* Mono panel label — top-left */}
-          <span className="absolute top-8 left-8 font-mono text-[10px] uppercase tracking-widest opacity-40 z-10" style={{ color: WM.gold }}>
-            // ABOUT US / 01
-          </span>
-          {/* Car enters from left */}
-          <div className="car-silhouette z-10" style={{ transform: `translateX(${carX}vw)` }}>
-            <F1CarSilhouette color={WM.text} />
-          </div>
+        {/* Parallax giant wordmark — one continuous backdrop */}
+        <motion.span
+          className="g3-wordmark font-display-strict select-none"
+          style={{ transform: wordmarkTransform, color: WM.text }}
+        >
+          {aboutHeading}
+        </motion.span>
+
+        {/* Parallax telemetry waveform — continuous */}
+        <motion.svg
+          className="g3-telemetry" viewBox="0 0 1920 1080" preserveAspectRatio="none"
+          style={{ transform: telemetryTransform }}
+        >
+          <polyline stroke={WM.gold} strokeWidth="1.5" fill="none" opacity="0.30"
+            points="0,560 240,500 420,610 640,470 880,580 1120,520 1360,540 1620,480 1920,540" />
+          <polyline stroke={WM.text} strokeWidth="1" fill="none" opacity="0.10"
+            points="0,620 240,560 480,640 720,520 960,600 1200,560 1440,600 1680,540 1920,600" />
+          <line x1="0" y1="400" x2="1920" y2="400" stroke={WM.text} strokeWidth="0.5" opacity="0.08" />
+          <line x1="0" y1="700" x2="1920" y2="700" stroke={WM.text} strokeWidth="0.5" opacity="0.08" />
+        </motion.svg>
+
+        {/* Continuous road + moving speed dashes */}
+        <div className="g3-road">
+          <div className="g3-road-line" style={{ backgroundColor: WM.text }} />
+          <motion.div
+            className="g3-road-dashes"
+            style={{
+              transform: roadDashTransform,
+              backgroundImage: `repeating-linear-gradient(90deg, ${WM.gold} 0 40px, transparent 40px 120px)`,
+            }}
+          />
         </div>
 
-        {/* Panel 2 — Race Track Separator */}
-        <div className="horizontal-slide" style={{ backgroundColor: WM.bg }}>
-          {/* Inline SVG telemetry visual — full-bleed */}
-          <svg viewBox="0 0 1920 1080" preserveAspectRatio="none"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-            {/* Primary telemetry waveform */}
-            <polyline stroke={WM.gold} strokeWidth="1.5" fill="none" opacity="0.35"
-              points="0,540 200,480 320,600 480,440 640,560 800,500 960,520 1200,460 1440,540 1680,500 1920,520" />
-            {/* Secondary reference line */}
-            <polyline stroke={WM.text} strokeWidth="1" fill="none" opacity="0.12"
-              points="0,600 200,540 400,620 600,500 800,580 1000,560 1200,520 1400,580 1600,540 1920,580" />
-            {/* Starting grid boxes */}
-            {[0,1,2,3,4,5].map(i => (
-              <rect key={i} x={80 + i * 60} y={820} width={48} height={40}
-                fill={i % 2 === 0 ? WM.gold : WM.text} opacity={i % 2 === 0 ? 0.25 : 0.08} rx="2" />
-            ))}
-            {/* Horizontal reference lines */}
-            <line x1="0" y1="400" x2="1920" y2="400" stroke={WM.text} strokeWidth="0.5" opacity="0.1" />
-            <line x1="0" y1="680" x2="1920" y2="680" stroke={WM.text} strokeWidth="0.5" opacity="0.1" />
-          </svg>
-          {/* Mono label */}
-          <span className="absolute top-8 left-8 font-mono text-[10px] uppercase tracking-widest opacity-40 z-10" style={{ color: WM.gold }}>
-            // LAP 01 / SECTOR 02
-          </span>
-          {/* Car continues across panel */}
-          <div className="car-silhouette z-10" style={{ transform: `translateX(${carX}vw)` }}>
-            <F1CarSilhouette color={WM.text} />
-          </div>
+        {/* Invisible horizontal scrubber — provides scroll distance only */}
+        <div ref={group3Ref} id="scroll-group-3" className="horizontal-scroll-group g3-track">
+          <div className="horizontal-slide" />
+          <div className="horizontal-slide" />
+          <div className="horizontal-slide" />
         </div>
 
-        {/* Panel 3 — Founding Story + Car Stop */}
-        <div className="horizontal-slide" style={{ backgroundColor: WM.bg }}>
-          <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
-          <span className="absolute top-8 left-8 font-mono text-[10px] uppercase tracking-widest opacity-40 z-10" style={{ color: WM.gold }}>
-            // ABOUT US / 03
-          </span>
-          {/* Car stops left of text column */}
-          <div className="car-silhouette z-10" style={{ transform: `translateX(${carX}vw)` }}>
-            <F1CarSilhouette color={WM.text} />
-          </div>
-          {/* Text column — right side */}
-          <div className="absolute right-24 top-1/2 -translate-y-1/2 flex flex-col gap-6 max-w-sm z-10" style={{ color: WM.text }}>
-            <span className="font-mono text-xs uppercase tracking-widest" style={{ color: WM.gold }}>
-              // PITWALL / ORIGIN
-            </span>
-            <p className="font-body-strict text-base opacity-80 leading-relaxed">
-              {foundingStory}
-            </p>
-            <a
-              href={ctaUrl}
-              className="w-full max-w-[240px] h-12 border bg-transparent font-mono text-[11px] uppercase tracking-wider font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-70"
-              style={{ borderColor: WM.text, color: WM.text }}
-            >
-              {ctaLabel} →
-            </a>
-          </div>
-        </div>
+        {/* Entry label — fades out as the journey begins */}
+        <motion.div className="g3-fg-label" style={{ opacity: introOpacity, color: WM.gold }}>
+          <span className="block font-mono text-[10px] uppercase tracking-[0.3em] opacity-70">// PITWALL</span>
+          <span className="block font-mono text-[10px] uppercase tracking-[0.3em] opacity-70">ABOUT US / 01</span>
+        </motion.div>
 
+        {/* Founding story + CTA — fades/slides in as the car arrives */}
+        <motion.div className="g3-story" style={{ opacity: storyOpacity, transform: storyTransform, color: WM.text }}>
+          <span className="font-mono text-xs uppercase tracking-widest" style={{ color: WM.gold }}>
+            // PITWALL / ORIGIN
+          </span>
+          <p className="font-body-strict text-base opacity-80 leading-relaxed">
+            {foundingStory}
+          </p>
+          <a href={ctaUrl} className="g3-cta font-mono" style={{ borderColor: WM.text, color: WM.text }}>
+            {ctaLabel} →
+          </a>
+        </motion.div>
+
+        {/* The single car — travels continuously across the whole scene */}
+        <motion.div className="g3-car" style={{ transform: carTransform }}>
+          <F1CarSilhouette color={WM.text} />
+        </motion.div>
+
+        {/* Scroll hint */}
+        <motion.div
+          className="g3-hint font-mono"
+          style={{ opacity: hintOpacity, color: WM.text }}
+        >
+          SCROLL →
+        </motion.div>
       </div>
 
       {/* ── VERTICAL STATS + BRAND SECTION (after Group 3, before Footer) ─── */}
