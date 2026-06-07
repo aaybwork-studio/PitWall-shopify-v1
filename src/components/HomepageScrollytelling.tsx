@@ -583,9 +583,16 @@ export function HomepageScrollytelling({
   }, []);
 
   // ── Group 3 car animation formula ───────────────────────────────────────────
-  const group3MaxScroll = group3Ref.current
-    ? group3Ref.current.scrollWidth - group3Ref.current.clientWidth
-    : 1;
+  const [group3MaxScroll, setGroup3MaxScroll] = useState(1);
+  useEffect(() => {
+    const el = group3Ref.current;
+    if (!el) return;
+    const update = () => setGroup3MaxScroll(Math.max(1, el.scrollWidth - el.clientWidth));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const rawProgress = group3ScrollLeft / Math.max(1, group3MaxScroll);
   const easedProgress = 1 - Math.pow(1 - rawProgress, 1.5);
   const carX = -30 + easedProgress * 36; // vw units: -30vw (off-screen left) → +6vw (resting)
