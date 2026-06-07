@@ -44,6 +44,7 @@ The two new pages must look unmistakably **Pitwall** — its brutalist F1 aesthe
 - **Brand tokens (must reuse exactly):** bg `#EDEBE5`, fg `#0C0C0C`, accent racing-yellow `#F6C917`; fonts Syne (display), Barlow (body), IBM Plex Mono (technical labels); zero border-radius, persistent grain overlay, full-bleed sections, uppercase display/labels. Full detail in `.planning/codebase/CONVENTIONS.md`.
 - **How pages are added (mapped):** create `sections/page-<name>.liquid` (+ `{% schema %}`) and `templates/page.<name>.json` (or `collection.json` for the all-products route), then assign the template in Shopify admin. See `.planning/codebase/STRUCTURE.md`.
 - **User:** non-deeply-technical; defers tech/implementation choices to Claude. Products are placeholder for this milestone.
+- **Phase 02.3 (inserted, complete 2026-06-07):** Added a Group 3 horizontal-then-vertical "About Us" scrollytelling section to the homepage (animated F1 car silhouette across 3 panels via `scrollLeft`, vertical content section, full Shopify schema editability) — homepage polish work inserted ahead of Phase 3, outside this milestone's About/All-Products page scope.
 
 ## Constraints
 
@@ -80,4 +81,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-30 after initialization*
+*Last updated: 2026-06-07 after Phase 02.3 completion*
