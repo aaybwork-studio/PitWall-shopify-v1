@@ -94,30 +94,36 @@ html, body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  overscroll-behavior: none;
+  overflow-x: clip;
+  overflow-y: auto !important;
+  height: auto !important;
+  overscroll-behavior: auto !important;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
-/* Homepage: lock viewport so only the scrollytelling container scrolls */
+/* Homepage takeover: lock viewport when scrollytelling is active */
 @media (min-width: 768px) {
   html.homepage-scrollytelling-active,
   html.homepage-scrollytelling-active body {
     overflow: hidden !important;
     height: 100% !important;
+    overscroll-behavior: none !important;
   }
 }
 
-/* Non-homepage pages: allow normal vertical scroll */
+/* Non-homepage pages fallback (to override any potential external scroll locks) */
 html:not(.homepage-scrollytelling-active) {
   overflow-y: auto !important;
-  overflow-x: hidden !important;
+  overflow-x: clip !important;
   height: auto !important;
+  overscroll-behavior: auto !important;
 }
 html:not(.homepage-scrollytelling-active) body {
   overflow-y: auto !important;
-  overflow-x: hidden !important;
+  overflow-x: clip !important;
   height: auto !important;
+  overscroll-behavior: auto !important;
 }
 
 ::-webkit-scrollbar {
@@ -1015,23 +1021,38 @@ html:not(.homepage-scrollytelling-active) body {
   margin-top: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 12px !important;
   list-style: none;
   padding: 0;
+  background-color: transparent !important;
+  border: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  min-width: unset !important;
 }
 
 .menu-submenu-middle-link {
-  font-family: var(--font-display), 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: clamp(20px, 2.5vw, 28px);
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--fg);
-  transition: color 200ms ease;
+  font-family: var(--font-mono, "IBM Plex Mono", monospace) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  background-color: transparent !important;
+  color: #EDEBE5 !important;
+  padding: 4px 0 !important;
+  text-align: left !important;
+  display: block !important;
+  transition: color 120ms ease, padding-left 120ms ease !important;
+  width: auto !important;
+  box-sizing: border-box !important;
 }
 
-.menu-submenu-middle-link:hover {
-  color: var(--accent) !important;
+.menu-submenu-middle-link:hover,
+.menu-submenu-middle-link.is-active {
+  background-color: transparent !important;
+  color: #F6C917 !important;
+  padding-left: 6px !important;
 }
 
 /* Bottom Dropdown Wordmark Logo Text (using BTSE PS2 font, centered, size reduced, color inverted dynamically) */

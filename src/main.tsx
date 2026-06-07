@@ -14,11 +14,14 @@ function bootstrap() {
   // 0. Mount Homepage Interactive Scrollytelling (Takeover)
   const homepageRoot = document.getElementById('homepage-interactive-root');
 
-  // Self-heal: if a stale `homepage-scrollytelling-active` lock survived onto
-  // a non-homepage page (e.g. via bfcache restore skipping React's unmount
-  // cleanup), strip it so this page's scroll isn't permanently locked.
   if (!homepageRoot) {
     document.documentElement.classList.remove('homepage-scrollytelling-active');
+    document.documentElement.style.overflow = 'auto';
+    document.documentElement.style.overflowY = 'auto';
+    document.documentElement.style.height   = 'auto';
+    document.body.style.overflow            = 'auto';
+    document.body.style.overflowY           = 'auto';
+    document.body.style.height              = 'auto';
   }
 
   if (homepageRoot) {
@@ -194,6 +197,7 @@ function bootstrap() {
     // 3. Mount Collection Grid
     const collectionRoot = document.getElementById('collection-grid-root');
     if (collectionRoot) {
+      const videoUrl = collectionRoot.getAttribute('data-video-url') || '';
       let products = [];
       const productsScript = document.getElementById('collection-products-data');
       if (productsScript) {
@@ -206,7 +210,7 @@ function bootstrap() {
       const root = ReactDOM.createRoot(collectionRoot);
       root.render(
         <React.StrictMode>
-          <CollectionGrid products={products} />
+          <CollectionGrid products={products} videoUrl={videoUrl} />
         </React.StrictMode>
       );
     }
@@ -288,6 +292,54 @@ function bootstrap() {
         closeMenu();
       });
     }
+
+    // Sync category sub-menu links: highlight active and intercept clicks for dynamic navigation
+    const updateMenuCategoryHighlight = () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const catParam = params.get('category') || 'All';
+        const submenuLinks = menuOverlay.querySelectorAll('.menu-submenu-middle-link');
+        submenuLinks.forEach(link => {
+          const href = link.getAttribute('href') || '';
+          const linkParams = new URLSearchParams(href.split('?')[1] || '');
+          const linkCat = linkParams.get('category') || 'All';
+          if (linkCat.toLowerCase() === catParam.toLowerCase()) {
+            link.classList.add('is-active');
+          } else {
+            link.classList.remove('is-active');
+          }
+        });
+      } catch (err) {
+        Logger.error('Failed to update menu category highlight', err);
+      }
+    };
+
+    // Initial highlight sync
+    updateMenuCategoryHighlight();
+    window.addEventListener('popstate', updateMenuCategoryHighlight);
+
+    // Bind sub-menu link clicks
+    const submenuLinks = menuOverlay.querySelectorAll('.menu-submenu-middle-link');
+    submenuLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        try {
+          const href = link.getAttribute('href') || '';
+          const isCollectionsPage = document.getElementById('collection-grid-root') !== null;
+          if (isCollectionsPage) {
+            e.preventDefault();
+            // Client-side transition (triggers popstate inside React)
+            window.history.pushState(null, '', href);
+            window.dispatchEvent(new Event('popstate'));
+            closeMenu();
+          } else {
+            // Not on collections page: close menu and allow full navigation
+            closeMenu();
+          }
+        } catch (err) {
+          Logger.error('Failed handling submenu link click', err);
+        }
+      });
+    });
   }
 
   // Add scroll headers intersection handlers for color adaptive dynamic header

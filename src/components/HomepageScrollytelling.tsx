@@ -742,7 +742,7 @@ export function HomepageScrollytelling({
           <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.52)' }} />
           <div className="relative z-20 text-center px-4 w-full h-full flex flex-col items-center justify-center">
             {/* Centered logo */}
-            <h1 className="hero-title-text select-none absolute z-10 animate-pulse-subtle">PITWALL</h1>
+            <h1 className="hero-title-text select-none absolute z-10 animate-pulse-subtle" style={{ mixBlendMode: 'difference' }}>PITWALL</h1>
             {/* Tagline on Mobile */}
             <div className="absolute w-full flex justify-center px-4 bottom-[90px]">
               <p className="hero-tagline uppercase tracking-widest text-xs font-mono text-center" style={{ color: WM.gold }}>
@@ -918,7 +918,7 @@ export function HomepageScrollytelling({
       {/* ── SECTION 1: HERO (Vertical, 100vh) ────────────────────────────── */}
       <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
         {/* Centered logo */}
-        <h1 className="hero-title-text select-none absolute z-10">PITWALL</h1>
+        <h1 className="hero-title-text select-none absolute z-10" style={{ mixBlendMode: 'difference' }}>PITWALL</h1>
 
         {/* Tagline: "Because cars are not objects" */}
         <div className="absolute flex items-center justify-center bottom-[90px]">
