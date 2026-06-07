@@ -772,8 +772,11 @@ export function HomepageScrollytelling({
           <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
           <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.52)' }} />
           <div className="relative z-20 max-w-4xl mx-auto w-full text-center">
-            <p className="hero-tagline uppercase tracking-widest font-mono text-center px-4" style={{ color: WM.gold }}>
-              and life has always been a race.
+            <p
+              className="text-3xl md:text-[54px] font-normal leading-normal text-center"
+              style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
+            >
+              “and life has always been a race.”
             </p>
           </div>
         </section>
@@ -965,8 +968,11 @@ export function HomepageScrollytelling({
             transition: 'opacity 0.5s ease, transform 0.5s ease'
           }}
         >
-          <p className="hero-tagline uppercase tracking-widest font-mono text-center px-4" style={{ color: WM.gold }}>
-            and life has always been a race.
+          <p
+            className="text-3xl md:text-[54px] font-normal leading-normal text-center"
+            style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
+          >
+            “and life has always been a race.”
           </p>
         </div>
       </div>
