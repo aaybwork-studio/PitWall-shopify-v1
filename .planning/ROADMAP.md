@@ -14,6 +14,7 @@
 - [x] **Phase 02.1: Redesign Hero Page (INSERTED)** — Redesign the homepage (hero page) with a 4-section snapping layout, rotating collections grid, and cinematic video player separators
 - [ ] **Phase 02.2: Homepage Interaction Overhaul (INSERTED)** — Deliver an advanced scrollytelling experience on the homepage featuring scroll-locking, mirrored featured products, continuous video backgrounds, interactive ticker, and custom columns collections grids
 - [x] **Phase 02.3: About Us Car Scrollytelling (INSERTED)** — Add a Group 3 horizontal scrollytelling section with an animated F1 car traveling across 3 panels, followed by a vertical About Us content section, inserted between Group 2 and Footer (completed 2026-06-07)
+- [ ] **Phase 02.4: Redesign Collections Page (INSERTED)** — Redesign the collections page with a top video hero, difference-blended title overlay, yellow filter/sort bar, and a masonry dynamic product grid with landing page style cards
 - [ ] **Phase 3: Helmets PDP & Dynamic Routing** — Deliver a complete, shippable helmets product page with autocalibrated WebGL helmet models, zero-lag browser URL state switches via HTML5 History API, and separate catalog listings in `/collections/all`
 
 ---
@@ -92,6 +93,22 @@ Plans:
 
 ---
 
+---
+ 
+### Phase 02.4: Redesign Collections Page (INSERTED)
+**Goal**: Redesign the collections page (`/collections/all`) to match the new specifications: 1/3 video on top with a difference blended header, a yellow filter/sort bar with functional categories and sorting dropdowns, and a dynamic masonry product grid with randomized positions and landing page card styles.
+**Mode**: mvp
+**Depends on**: Phase 2
+**Requirements**: (inline — decisions D-01 through D-13 from 02.4-CONTEXT.md)
+**Success Criteria** (what must be TRUE):
+  1. The collections page mounts the React-driven collections interface at `collection-grid-root`.
+  2. The page loads with all products in the category visible, shuffled in a random order.
+  3. The yellow bar is functional: clicking a category dropdown filters products; clicking a sort dropdown sorts them, updating the label next to the button.
+  4. Cards render with specification labels and show the details overlay + "VIEW" button on hover.
+  5. The video hero occupies 1/3 screen height and the text blends correctly.
+
+---
+
 ### Phase 3: Helmets PDP & Dynamic Routing
 **Goal**: Integrate two F1 Helmet WebGL models (`f1_helmet_lando_norris.glb` and `michael_schumacher_2002_helmet.glb`) into a dedicated Helmet Product page, with zero-lag URL switches using HTML5 History API and separated grid items in `/collections/all`
 **Mode:** mvp
@@ -105,11 +122,11 @@ Plans:
   5. Pre-order parameters (like for the helmets or MCL39 models) are rendered as clean inline monospace annotations `[ PRE-ORDER ]` next to the price tag in high-contrast Racing Yellow.
 **Plans**: TBD
 **UI hint**: yes
-
+ 
 ---
-
+ 
 ## Progress Table
-
+ 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. About Page | 1/1 | Completed | 2026-05-31 |
@@ -117,6 +134,7 @@ Plans:
 | 02.1. Redesign Hero Page | 2/2 | Completed | 2026-06-06 |
 | 02.2. Homepage Interaction Overhaul | - | Completed | 2026-06-07 |
 | 02.3. About Us Car Scrollytelling | 6/6 | Complete    | 2026-06-07 |
+| 02.4. Redesign Collections Page | 0/? | Not started | - |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
 ---

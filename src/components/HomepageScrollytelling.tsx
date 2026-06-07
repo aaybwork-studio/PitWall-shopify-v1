@@ -745,7 +745,7 @@ export function HomepageScrollytelling({
             <img 
               src={wordmarkFooterUrl || '/assets/wordmark-footer.png'} 
               alt="PITWALL" 
-              className="absolute pointer-events-none select-none animate-pulse-subtle"
+              className="absolute pointer-events-none select-none animate-pulse-subtle mix-blend-difference"
               style={{ 
                 width: '85vw', 
                 maxWidth: '500px', 
@@ -932,7 +932,7 @@ export function HomepageScrollytelling({
         <img 
           src={wordmarkFooterUrl || '/assets/wordmark-footer.png'} 
           alt="PITWALL" 
-          className="absolute pointer-events-none select-none"
+          className="absolute pointer-events-none select-none mix-blend-difference"
           style={{ 
             width: '75vw', 
             maxWidth: '1000px', 
