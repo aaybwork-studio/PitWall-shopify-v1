@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { VideoBackground } from './VideoBackground';
 import { CollectionCard, Product } from './CollectionGrid';
 import { ArrowUpRight, ChevronRight } from 'lucide-react';
-import { Footer } from './Footer';
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'motion/react';
 
 function getImmersivePDPUrl(product: Product): string {
@@ -277,9 +276,20 @@ export function HomepageScrollytelling({
   }, []);
 
   // ── Lock body scroll ─────────────────────────────────────────────────────────
+  // Also strip the lock class on pagehide/bfcache-restore — without this, a
+  // browser back/forward navigation away from the homepage can leave
+  // `homepage-scrollytelling-active` stuck on <html> (React's cleanup never
+  // runs for a bfcache-suspended page), permanently locking scroll on every
+  // other page until a hard refresh.
   useEffect(() => {
-    document.documentElement.classList.add('homepage-scrollytelling-active');
-    return () => document.documentElement.classList.remove('homepage-scrollytelling-active');
+    const root = document.documentElement;
+    root.classList.add('homepage-scrollytelling-active');
+    const release = () => root.classList.remove('homepage-scrollytelling-active');
+    window.addEventListener('pagehide', release);
+    return () => {
+      release();
+      window.removeEventListener('pagehide', release);
+    };
   }, []);
 
   // ── Ticker animation ─────────────────────────────────────────────────────────
@@ -791,8 +801,6 @@ export function HomepageScrollytelling({
             {exploreCta} <ArrowUpRight size={14} />
           </a>
         </section>
-
-        <Footer />
       </div>
     );
   }
@@ -1160,9 +1168,6 @@ export function HomepageScrollytelling({
           {exploreCta} <ArrowUpRight size={14} />
         </a>
       </div>
-
-      {/* ── FOOTER ────────────────────────────────────────────────────────── */}
-      <Footer />
     </div>
   );
 }

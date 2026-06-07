@@ -13,6 +13,14 @@ import { Logger } from './utils/logger';
 function bootstrap() {
   // 0. Mount Homepage Interactive Scrollytelling (Takeover)
   const homepageRoot = document.getElementById('homepage-interactive-root');
+
+  // Self-heal: if a stale `homepage-scrollytelling-active` lock survived onto
+  // a non-homepage page (e.g. via bfcache restore skipping React's unmount
+  // cleanup), strip it so this page's scroll isn't permanently locked.
+  if (!homepageRoot) {
+    document.documentElement.classList.remove('homepage-scrollytelling-active');
+  }
+
   if (homepageRoot) {
     let productsJson = '[]';
     const productsScript = document.getElementById('collection-products-data');

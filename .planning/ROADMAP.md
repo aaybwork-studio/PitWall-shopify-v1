@@ -116,7 +116,7 @@ Plans:
 | 2. All Products Page | 1/1 | Completed | 2026-05-31 |
 | 02.1. Redesign Hero Page | 2/2 | Completed | 2026-06-06 |
 | 02.2. Homepage Interaction Overhaul | - | Completed | 2026-06-07 |
-| 02.3. About Us Car Scrollytelling | 6/6 | Complete   | 2026-06-07 |
+| 02.3. About Us Car Scrollytelling | 6/6 | Complete    | 2026-06-07 |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
 ---

@@ -124,7 +124,7 @@
         </div>
       </div>
       <!-- Bottom wordmark logo -->
-      <div class="menu-bottom-bar" style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 16px 0;">
+      <div class="menu-bottom-bar">
         <span class="menu-wordmark-text">PITWALL</span>
       </div>
     </div>
@@ -283,7 +283,7 @@
             if (count === 0) {
               itemsEl.innerHTML = '';
               footerEl.style.display = 'none';
-              emptyEl.style.display = 'block';
+              emptyEl.style.display = 'flex';
             } else {
               emptyEl.style.display = 'none';
               footerEl.style.display = 'block';
@@ -295,7 +295,12 @@
                     (item.image ? '<img src="' + item.image + '" alt="' + item.title + '" class="pw-cart-item-img" />' : '<div class="pw-cart-item-img-placeholder"></div>') +
                   '</div>' +
                   '<div class="pw-cart-item-info">' +
-                    '<span class="pw-cart-item-title">' + item.product_title + '</span>' +
+                    '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">' +
+                      '<span class="pw-cart-item-title">' + item.product_title + '</span>' +
+                      '<button class="pw-cart-item-remove-btn" data-variant-id="' + item.variant_id + '" aria-label="Remove item">' +
+                        '<svg class="pw-cart-item-remove-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>' +
+                      '</button>' +
+                    '</div>' +
                     (item.variant_title && item.variant_title !== 'Default Title' ? '<span class="pw-cart-item-variant">' + item.variant_title + '</span>' : '') +
                     '<div class="pw-cart-item-row">' +
                       '<span class="pw-cart-item-qty">QTY: ' + item.quantity + '</span>' +
@@ -311,6 +316,40 @@
       if (openBtn) openBtn.addEventListener('click', openCart);
       if (closeBtn) closeBtn.addEventListener('click', closeCart);
       if (backdrop) backdrop.addEventListener('click', closeCart);
+
+      var itemsContainer = document.getElementById('pw-cart-items');
+      if (itemsContainer) {
+        itemsContainer.addEventListener('click', function(e) {
+          var removeBtn = e.target.closest('.pw-cart-item-remove-btn');
+          if (removeBtn) {
+            var variantId = removeBtn.getAttribute('data-variant-id');
+            if (variantId) {
+              removeBtn.style.opacity = '0.35';
+              removeBtn.disabled = true;
+              fetch('/cart/change.js', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                  id: variantId,
+                  quantity: 0
+                })
+              })
+              .then(function(res) { return res.json(); })
+              .then(function(cart) {
+                refreshCart();
+                document.dispatchEvent(new CustomEvent('cart:refresh'));
+              })
+              .catch(function(err) {
+                console.error('Failed to remove item from cart', err);
+                refreshCart();
+              });
+            }
+          }
+        });
+      }
 
       // Refresh count on page load
       fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
