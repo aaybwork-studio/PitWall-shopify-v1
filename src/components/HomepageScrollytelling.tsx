@@ -185,7 +185,6 @@ interface HomepageScrollytellingProps {
   stat3Label?: string;
   brandParagraph?: string;
   exploreCta?: string;
-  wordmarkFooterUrl?: string;
 }
 
 export function HomepageScrollytelling({
@@ -196,7 +195,6 @@ export function HomepageScrollytelling({
   ctaLabel = 'OUR STORY',
   ctaUrl = '/pages/about',
   foundingStory = 'Pitwall was born from obsession. We build objects that earn their place alongside the machines we worship.',
-  wordmarkFooterUrl = '',
 }: HomepageScrollytellingProps) {
   // ── Products ────────────────────────────────────────────────────────────────
   const products: Product[] = React.useMemo(() => {
@@ -742,7 +740,7 @@ export function HomepageScrollytelling({
           <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.52)' }} />
           <div className="relative z-20 text-center px-4 w-full h-full flex flex-col items-center justify-center">
             {/* Centered logo */}
-            <h1 className="hero-title-text select-none absolute z-10 animate-pulse-subtle" style={{ mixBlendMode: 'difference' }}>PITWALL</h1>
+            <h1 className="hero-title-text select-none absolute z-10 animate-pulse-subtle" style={{ mixBlendMode: 'difference', opacity: 0.4 }}>PITWALL</h1>
             {/* Tagline on Mobile */}
             <div className="absolute w-full flex justify-center px-4 bottom-[90px]">
               <p className="hero-tagline uppercase tracking-widest text-xs font-mono text-center" style={{ color: WM.gold }}>
@@ -846,7 +844,7 @@ export function HomepageScrollytelling({
 
         {/* ── HERO VIDEO CALL TO ACTION SECTION — Mobile ─────────────────────────────────────────────── */}
         <section 
-          className="w-full relative flex flex-col items-center justify-between py-16 px-6 overflow-hidden" 
+          className="w-full relative flex flex-col items-center justify-center py-16 px-6 overflow-hidden gap-[60px]" 
           style={{ minHeight: '80vh' }}
         >
           {/* Video background */}
@@ -855,30 +853,16 @@ export function HomepageScrollytelling({
             <div className="absolute inset-0 bg-black/50 z-[1]" />
           </div>
 
-          {/* Top balance label */}
-          <div className="relative z-10 font-mono text-[9px] tracking-widest text-white/40 uppercase pt-4">
-            // PITWALL / CALIBRATION
-          </div>
-
           {/* Centered logo */}
-          <img 
-            src={wordmarkFooterUrl || '/assets/wordmark-footer.png'} 
-            alt="PITWALL" 
-            className="absolute pointer-events-none select-none"
-            style={{ 
-              width: '85vw', 
-              maxWidth: '500px', 
-              height: 'auto', 
-              top: '45%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              mixBlendMode: 'difference',
-              zIndex: 5
-            }} 
-          />
+          <h1 
+            className="hero-title-text select-none text-center relative z-10 animate-pulse-subtle" 
+            style={{ mixBlendMode: 'difference', opacity: 0.4 }}
+          >
+            PITWALL
+          </h1>
           
           {/* Bottom buttons */}
-          <div className="relative z-20 flex flex-col sm:flex-row justify-center items-center gap-4 w-full px-4 pb-4">
+          <div className="relative z-20 flex flex-col sm:flex-row justify-center items-center gap-4 w-full px-4">
             <a
               href="/pages/collections"
               className="px-6 py-3 border border-[#F6C917]/30 bg-[#F6C917]/10 backdrop-blur-md text-[#F6C917] font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-[#F6C917]/25 hover:border-[#F6C917]/60 flex items-center justify-center cursor-pointer"
@@ -918,7 +902,7 @@ export function HomepageScrollytelling({
       {/* ── SECTION 1: HERO (Vertical, 100vh) ────────────────────────────── */}
       <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
         {/* Centered logo */}
-        <h1 className="hero-title-text select-none absolute z-10" style={{ mixBlendMode: 'difference' }}>PITWALL</h1>
+        <h1 className="hero-title-text select-none absolute z-10" style={{ mixBlendMode: 'difference', opacity: 0.4 }}>PITWALL</h1>
 
         {/* Tagline: "Because cars are not objects" */}
         <div className="absolute flex items-center justify-center bottom-[90px]">
@@ -1218,7 +1202,7 @@ export function HomepageScrollytelling({
 
       {/* ── HERO VIDEO CALL TO ACTION SECTION (after Group 3, before Footer) ─── */}
       <div 
-        className="w-full relative flex flex-col items-center justify-between py-16 px-6 z-10 overflow-hidden" 
+        className="w-full relative flex flex-col items-center justify-center py-16 px-6 z-10 overflow-hidden gap-[60px]" 
         style={{ minHeight: '100vh' }}
       >
         {/* Video background */}
@@ -1227,30 +1211,16 @@ export function HomepageScrollytelling({
           <div className="absolute inset-0 bg-black/50 z-[1]" />
         </div>
 
-        {/* Top balance label */}
-        <div className="relative z-10 font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase pt-6">
-          // PITWALL / SPEED CALIBRATION
-        </div>
-
         {/* Centered logo */}
-        <img 
-          src={wordmarkFooterUrl || '/assets/wordmark-footer.png'} 
-          alt="PITWALL" 
-          className="absolute pointer-events-none select-none"
-          style={{ 
-            width: '75vw', 
-            maxWidth: '1000px', 
-            height: 'auto', 
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            mixBlendMode: 'difference',
-            zIndex: 5
-          }} 
-        />
+        <h1 
+          className="hero-title-text select-none text-center relative z-10" 
+          style={{ mixBlendMode: 'difference', opacity: 0.4 }}
+        >
+          PITWALL
+        </h1>
 
         {/* Bottom buttons */}
-        <div className="relative z-20 flex flex-row flex-wrap justify-center items-center gap-6 pb-6">
+        <div className="relative z-20 flex flex-row flex-wrap justify-center items-center gap-6">
           <a
             href="/pages/collections"
             className="px-8 py-3.5 border border-[#F6C917]/30 bg-[#F6C917]/10 backdrop-blur-md text-[#F6C917] font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-[#F6C917]/25 hover:border-[#F6C917]/60 flex items-center justify-center cursor-pointer"
