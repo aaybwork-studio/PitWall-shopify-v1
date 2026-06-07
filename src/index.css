@@ -956,7 +956,7 @@ html:not(.homepage-scrollytelling-active) body {
 /* Hero Branding Title (BTSE PS2 font, size 250px, black, blend mode difference, push up 20px, +6px letter-spacing) */
 .hero-title-text {
   font-family: var(--font-branding), 'BTSE PS2', sans-serif !important;
-  font-size: clamp(50px, 12vw, 250px) !important;
+  font-size: clamp(62.5px, 15vw, 312.5px) !important;
   font-weight: 800;
   line-height: 0.9;
   letter-spacing: 6px !important; /* +6 letter spacing */
