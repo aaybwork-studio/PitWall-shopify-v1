@@ -87,7 +87,7 @@ Plans:
 - [x] 02.3-02-PLAN.md — F1CarSilhouette inline SVG component + .car-silhouette CSS + carX formula
 - [x] 02.3-03-PLAN.md — Group 3 desktop JSX (3 panels) + mobile stacked sections
 - [x] 02.3-04-PLAN.md — Shopify schema fields + JSON script tag + data-* attributes + main.tsx wiring
-- [ ] 02.3-05-PLAN.md — Mobile CSS audit + human verification checkpoint
+- [x] 02.3-05-PLAN.md — Mobile CSS audit + human verification checkpoint
 - [ ] 02.3-06-PLAN.md — End-to-end scroll chain verification + final production build
 
 ---
@@ -116,7 +116,7 @@ Plans:
 | 2. All Products Page | 1/1 | Completed | 2026-05-31 |
 | 02.1. Redesign Hero Page | 2/2 | Completed | 2026-06-06 |
 | 02.2. Homepage Interaction Overhaul | - | Completed | 2026-06-07 |
-| 02.3. About Us Car Scrollytelling | 4/6 | In Progress|  |
+| 02.3. About Us Car Scrollytelling | 5/6 | In Progress|  |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
 ---
