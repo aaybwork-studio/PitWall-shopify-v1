@@ -185,6 +185,7 @@ interface HomepageScrollytellingProps {
   stat3Label?: string;
   brandParagraph?: string;
   exploreCta?: string;
+  wordmarkFooterUrl?: string;
 }
 
 export function HomepageScrollytelling({
@@ -194,15 +195,8 @@ export function HomepageScrollytelling({
   aboutHeading = 'ABOUT US',
   ctaLabel = 'OUR STORY',
   ctaUrl = '/pages/about',
-  stat1Value = 'ZERO',
-  stat1Label = 'COMPROMISE',
-  stat2Value = 'ONE',
-  stat2Label = 'PURSUIT',
-  stat3Value = 'INFINITE',
-  stat3Label = 'PRECISION',
   foundingStory = 'Pitwall was born from obsession. We build objects that earn their place alongside the machines we worship.',
-  brandParagraph = 'Where every object we make is held to the same standards as the machines we obsess over.',
-  exploreCta = 'EXPLORE OUR STORY',
+  wordmarkFooterUrl = '',
 }: HomepageScrollytellingProps) {
   // ── Products ────────────────────────────────────────────────────────────────
   const products: Product[] = React.useMemo(() => {
@@ -241,6 +235,11 @@ export function HomepageScrollytelling({
   const group3Ref = useRef<HTMLDivElement>(null);
   const group3StageRef = useRef<HTMLDivElement>(null);
   const tickerItemRef = useRef<HTMLDivElement>(null);
+
+  // Scroll snapping accumulator refs to prevent hyper-sensitive snapping
+  const scrollAccumulator = useRef(0);
+  const scrollDirection = useRef(0);
+  const scrollTimeout = useRef<any>(null);
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [activeIndex1, setActiveIndex1] = useState(0);
@@ -405,6 +404,22 @@ export function HomepageScrollytelling({
     const startG3Lerp = () => { if (g3RafId == null) g3RafId = requestAnimationFrame(g3Lerp); };
 
     const handleWheel = (e: WheelEvent) => {
+      // 1. Maintain accumulator timeout to reset delta on inactivity
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+      scrollTimeout.current = setTimeout(() => {
+        scrollAccumulator.current = 0;
+        scrollDirection.current = 0;
+      }, 300);
+
+      // 2. Reset accumulator if direction changes
+      const currentDir = e.deltaY > 0 ? 1 : -1;
+      if (scrollDirection.current !== currentDir) {
+        scrollAccumulator.current = 0;
+        scrollDirection.current = currentDir;
+      }
+
       if (isSnapping.current) {
         e.preventDefault();
         return;
@@ -444,6 +459,17 @@ export function HomepageScrollytelling({
         }
       }
 
+      // Helper to evaluate accumulator threshold for snaps
+      const threshold = 180;
+      const checkAccumulatorThreshold = (delta: number) => {
+        scrollAccumulator.current += delta;
+        if (Math.abs(scrollAccumulator.current) >= threshold) {
+          scrollAccumulator.current = 0;
+          return true;
+        }
+        return false;
+      };
+
       // 1. Group 1 Horizontal Lock
       if (currentIdx === 2) {
         if (Math.abs(currentScrollTop - g1Top) > 2) {
@@ -452,6 +478,23 @@ export function HomepageScrollytelling({
         const maxScroll = g1.scrollWidth - g1.clientWidth;
         const curScroll = g1.scrollLeft;
 
+        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
+          e.preventDefault();
+          if (checkAccumulatorThreshold(e.deltaY)) {
+            snapTo(sections[3]); // Snap to Video Divider
+          }
+          return;
+        }
+        if (e.deltaY < 0 && curScroll <= 5) {
+          e.preventDefault();
+          if (checkAccumulatorThreshold(e.deltaY)) {
+            snapTo(sections[1]); // Snap back to Manifesto
+          }
+          return;
+        }
+
+        // Inside horizontal scrolling: bypass accumulator (keep instant)
+        scrollAccumulator.current = 0;
         if (e.deltaY > 0 && curScroll < maxScroll - 5) {
           e.preventDefault();
           g1.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
@@ -462,16 +505,6 @@ export function HomepageScrollytelling({
           e.preventDefault();
           g1.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
           setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
-          return;
-        }
-        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
-          e.preventDefault();
-          snapTo(sections[3]); // Snap to Video Divider
-          return;
-        }
-        if (e.deltaY < 0 && curScroll <= 5) {
-          e.preventDefault();
-          snapTo(sections[1]); // Snap back to Manifesto
           return;
         }
         return;
@@ -485,6 +518,23 @@ export function HomepageScrollytelling({
         const maxScroll = g2.scrollWidth - g2.clientWidth;
         const curScroll = g2.scrollLeft;
 
+        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
+          e.preventDefault();
+          if (checkAccumulatorThreshold(e.deltaY)) {
+            snapTo(sections[5]); // Snap to Group 3
+          }
+          return;
+        }
+        if (e.deltaY < 0 && curScroll <= 5) {
+          e.preventDefault();
+          if (checkAccumulatorThreshold(e.deltaY)) {
+            snapTo(sections[3]); // Snap back to Video Divider
+          }
+          return;
+        }
+
+        // Inside horizontal scrolling: bypass accumulator
+        scrollAccumulator.current = 0;
         if (e.deltaY > 0 && curScroll < maxScroll - 5) {
           e.preventDefault();
           g2.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
@@ -497,29 +547,37 @@ export function HomepageScrollytelling({
           setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
           return;
         }
-        if (e.deltaY < 0 && curScroll <= 5) {
-          e.preventDefault();
-          snapTo(sections[3]); // Snap back to Video Divider
-          return;
-        }
-        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
-          // End of Group 2 -> snap to Group 3
-          e.preventDefault();
-          snapTo(sections[5]);
-          return;
-        }
         return;
       }
 
       // 3. Group 3 Horizontal Lock — smooth scrubber drives the continuous drive-scene
       if (Math.abs(currentScrollTop - g3Top) < 10) {
-        if (Math.abs(currentScrollTop - g3Top) > 2) {
-          container.scrollTop = g3Top;
-        }
         const maxScroll = g3.scrollWidth - g3.clientWidth;
         if (g3RafId == null) g3Target = g3.scrollLeft; // resync target when idle
         const curScroll = g3.scrollLeft;
 
+        // If we are at the end of Group 3 and scrolling down, release to vertical immediately
+        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
+          g3Target = maxScroll;
+          scrollAccumulator.current = 0;
+          return; // Release to vertical (stats/footer)
+        }
+
+        if (e.deltaY < 0 && curScroll <= 5) {
+          e.preventDefault();
+          if (checkAccumulatorThreshold(e.deltaY)) {
+            g3Target = 0;
+            snapTo(sections[4]); // Snap back to Group 2
+          }
+          return;
+        }
+
+        if (Math.abs(currentScrollTop - g3Top) > 2) {
+          container.scrollTop = g3Top;
+        }
+
+        // Inside horizontal scrubbing: bypass accumulator
+        scrollAccumulator.current = 0;
         if (e.deltaY > 0 && curScroll < maxScroll - 5) {
           e.preventDefault();
           g3Target = Math.min(maxScroll, g3Target + e.deltaY * 0.9);
@@ -532,26 +590,18 @@ export function HomepageScrollytelling({
           startG3Lerp();
           return;
         }
-        if (e.deltaY < 0 && curScroll <= 5) {
-          e.preventDefault();
-          g3Target = 0;
-          snapTo(sections[4]); // Snap back to Group 2
-          return;
-        }
-        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
-          g3Target = maxScroll;
-          return; // Release to vertical (stats/footer)
-        }
         return;
       }
 
       // 3. Video Divider Snapping
       if (currentIdx === 3) {
         e.preventDefault();
-        if (e.deltaY > 0) {
-          snapTo(sections[4]); // Snap to Group 2
-        } else if (e.deltaY < 0) {
-          snapTo(sections[2]); // Snap to Group 1
+        if (checkAccumulatorThreshold(e.deltaY)) {
+          if (e.deltaY > 0) {
+            snapTo(sections[4]); // Snap to Group 2
+          } else if (e.deltaY < 0) {
+            snapTo(sections[2]); // Snap to Group 1
+          }
         }
         return;
       }
@@ -560,7 +610,9 @@ export function HomepageScrollytelling({
       if (currentIdx === 0) {
         if (e.deltaY > 0) {
           e.preventDefault();
-          snapTo(sections[1]); // Snap to Manifesto
+          if (checkAccumulatorThreshold(e.deltaY)) {
+            snapTo(sections[1]); // Snap to Manifesto
+          }
         }
         return;
       }
@@ -568,10 +620,12 @@ export function HomepageScrollytelling({
       // 5. Manifesto Snapping
       if (currentIdx === 1) {
         e.preventDefault();
-        if (e.deltaY > 0) {
-          snapTo(sections[2]); // Snap to Group 1
-        } else if (e.deltaY < 0) {
-          snapTo(sections[0]); // Snap to Hero
+        if (checkAccumulatorThreshold(e.deltaY)) {
+          if (e.deltaY > 0) {
+            snapTo(sections[2]); // Snap to Group 1
+          } else if (e.deltaY < 0) {
+            snapTo(sections[0]); // Snap to Hero
+          }
         }
         return;
       }
@@ -580,7 +634,9 @@ export function HomepageScrollytelling({
       if (currentIdx === 6) {
         if (e.deltaY < 0 && currentScrollTop <= sections[6] + 10) {
           e.preventDefault();
-          snapTo(sections[5]); // Snap to Group 3
+          if (checkAccumulatorThreshold(e.deltaY)) {
+            snapTo(sections[5]); // Snap to Group 3
+          }
         }
         return;
       }
@@ -588,21 +644,27 @@ export function HomepageScrollytelling({
       // Snap-assist: approaching Group 3 from above
       if (e.deltaY > 0 && currentScrollTop > g3Top - vh * 0.6 && currentScrollTop < g3Top - 10) {
         e.preventDefault();
-        snapTo(sections[5]);
+        if (checkAccumulatorThreshold(e.deltaY)) {
+          snapTo(sections[5]);
+        }
         return;
       }
 
       // Snap-assist: up from vertical stats back into Group 3
       if (e.deltaY < 0 && currentScrollTop > g3Top + 10 && currentScrollTop < g3Top + vh * 0.4) {
         e.preventDefault();
-        snapTo(sections[5]);
+        if (checkAccumulatorThreshold(e.deltaY)) {
+          snapTo(sections[5]);
+        }
         return;
       }
 
       // Snap-assist: between Group 3 and Group 2 scrolling up
       if (e.deltaY < 0 && currentScrollTop > g2Top + 10 && currentScrollTop < g3Top - 10) {
         e.preventDefault();
-        snapTo(sections[4]);
+        if (checkAccumulatorThreshold(e.deltaY)) {
+          snapTo(sections[4]);
+        }
         return;
       }
     };
@@ -612,6 +674,7 @@ export function HomepageScrollytelling({
     return () => {
       if (el) el.removeEventListener('wheel', handleWheel);
       if (snapTimer) clearTimeout(snapTimer);
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
       if (g3RafId != null) cancelAnimationFrame(g3RafId);
     };
   }, [isMobile]);
@@ -678,29 +741,26 @@ export function HomepageScrollytelling({
           <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
           <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.52)' }} />
           <div className="relative z-20 text-center px-4 w-full h-full flex flex-col items-center justify-center">
-            {/* Tagline 1 on Mobile */}
-            <div 
-              className="absolute transition-opacity duration-300 w-full flex justify-center px-4"
-              style={{
-                bottom: '90px',
-                opacity: Math.max(0, 1 - (scrollTop / (vh * 0.4))),
-              }}
-            >
+            {/* Centered logo */}
+            <img 
+              src={wordmarkFooterUrl || '/assets/wordmark-footer.png'} 
+              alt="PITWALL" 
+              className="absolute pointer-events-none select-none animate-pulse-subtle"
+              style={{ 
+                width: '85vw', 
+                maxWidth: '500px', 
+                height: 'auto', 
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                mixBlendMode: 'difference',
+                zIndex: 5
+              }} 
+            />
+            {/* Tagline on Mobile */}
+            <div className="absolute w-full flex justify-center px-4 bottom-[90px]">
               <p className="hero-tagline uppercase tracking-widest text-xs font-mono text-center" style={{ color: WM.gold }}>
                 Because cars are not objects
-              </p>
-            </div>
-
-            {/* Tagline 2 on Mobile */}
-            <div 
-              className="absolute transition-opacity duration-300 w-full flex justify-center px-4"
-              style={{
-                bottom: '90px',
-                opacity: Math.min(1, Math.max(0, (scrollTop - vh * 0.15) / (vh * 0.35))),
-              }}
-            >
-              <p className="hero-tagline uppercase tracking-widest text-xs font-mono text-center" style={{ color: WM.gold }}>
-                and life has always been a race.
               </p>
             </div>
           </div>
@@ -712,11 +772,8 @@ export function HomepageScrollytelling({
           <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
           <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.52)' }} />
           <div className="relative z-20 max-w-4xl mx-auto w-full text-center">
-            <p
-              className="text-3xl md:text-[54px] font-normal leading-normal text-center"
-              style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
-            >
-              “Where every object we make is held to the<br className="hidden md:inline" /> same standards as the machines we obsess over.”
+            <p className="hero-tagline uppercase tracking-widest font-mono text-center px-4" style={{ color: WM.gold }}>
+              and life has always been a race.
             </p>
           </div>
         </section>
@@ -798,26 +855,58 @@ export function HomepageScrollytelling({
           </a>
         </section>
 
-        {/* ── Stats + Brand — Mobile ─────────────────────────────────────────────── */}
-        <section className="w-full px-6 py-16 flex flex-col gap-8 border-b border-white/10" style={{ backgroundColor: WM.bg }}>
-          {[
-            { value: stat1Value, label: stat1Label },
-            { value: stat2Value, label: stat2Label },
-            { value: stat3Value, label: stat3Label },
-          ].map(({ value, label }, i) => (
-            <div key={i} className="flex flex-col gap-2 border-t border-white/10 pt-4">
-              <span className="font-display-strict text-4xl uppercase tracking-tighter" style={{ color: WM.text }}>{value}</span>
-              <span className="font-mono text-[10px] uppercase tracking-widest opacity-50" style={{ color: WM.gold }}>{label}</span>
-            </div>
-          ))}
-          <p className="font-body-strict text-sm opacity-55 leading-relaxed italic mt-4">{brandParagraph}</p>
-          <a
-            href={ctaUrl}
-            className="h-12 px-6 border bg-transparent font-mono text-[11px] uppercase tracking-wider font-bold flex items-center justify-center gap-1.5 hover:opacity-70 self-start"
-            style={{ borderColor: WM.text, color: WM.text }}
-          >
-            {exploreCta} <ArrowUpRight size={14} />
-          </a>
+        {/* ── HERO VIDEO CALL TO ACTION SECTION — Mobile ─────────────────────────────────────────────── */}
+        <section 
+          className="w-full relative flex flex-col items-center justify-between py-16 px-6 overflow-hidden" 
+          style={{ minHeight: '80vh' }}
+        >
+          {/* Video background */}
+          <div className="absolute inset-0 z-0 overflow-hidden">
+            <VideoBackground playlist={playlist} />
+            <div className="absolute inset-0 bg-black/50 z-[1]" />
+          </div>
+
+          {/* Top balance label */}
+          <div className="relative z-10 font-mono text-[9px] tracking-widest text-white/40 uppercase pt-4">
+            // PITWALL / CALIBRATION
+          </div>
+
+          {/* Centered logo */}
+          <img 
+            src={wordmarkFooterUrl || '/assets/wordmark-footer.png'} 
+            alt="PITWALL" 
+            className="absolute pointer-events-none select-none"
+            style={{ 
+              width: '85vw', 
+              maxWidth: '500px', 
+              height: 'auto', 
+              top: '45%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              mixBlendMode: 'difference',
+              zIndex: 5
+            }} 
+          />
+          
+          {/* Bottom buttons */}
+          <div className="relative z-20 flex flex-col sm:flex-row justify-center items-center gap-4 w-full px-4 pb-4">
+            <a
+              href="/pages/collections"
+              className="px-6 py-3 border border-[#F6C917]/30 bg-[#F6C917]/10 backdrop-blur-md text-[#F6C917] font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-[#F6C917]/25 hover:border-[#F6C917]/60 flex items-center justify-center cursor-pointer"
+              style={{ width: '100%', maxWidth: '200px' }}
+            >
+              Collections
+            </a>
+            <button
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="px-6 py-3 border border-white/15 bg-white/5 backdrop-blur-md text-white font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-white/15 hover:border-white/30 flex items-center justify-center cursor-pointer"
+              style={{ width: '100%', maxWidth: '200px' }}
+            >
+              Back to top
+            </button>
+          </div>
         </section>
       </div>
     );
@@ -839,29 +928,27 @@ export function HomepageScrollytelling({
 
       {/* ── SECTION 1: HERO (Vertical, 100vh) ────────────────────────────── */}
       <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
-        {/* Tagline 1: "Because cars are not objects" */}
-        <div 
-          className="absolute flex items-center justify-center transition-all duration-300"
-          style={{
-            bottom: '90px',
-            opacity: Math.max(0, 1 - (scrollTop / (vh * 0.4))),
-          }}
-        >
+        {/* Centered logo */}
+        <img 
+          src={wordmarkFooterUrl || '/assets/wordmark-footer.png'} 
+          alt="PITWALL" 
+          className="absolute pointer-events-none select-none"
+          style={{ 
+            width: '75vw', 
+            maxWidth: '1000px', 
+            height: 'auto', 
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            mixBlendMode: 'difference',
+            zIndex: 5
+          }} 
+        />
+
+        {/* Tagline: "Because cars are not objects" */}
+        <div className="absolute flex items-center justify-center bottom-[90px]">
           <p className="hero-tagline uppercase tracking-widest text-sm font-mono text-center px-4" style={{ color: WM.gold }}>
             Because cars are not objects
-          </p>
-        </div>
-
-        {/* Tagline 2: "and life has always been a race." */}
-        <div 
-          className="absolute w-full flex justify-center transition-all duration-300"
-          style={{
-            bottom: '90px',
-            opacity: Math.min(1, Math.max(0, (scrollTop - vh * 0.15) / (vh * 0.35))),
-          }}
-        >
-          <p className="hero-tagline uppercase tracking-widest text-sm font-mono text-center px-4" style={{ color: WM.gold }}>
-            and life has always been a race.
           </p>
         </div>
 
@@ -878,11 +965,8 @@ export function HomepageScrollytelling({
             transition: 'opacity 0.5s ease, transform 0.5s ease'
           }}
         >
-          <p
-            className="text-3xl md:text-[54px] font-normal leading-normal text-center"
-            style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
-          >
-            “Where every object we make is held to the<br className="hidden md:inline" /> same standards as the machines we obsess over.”
+          <p className="hero-tagline uppercase tracking-widest font-mono text-center px-4" style={{ color: WM.gold }}>
+            and life has always been a race.
           </p>
         </div>
       </div>
@@ -1154,37 +1238,61 @@ export function HomepageScrollytelling({
         </motion.div>
       </div>
 
-      {/* ── VERTICAL STATS + BRAND SECTION (after Group 3, before Footer) ─── */}
-      <div className="w-full flex flex-col items-center justify-center py-32 px-16 gap-20 z-10" style={{ backgroundColor: WM.bg, color: WM.text, minHeight: '100vh' }}>
-        {/* Stats Row — 3 typographic columns */}
-        <div className="w-full max-w-5xl grid grid-cols-3 gap-8">
-          {[
-            { value: stat1Value, label: stat1Label },
-            { value: stat2Value, label: stat2Label },
-            { value: stat3Value, label: stat3Label },
-          ].map(({ value, label }, i) => (
-            <div key={i} className="flex flex-col gap-3 border-t border-white/10 pt-6">
-              <span className="font-display-strict text-5xl uppercase tracking-tighter" style={{ color: WM.text }}>
-                {value}
-              </span>
-              <span className="font-mono text-[10px] uppercase tracking-widest opacity-50" style={{ color: WM.gold }}>
-                {label}
-              </span>
-            </div>
-          ))}
+      {/* ── HERO VIDEO CALL TO ACTION SECTION (after Group 3, before Footer) ─── */}
+      <div 
+        className="w-full relative flex flex-col items-center justify-between py-16 px-6 z-10 overflow-hidden" 
+        style={{ minHeight: '100vh' }}
+      >
+        {/* Video background */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <VideoBackground playlist={playlist} />
+          <div className="absolute inset-0 bg-black/50 z-[1]" />
         </div>
-        {/* Brand paragraph */}
-        <p className="font-body-strict text-sm opacity-55 max-w-xl text-center leading-relaxed italic">
-          {brandParagraph}
-        </p>
-        {/* Explore CTA */}
-        <a
-          href={ctaUrl}
-          className="h-12 px-8 border bg-transparent font-mono text-[11px] uppercase tracking-wider font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-70"
-          style={{ borderColor: WM.text, color: WM.text }}
-        >
-          {exploreCta} <ArrowUpRight size={14} />
-        </a>
+
+        {/* Top balance label */}
+        <div className="relative z-10 font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase pt-6">
+          // PITWALL / SPEED CALIBRATION
+        </div>
+
+        {/* Centered logo */}
+        <img 
+          src={wordmarkFooterUrl || '/assets/wordmark-footer.png'} 
+          alt="PITWALL" 
+          className="absolute pointer-events-none select-none"
+          style={{ 
+            width: '75vw', 
+            maxWidth: '1000px', 
+            height: 'auto', 
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            mixBlendMode: 'difference',
+            zIndex: 5
+          }} 
+        />
+
+        {/* Bottom buttons */}
+        <div className="relative z-20 flex flex-row flex-wrap justify-center items-center gap-6 pb-6">
+          <a
+            href="/pages/collections"
+            className="px-8 py-3.5 border border-[#F6C917]/30 bg-[#F6C917]/10 backdrop-blur-md text-[#F6C917] font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-[#F6C917]/25 hover:border-[#F6C917]/60 flex items-center justify-center cursor-pointer"
+          >
+            Collections
+          </a>
+          <button
+            onClick={() => {
+              const container = containerRef.current;
+              if (container) {
+                container.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+            className="px-8 py-3.5 border border-white/15 bg-white/5 backdrop-blur-md text-white font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-white/15 hover:border-white/30 flex items-center justify-center cursor-pointer"
+          >
+            Back to top
+          </button>
+        </div>
       </div>
     </div>
   );

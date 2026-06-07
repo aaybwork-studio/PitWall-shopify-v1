@@ -63,6 +63,7 @@ function bootstrap() {
     const stat3Value = homepageRoot.getAttribute('data-stat-3-value') || 'INFINITE';
     const stat3Label = homepageRoot.getAttribute('data-stat-3-label') || 'PRECISION';
     const exploreCta = homepageRoot.getAttribute('data-explore-cta') || 'EXPLORE OUR STORY';
+    const wordmarkFooterUrl = homepageRoot.getAttribute('data-wordmark-footer-url') || '';
 
     const videoPlaylist = homepageRoot.getAttribute('data-video-playlist') || '[]';
 
@@ -86,6 +87,7 @@ function bootstrap() {
             stat3Label={stat3Label}
             brandParagraph={brandParagraph}
             exploreCta={exploreCta}
+            wordmarkFooterUrl={wordmarkFooterUrl}
           />
         </React.StrictMode>
       );
