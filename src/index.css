@@ -100,10 +100,12 @@ html, body {
 }
 
 /* Homepage: lock viewport so only the scrollytelling container scrolls */
-html.homepage-scrollytelling-active,
-html.homepage-scrollytelling-active body {
-  overflow: hidden !important;
-  height: 100% !important;
+@media (min-width: 768px) {
+  html.homepage-scrollytelling-active,
+  html.homepage-scrollytelling-active body {
+    overflow: hidden !important;
+    height: 100% !important;
+  }
 }
 
 /* Non-homepage pages: allow normal vertical scroll */

@@ -292,6 +292,24 @@ export function HomepageScrollytelling({
     };
   }, []);
 
+  // ── Move Footer inside scroll container on desktop, restore on mobile ─────────
+  useEffect(() => {
+    const footer = document.getElementById('footer');
+    if (!footer) return;
+    if (isMobile) {
+      document.body.appendChild(footer);
+    } else {
+      const scrollContainer = containerRef.current;
+      if (scrollContainer) {
+        scrollContainer.appendChild(footer);
+      }
+    }
+    return () => {
+      // Restore footer to body on unmount so it's not destroyed with React
+      document.body.appendChild(footer);
+    };
+  }, [isMobile]);
+
   // ── Ticker animation ─────────────────────────────────────────────────────────
   useEffect(() => {
     let frameId: number;
