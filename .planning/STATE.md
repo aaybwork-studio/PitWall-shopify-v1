@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-07T08:37:26.716Z"
+last_updated: "2026-06-07T08:46:58.489Z"
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 8
-  completed_plans: 7
-  percent: 88
+  completed_plans: 8
+  percent: 100
 ---
 
 # Project State
@@ -23,24 +23,24 @@ progress:
 
 **Core Value:** The homepage redesign and new pages must look unmistakably Pitwall (brutalist F1 aesthetic + existing tokens) while delivering the editorial structure of the reference designs.
 
-**Current Focus:** Phase 02.3 — about-us-car-scrollytelling
+**Current Focus:** Phase 3 — Helmets PDP & Dynamic Routing (next up)
 
 ---
 
 ## Current Position
 
-Phase: 02.3 (about-us-car-scrollytelling) — EXECUTING
-Plan: 5 of 6
+Phase: 02.3 (about-us-car-scrollytelling) — COMPLETE
+Plan: 6 of 6 (all plans executed and approved)
 | Field | Value |
 |-------|-------|
-| Phase | 02.2 — Homepage Interaction Overhaul |
-| Plan | Plan completed |
+| Phase | 02.3 — About Us Car Scrollytelling |
+| Plan | 06 — Final verification & production build |
 | Status | Completed |
 | Mode | MVP |
 
 **Progress:**
 
-[█████████░] 88%
+[██████████] 100%
 [ Phase 1: About Page     ] █▓▓▓▓▓▓▓▓▓ 100%
 [ Phase 2: All Products   ] █▓▓▓▓▓▓▓▓▓ 100%
 [ Phase 02.1: Hero Page   ] █▓▓▓▓▓▓▓▓▓ 100%
@@ -63,6 +63,7 @@ Overall: 4/5 phases complete
 | Plans created | 5 |
 
 ---
+| Phase 02.3 P06 | 25 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -79,10 +80,12 @@ Overall: 4/5 phases complete
 | About page first | No dependency on All Products; either could come first. About is simpler (pure editorial Liquid, no product loop), reducing implementation risk for Phase 1. |
 | NAV-01 in Phase 2, NAV-02 in Phase 1 | Each nav confirmation is verified as part of shipping the respective page. |
 | Mobile Group 3 layout requires no new CSS | Audit (02.3-05) confirmed existing `@media (max-width: 767px)` rules already cover Group 3 stacking, static car silhouette, and stats overflow — human checkpoint approved visual rendering at 375px viewport with zero issues. |
+| cta_url Shopify schema setting changed from type="url" to type="text" | Field is consumed as a plain string attribute (`data-cta-url` → `getAttribute`) not a Shopify URL resource object; Shopify's schema validator rejects `url`-type settings with string defaults. Fixed in commit `de0c211` during Plan 06 checkpoint verification. |
 
 ### Active TODOs
 
 - [ ] Plan Phase 3 (run `/gsd-plan-phase 3`)
+- [ ] Push Phase 02.3 theme changes to Shopify (`shopify:push`)
 
 ### Blockers
 
@@ -98,8 +101,9 @@ None.
 - Phase 02.1: Redesign Hero Page completed and verified on 2026-06-06.
 - Phase 3: Helmets PDP & Dynamic Routing context gathered on 2026-05-31.
 - Phase 02.3 Plan 05 (mobile Group 3 audit + checkpoint) completed and approved on 2026-06-07 — no CSS changes needed; human visually verified mobile layout at 375px viewport.
-- Next action: continue Phase 02.3 Plan 06 (final wave-3 plan).
+- Phase 02.3 Plan 06 (final desktop verification + production build) completed and approved on 2026-06-07 — checkpoint approved after fixing a Shopify schema validation error (`cta_url` type changed url→text, commit `de0c211`); `npm run build` passed cleanly. **Phase 02.3 is now COMPLETE.**
+- Next action: plan Phase 3 (Helmets PDP & Dynamic Routing) via `/gsd-plan-phase 3`, then push Phase 02.3 theme changes to Shopify.
 
 ---
 
-*State updated: 2026-06-06*
+*State updated: 2026-06-07*

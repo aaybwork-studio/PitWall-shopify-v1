@@ -13,7 +13,7 @@
 - [x] **Phase 2: All Products Page** — Deliver a complete, shippable `/collections/all` page in Pitwall brand identity, wired to the existing SHOP nav links, with a placeholder product grid
 - [x] **Phase 02.1: Redesign Hero Page (INSERTED)** — Redesign the homepage (hero page) with a 4-section snapping layout, rotating collections grid, and cinematic video player separators
 - [ ] **Phase 02.2: Homepage Interaction Overhaul (INSERTED)** — Deliver an advanced scrollytelling experience on the homepage featuring scroll-locking, mirrored featured products, continuous video backgrounds, interactive ticker, and custom columns collections grids
-- [ ] **Phase 02.3: About Us Car Scrollytelling (INSERTED)** — Add a Group 3 horizontal scrollytelling section with an animated F1 car traveling across 3 panels, followed by a vertical About Us content section, inserted between Group 2 and Footer
+- [x] **Phase 02.3: About Us Car Scrollytelling (INSERTED)** — Add a Group 3 horizontal scrollytelling section with an animated F1 car traveling across 3 panels, followed by a vertical About Us content section, inserted between Group 2 and Footer (completed 2026-06-07)
 - [ ] **Phase 3: Helmets PDP & Dynamic Routing** — Deliver a complete, shippable helmets product page with autocalibrated WebGL helmet models, zero-lag browser URL state switches via HTML5 History API, and separate catalog listings in `/collections/all`
 
 ---
@@ -88,7 +88,7 @@ Plans:
 - [x] 02.3-03-PLAN.md — Group 3 desktop JSX (3 panels) + mobile stacked sections
 - [x] 02.3-04-PLAN.md — Shopify schema fields + JSON script tag + data-* attributes + main.tsx wiring
 - [x] 02.3-05-PLAN.md — Mobile CSS audit + human verification checkpoint
-- [ ] 02.3-06-PLAN.md — End-to-end scroll chain verification + final production build
+- [x] 02.3-06-PLAN.md — End-to-end scroll chain verification + final production build
 
 ---
 
@@ -116,7 +116,7 @@ Plans:
 | 2. All Products Page | 1/1 | Completed | 2026-05-31 |
 | 02.1. Redesign Hero Page | 2/2 | Completed | 2026-06-06 |
 | 02.2. Homepage Interaction Overhaul | - | Completed | 2026-06-07 |
-| 02.3. About Us Car Scrollytelling | 5/6 | In Progress|  |
+| 02.3. About Us Car Scrollytelling | 6/6 | Complete   | 2026-06-07 |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
 ---
