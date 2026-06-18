@@ -398,6 +398,36 @@ export function HomepageScrollytelling({
       verticalRafId = requestAnimationFrame(verticalLerp);
     };
 
+    // ── Settle-snap: let Hero/Manifesto/Footer scroll completely naturally;
+    // once the user stops scrolling, glide to the nearest section only if
+    // they're already close to one (so deep footer scrolling is untouched).
+    let settleTimer: any = null;
+    const scheduleSettleSnap = () => {
+      if (settleTimer) clearTimeout(settleTimer);
+      settleTimer = setTimeout(() => {
+        const container = containerRef.current;
+        const g1 = group1Ref.current;
+        const g2 = group2Ref.current;
+        const g3 = group3Ref.current;
+        if (!container || !g1 || !g2 || !g3 || isSnapping.current) return;
+        const vh = container.clientHeight;
+        const g1Top = g1.offsetTop;
+        const g2Top = g2.offsetTop;
+        const g3Top = group3StageRef.current ? group3StageRef.current.offsetTop : g3.offsetTop;
+        const sections = [0, g1Top - vh, g1Top, g2Top, g3Top, g3Top + vh];
+        const cur = container.scrollTop;
+        let nearest = sections[0];
+        let minDiff = Infinity;
+        for (const s of sections) {
+          const diff = Math.abs(cur - s);
+          if (diff < minDiff) { minDiff = diff; nearest = s; }
+        }
+        if (minDiff > 2 && minDiff < vh * 0.45) {
+          snapTo(nearest);
+        }
+      }, 130);
+    };
+
     // ── Group 1 smooth horizontal scrubber (rAF lerp) ──
     let g1Target = 0;
     let g1RafId: number | null = null;
@@ -463,6 +493,8 @@ export function HomepageScrollytelling({
     const startG3Lerp = () => { if (g3RafId == null) g3RafId = requestAnimationFrame(g3Lerp); };
 
     const handleWheel = (e: WheelEvent) => {
+      scheduleSettleSnap();
+
       // 1. Maintain accumulator timeout to reset delta on inactivity
       if (scrollTimeout.current) {
         clearTimeout(scrollTimeout.current);
@@ -657,67 +689,11 @@ export function HomepageScrollytelling({
         return;
       }
 
-      // 4. Hero Snapping
-      if (currentIdx === 0) {
-        if (e.deltaY > 0) {
-          e.preventDefault();
-          if (checkAccumulatorThreshold(e.deltaY)) {
-            snapTo(sections[1]); // Snap to Manifesto
-          }
-        }
-        return;
-      }
-
-      // 5. Manifesto Snapping
-      if (currentIdx === 1) {
-        e.preventDefault();
-        if (checkAccumulatorThreshold(e.deltaY)) {
-          if (e.deltaY > 0) {
-            snapTo(sections[2]); // Snap to Group 1
-          } else if (e.deltaY < 0) {
-            snapTo(sections[0]); // Snap to Hero
-          }
-        }
-        return;
-      }
-
-      // 6. Footer Snapping
-      if (currentIdx === 5) {
-        if (e.deltaY < 0 && currentScrollTop <= sections[5] + 10) {
-          e.preventDefault();
-          if (checkAccumulatorThreshold(e.deltaY)) {
-            snapTo(sections[4]); // Snap to Group 3
-          }
-        }
-        return;
-      }
-
-      // Snap-assist: approaching Group 3 from above
-      if (e.deltaY > 0 && currentScrollTop > g3Top - vh * 0.6 && currentScrollTop < g3Top - 10) {
-        e.preventDefault();
-        if (checkAccumulatorThreshold(e.deltaY)) {
-          snapTo(sections[4]);
-        }
-        return;
-      }
-
-      // Snap-assist: up from vertical stats back into Group 3
-      if (e.deltaY < 0 && currentScrollTop > g3Top + 10 && currentScrollTop < g3Top + vh * 0.4) {
-        e.preventDefault();
-        if (checkAccumulatorThreshold(e.deltaY)) {
-          snapTo(sections[4]);
-        }
-        return;
-      }
-
-      // Snap-assist: between Group 3 and Group 2 scrolling up
-      if (e.deltaY < 0 && currentScrollTop > g2Top + 10 && currentScrollTop < g3Top - 10) {
-        e.preventDefault();
-        if (checkAccumulatorThreshold(e.deltaY)) {
-          snapTo(sections[3]);
-        }
-        return;
-      }
+      // 4/5/6. Hero, Manifesto, Footer, and the gaps around Group 3 all scroll
+      // completely natively now — no preventDefault, no accumulator dead-zone.
+      // scheduleSettleSnap() (called above) glides to the nearest section once
+      // the user stops scrolling, but only lets the page move freely while
+      // they're actively scrolling.
     };
 
     const el = containerRef.current;
@@ -725,6 +701,7 @@ export function HomepageScrollytelling({
     return () => {
       if (el) el.removeEventListener('wheel', handleWheel);
       if (snapTimer) clearTimeout(snapTimer);
+      if (settleTimer) clearTimeout(settleTimer);
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
       if (verticalRafId != null) cancelAnimationFrame(verticalRafId);
       if (g1RafId != null) cancelAnimationFrame(g1RafId);
