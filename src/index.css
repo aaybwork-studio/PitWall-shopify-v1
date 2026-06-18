@@ -678,12 +678,10 @@ html:not(.homepage-scrollytelling-active) body {
   overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   overscroll-behavior: none;
   z-index: 0;
-  /* Native vertical section snapping — the browser handles settling on the
-     nearest section itself: no dead zones, no custom JS race conditions. */
-  scroll-snap-type: y proximity;
+  scroll-snap-type: none;
 }
 .homepage-scroll-container::-webkit-scrollbar {
   display: none;

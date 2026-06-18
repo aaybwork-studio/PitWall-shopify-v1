@@ -255,6 +255,13 @@ export function HomepageScrollytelling({
   const group3Ref = useRef<HTMLDivElement>(null);
   const group3StageRef = useRef<HTMLDivElement>(null);
   const tickerItemRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const manifestoRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+
+  const activeSectionIdx = useRef(0);
+  const isAnimating = useRef(false);
+  const animationFrameId = useRef<number | null>(null);
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [activeIndex1, setActiveIndex1] = useState(0);
@@ -370,6 +377,94 @@ export function HomepageScrollytelling({
     return () => window.removeEventListener('wheel', onWheel);
   }, []);
 
+  // ── Dynamic Section Offset calculation ─────────────────────────────────────
+  const getSectionOffsets = (): number[] => {
+    const container = containerRef.current;
+    if (!container) return [];
+    
+    const offsets: number[] = [];
+    const vhVal = window.innerHeight;
+    
+    // Section 0: Hero
+    offsets.push(heroRef.current ? heroRef.current.offsetTop : 0);
+    // Section 1: Manifesto
+    offsets.push(manifestoRef.current ? manifestoRef.current.offsetTop : vhVal);
+    // Section 2: Group 1
+    offsets.push(group1Ref.current ? group1Ref.current.offsetTop : 2 * vhVal);
+    // Section 3: Group 2
+    offsets.push(group2Ref.current ? group2Ref.current.offsetTop : 3 * vhVal + vhVal / 3);
+    // Section 4: Group 3
+    offsets.push(group3StageRef.current ? group3StageRef.current.offsetTop : 4 * vhVal + vhVal / 3);
+    // Section 5: CTA Section
+    offsets.push(ctaRef.current ? ctaRef.current.offsetTop : 5 * vhVal + vhVal / 3);
+    
+    // Section 6: Footer (Max Scroll Top)
+    const footer = document.getElementById('footer');
+    if (footer && footer.parentElement === container) {
+      offsets.push(footer.offsetTop);
+    } else {
+      const maxScroll = container.scrollHeight - container.clientHeight;
+      offsets.push(maxScroll);
+    }
+    
+    return offsets;
+  };
+
+  // ── Programmatic smooth transition animation ────────────────────────────────
+  const transitionToSection = (targetIdx: number) => {
+    const container = containerRef.current;
+    if (!container) return;
+    
+    const offsets = getSectionOffsets();
+    if (targetIdx < 0 || targetIdx >= offsets.length) return;
+    
+    const targetScrollTop = offsets[targetIdx];
+    const startScrollTop = container.scrollTop;
+    const distance = targetScrollTop - startScrollTop;
+    
+    if (Math.abs(distance) < 2) {
+      container.scrollTop = targetScrollTop;
+      activeSectionIdx.current = targetIdx;
+      return;
+    }
+    
+    if (animationFrameId.current !== null) {
+      cancelAnimationFrame(animationFrameId.current);
+    }
+    
+    isAnimating.current = true;
+    activeSectionIdx.current = targetIdx;
+    
+    const duration = 650; // duration in ms
+    const startTime = performance.now();
+    
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing: easeInOutCubic
+      const ease = progress < 0.5 
+        ? 4 * progress * progress * progress 
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        
+      container.scrollTop = startScrollTop + distance * ease;
+      
+      if (progress < 1) {
+        animationFrameId.current = requestAnimationFrame(animate);
+      } else {
+        container.scrollTop = targetScrollTop;
+        animationFrameId.current = null;
+        
+        // Cooldown lockout period to allow scroll momentum to decay
+        setTimeout(() => {
+          isAnimating.current = false;
+        }, 300);
+      }
+    };
+    
+    animationFrameId.current = requestAnimationFrame(animate);
+  };
+
   // ── Scroll Listener for scrollytelling state ───────────────────────────────
   useEffect(() => {
     const container = containerRef.current;
@@ -377,11 +472,32 @@ export function HomepageScrollytelling({
 
     const handleScroll = () => {
       setScrollTop(container.scrollTop);
+      
+      // Update active section index on manual scroll (scrollbar/keys) when not animating
+      if (!isAnimating.current) {
+        const currentScroll = container.scrollTop;
+        const offsets = getSectionOffsets();
+        let closestIdx = 0;
+        let minDiff = Infinity;
+        
+        offsets.forEach((offset, idx) => {
+          const diff = Math.abs(currentScroll - offset);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestIdx = idx;
+          }
+        });
+        
+        activeSectionIdx.current = closestIdx;
+      }
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       container.removeEventListener('scroll', handleScroll);
+      if (animationFrameId.current !== null) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
     };
   }, []);
 
@@ -415,48 +531,6 @@ export function HomepageScrollytelling({
       progressMV.set(Math.min(1, Math.max(0, g3.scrollLeft / max)));
     };
 
-    type GroupKey = 'g1' | 'g2' | 'g3';
-    // The horizontal scrub track to redirect wheel input into.
-    const trackMap: Record<GroupKey, React.RefObject<HTMLDivElement>> = {
-      g1: group1Ref, g2: group2Ref, g3: group3Ref,
-    };
-    // The actual scroll-snap-aligned section element (for g3 this is the
-    // stage wrapper, not the invisible inner scrub track).
-    const sectionMap: Record<GroupKey, React.RefObject<HTMLDivElement>> = {
-      g1: group1Ref, g2: group2Ref, g3: group3StageRef,
-    };
-    let activeGroup: GroupKey | null = null;
-
-    const targets: [HTMLElement | null, GroupKey][] = [
-      [group1Ref.current, 'g1'],
-      [group2Ref.current, 'g2'],
-      [group3StageRef.current, 'g3'],
-    ];
-    targets.forEach(([el, key]) => { if (el) el.dataset.group = key; });
-
-    // Hysteresis: only engage horizontal redirect once a section is almost
-    // fully in view (so the vertical position is already essentially
-    // snapped, no visible jump), but don't disengage until well past half —
-    // otherwise a section right at the resting scroll-snap point could
-    // flicker in and out of "active" on tiny scroll jitter.
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const key = (entry.target as HTMLElement).dataset.group as GroupKey | undefined;
-        if (!key) return;
-        if (entry.intersectionRatio >= 0.92) {
-          activeGroup = key;
-        } else if (activeGroup === key && entry.intersectionRatio <= 0.5) {
-          activeGroup = null;
-        }
-      });
-    }, { root: container, threshold: [0.5, 0.92] });
-    targets.forEach(([el]) => { if (el) observer.observe(el); });
-
-    // Group 3's scrollLeft drives a spring-smoothed parallax scene
-    // (driveProgress = useSpring(progressMV, ...)). Feeding it raw, chunky
-    // 1:1 jumps made the spring overshoot/oscillate — visibly "glitchy".
-    // A light rAF lerp keeps the input continuous without reintroducing the
-    // sluggish, multi-hundred-ms lag the old system had everywhere.
     let g3Target = 0;
     let g3RafId: number | null = null;
     const g3Lerp = () => {
@@ -476,45 +550,78 @@ export function HomepageScrollytelling({
     };
 
     const handleWheel = (e: WheelEvent) => {
-      if (!activeGroup) return; // let native vertical scroll-snap handle it
-      const el = trackMap[activeGroup].current;
-      const sectionEl = sectionMap[activeGroup].current;
-      if (!el || !sectionEl) return;
-
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      const refScrollLeft = activeGroup === 'g3' ? (g3RafId != null ? g3Target : el.scrollLeft) : el.scrollLeft;
-      const atStart = refScrollLeft <= 0;
-      const atEnd = refScrollLeft >= maxScroll - 1;
-
-      // At either edge of the horizontal range: release to native vertical
-      // scroll so it can carry on to the next/previous section.
-      if (e.deltaY > 0 && atEnd) return;
-      if (e.deltaY < 0 && atStart) return;
-
       e.preventDefault();
-      // Keep the section pinned exactly in frame while scrubbing (small
-      // safety correction — the 0.92 intersection threshold already keeps
-      // this within a few px in practice).
-      if (Math.abs(container.scrollTop - sectionEl.offsetTop) > 1) {
-        container.scrollTop = sectionEl.offsetTop;
+
+      if (isAnimating.current) return;
+
+      const delta = e.deltaY;
+      if (Math.abs(delta) < 4) return; // filter minor trackpad jitter
+
+      const offsets = getSectionOffsets();
+      const currentIdx = activeSectionIdx.current;
+
+      // Check if current section is horizontal
+      const isHorizontal = currentIdx === 2 || currentIdx === 3 || currentIdx === 4;
+
+      if (isHorizontal) {
+        let trackEl: HTMLDivElement | null = null;
+        if (currentIdx === 2) trackEl = group1Ref.current;
+        else if (currentIdx === 3) trackEl = group2Ref.current;
+        else if (currentIdx === 4) trackEl = group3Ref.current;
+
+        if (trackEl) {
+          const maxScroll = trackEl.scrollWidth - trackEl.clientWidth;
+          const refScrollLeft = (currentIdx === 4 && g3RafId != null) ? g3Target : trackEl.scrollLeft;
+          
+          const atStart = refScrollLeft <= 0;
+          const atEnd = refScrollLeft >= maxScroll - 1;
+
+          if (delta > 0 && atEnd) {
+            transitionToSection(currentIdx + 1);
+            return;
+          }
+          if (delta < 0 && atStart) {
+            transitionToSection(currentIdx - 1);
+            return;
+          }
+
+          // Horizontal scroll
+          if (currentIdx === 4) {
+            g3Target = Math.max(0, Math.min(maxScroll, refScrollLeft + delta));
+            if (g3RafId == null) g3RafId = requestAnimationFrame(g3Lerp);
+          } else {
+            trackEl.scrollLeft = Math.max(0, Math.min(maxScroll, trackEl.scrollLeft + delta));
+            if (currentIdx === 2) {
+              setActiveIndex1(getSlideIndex(trackEl, trackEl.scrollLeft));
+            } else if (currentIdx === 3) {
+              setActiveIndex2(getSlideIndex(trackEl, trackEl.scrollLeft));
+            }
+          }
+
+          // Lock vertical scroll position
+          const targetY = offsets[currentIdx];
+          if (Math.abs(container.scrollTop - targetY) > 1) {
+            container.scrollTop = targetY;
+          }
+          return;
+        }
       }
 
-      if (activeGroup === 'g3') {
-        g3Target = Math.max(0, Math.min(maxScroll, refScrollLeft + e.deltaY));
-        if (g3RafId == null) g3RafId = requestAnimationFrame(g3Lerp);
-        return;
+      // Vertical section transitions
+      if (delta > 0) {
+        if (currentIdx < offsets.length - 1) {
+          transitionToSection(currentIdx + 1);
+        }
+      } else {
+        if (currentIdx > 0) {
+          transitionToSection(currentIdx - 1);
+        }
       }
-
-      el.scrollLeft = Math.max(0, Math.min(maxScroll, el.scrollLeft + e.deltaY));
-
-      if (activeGroup === 'g1') setActiveIndex1(getSlideIndex(el, el.scrollLeft));
-      else if (activeGroup === 'g2') setActiveIndex2(getSlideIndex(el, el.scrollLeft));
     };
 
     container.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       container.removeEventListener('wheel', handleWheel);
-      observer.disconnect();
       if (g3RafId != null) cancelAnimationFrame(g3RafId);
     };
   }, [isMobile]);
@@ -745,7 +852,7 @@ export function HomepageScrollytelling({
       )}
 
       {/* ── SECTION 1: HERO (Vertical, 100vh) ────────────────────────────── */}
-      <div className="scroll-snap-section relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
+      <div ref={heroRef} className="scroll-snap-section relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
         {/* Centered logo */}
         <h1 className="hero-title-text select-none absolute z-10" style={{ mixBlendMode: 'difference', opacity: 0.4 }}>PITWALL</h1>
 
@@ -753,7 +860,7 @@ export function HomepageScrollytelling({
       </div>
 
       {/* ── SECTION 2: MANIFESTO (Vertical, 100vh, 3-panel full-bleed reveal) ── */}
-      <div className="scroll-snap-section relative w-full h-screen flex flex-row overflow-hidden z-10">
+      <div ref={manifestoRef} className="scroll-snap-section relative w-full h-screen flex flex-row overflow-hidden z-10">
         <div className={`manifesto-panel relative w-[33.333vw] h-full overflow-hidden${manifestoRevealed ? ' reveal-active' : ''}`} style={{ transitionDelay: '0ms' }}>
           <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage1} alt="" loading="lazy" />
           <span className="font-display-strict select-none absolute uppercase text-3xl md:text-5xl top-8 left-8" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline1}</span>
@@ -1092,8 +1199,8 @@ export function HomepageScrollytelling({
       </div>
 
       {/* ── HERO VIDEO CALL TO ACTION SECTION (after Group 3, before Footer) ─── */}
-      {/* ── HERO VIDEO CALL TO ACTION SECTION (after Group 3, before Footer) ─── */}
       <div
+        ref={ctaRef}
         className="scroll-snap-section w-full h-screen relative flex items-center justify-center z-10 overflow-hidden"
       >
         {/* Video background */}
