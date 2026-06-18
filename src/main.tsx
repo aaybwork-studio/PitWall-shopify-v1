@@ -66,6 +66,12 @@ function bootstrap() {
     const stat3Value = homepageRoot.getAttribute('data-stat-3-value') || 'INFINITE';
     const stat3Label = homepageRoot.getAttribute('data-stat-3-label') || 'PRECISION';
     const exploreCta = homepageRoot.getAttribute('data-explore-cta') || 'EXPLORE OUR STORY';
+    const manifestoImage1 = homepageRoot.getAttribute('data-manifesto-image-1') || '';
+    const manifestoTagline1 = homepageRoot.getAttribute('data-manifesto-tagline-1') || 'THE RACE.';
+    const manifestoImage2 = homepageRoot.getAttribute('data-manifesto-image-2') || '';
+    const manifestoTagline2 = homepageRoot.getAttribute('data-manifesto-tagline-2') || 'THE MOMENT.';
+    const manifestoImage3 = homepageRoot.getAttribute('data-manifesto-image-3') || '';
+    const manifestoTagline3 = homepageRoot.getAttribute('data-manifesto-tagline-3') || 'YOURS.';
 
     const videoPlaylist = homepageRoot.getAttribute('data-video-playlist') || '[]';
 
@@ -89,6 +95,12 @@ function bootstrap() {
             stat3Label={stat3Label}
             brandParagraph={brandParagraph}
             exploreCta={exploreCta}
+            manifestoImage1={manifestoImage1}
+            manifestoTagline1={manifestoTagline1}
+            manifestoImage2={manifestoImage2}
+            manifestoTagline2={manifestoTagline2}
+            manifestoImage3={manifestoImage3}
+            manifestoTagline3={manifestoTagline3}
           />
         </React.StrictMode>
       );
