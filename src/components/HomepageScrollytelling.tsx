@@ -185,6 +185,12 @@ interface HomepageScrollytellingProps {
   stat3Label?: string;
   brandParagraph?: string;
   exploreCta?: string;
+  manifestoImage1?: string;
+  manifestoTagline1?: string;
+  manifestoImage2?: string;
+  manifestoTagline2?: string;
+  manifestoImage3?: string;
+  manifestoTagline3?: string;
 }
 
 export function HomepageScrollytelling({
@@ -201,7 +207,17 @@ export function HomepageScrollytelling({
   stat2Label = 'PURSUIT',
   stat3Value = 'INFINITE',
   stat3Label = 'PRECISION',
+  manifestoImage1 = '',
+  manifestoTagline1 = 'THE RACE.',
+  manifestoImage2 = '',
+  manifestoTagline2 = 'THE MOMENT.',
+  manifestoImage3 = '',
+  manifestoTagline3 = 'YOURS.',
 }: HomepageScrollytellingProps) {
+  // stat1Value/stat1Label/stat2Value/stat2Label/stat3Value/stat3Label remain valid
+  // schema-driven props (Plan 01's prior phase) but are no longer rendered now that
+  // the Manifesto section has been redesigned into a 3-panel image reveal (Phase 02.5).
+  void stat1Value; void stat1Label; void stat2Value; void stat2Label; void stat3Value; void stat3Label;
   // ── Products ────────────────────────────────────────────────────────────────
   const products: Product[] = React.useMemo(() => {
     let parsed: Product[] = [];
@@ -246,6 +262,15 @@ export function HomepageScrollytelling({
   // Group 3 scroll progress (0→1) as a motion value — drives the drive-scene
   // directly from the rAF loop, so scroll animation never re-renders React.
   const progressMV = useMotionValue(0);
+  // Manifesto section's own arrival progress (0→1), derived from scrollTop/vh —
+  // drives the staggered scale-up-from-center panel reveal via reveal-active class.
+  const manifestoProgressMV = useMotionValue(0);
+  // Defined per spec for potential motion-value-driven consumers; the panel reveal
+  // itself uses the simpler CSS .manifesto-panel/.reveal-active class pair (see JSX below).
+  const manifestoPanelOpacity = useTransform(manifestoProgressMV, [0, 0.6], [0, 1]);
+  const manifestoPanelScale = useTransform(manifestoProgressMV, [0, 0.6], [0.88, 1]);
+  void manifestoPanelOpacity; void manifestoPanelScale;
+  const [manifestoRevealed, setManifestoRevealed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [tickerOffset, setTickerOffset] = useState(0);
   const tickerVelocity = useRef(1.0);
@@ -359,6 +384,17 @@ export function HomepageScrollytelling({
       container.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // ── Manifesto arrival progress (drives the 3-panel staggered reveal) ───────
+  useEffect(() => {
+    const start = vh * 0.7;
+    const end = vh * 1.3;
+    const progress = Math.min(1, Math.max(0, (scrollTop - start) / (end - start)));
+    manifestoProgressMV.set(progress);
+    if (progress > 0.05) {
+      setManifestoRevealed(true);
+    }
+  }, [scrollTop, vh]);
 
   // ── Vertical section snapping is handled entirely by native CSS
   // scroll-snap (see .homepage-scroll-container / .scroll-snap-section in
@@ -551,34 +587,17 @@ export function HomepageScrollytelling({
         </section>
 
         {/* Manifesto */}
-        <section className="min-h-[70vh] w-full relative flex flex-col justify-center px-6 py-16 border-b border-[var(--pw-border)]">
-          <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
-          <div className="relative z-20 max-w-xl mx-auto w-full text-center border border-[var(--pw-border)] p-8 relative overflow-hidden backdrop-blur-md bg-black/5">
-            <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[var(--pw-gold)]" />
-            <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[var(--pw-gold)]" />
-            <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[var(--pw-gold)]" />
-            <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[var(--pw-gold)]" />
-            
-            <span className="font-mono text-[10px] uppercase tracking-widest block mb-4" style={{ color: WM.gold }}>// MANIFESTO</span>
-            <p
-              className="text-3xl md:text-[54px] font-normal leading-normal text-center"
-              style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
-            >
-              “and life has always been a race.”
-            </p>
-            <div className="flex justify-between items-center mt-6 font-mono text-[8px] tracking-widest uppercase opacity-45 border-t border-[var(--pw-border)] pt-3 w-full">
-              <span>LOC: PW.RDU</span>
-              <span>VEL: 320 KM/H</span>
-              <span>REF: PW-01</span>
-            </div>
-            <div className="flex flex-wrap justify-center items-center gap-2 mt-5 font-mono text-[9px] tracking-[0.2em] uppercase" style={{ color: WM.gold }}>
-              <span>{stat1Value} {stat1Label}</span>
-              <span className="opacity-40">·</span>
-              <span>{stat2Value} {stat2Label}</span>
-              <span className="opacity-40">·</span>
-              <span>{stat3Value} {stat3Label}</span>
-            </div>
-          </div>
+        <section className="manifesto-panel relative w-full h-[55vh] overflow-hidden reveal-active">
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage1} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase top-6 left-6" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline1}</span>
+        </section>
+        <section className="manifesto-panel relative w-full h-[55vh] overflow-hidden reveal-active">
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage2} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline2}</span>
+        </section>
+        <section className="manifesto-panel relative w-full h-[55vh] overflow-hidden reveal-active">
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage3} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase bottom-6 right-6 text-right" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline3}</span>
         </section>
         {/* Featured Product 1 */}
         <section className="min-h-screen w-full flex flex-col justify-center px-6 py-16 border-b border-[var(--pw-border)]" style={{ backgroundColor: WM.bg }}>
@@ -719,7 +738,7 @@ export function HomepageScrollytelling({
     <div ref={containerRef} className="homepage-scroll-container">
 
       {/* ── Fixed Video Background (For Hero & Manifesto scroll zone) ────────── */}
-      {scrollTop < (vh * 2.3) && (
+      {scrollTop < (vh * 1) && (
         <div className="fixed inset-0 z-0 pointer-events-none transition-opacity duration-500">
           <VideoBackground playlist={playlist} />
         </div>
@@ -733,40 +752,19 @@ export function HomepageScrollytelling({
         <HeroTicker offset={tickerOffset} itemRef={tickerItemRef} />
       </div>
 
-      {/* ── SECTION 2: MANIFESTO (Vertical, 100vh) ───────────────────────── */}
-      <div className="scroll-snap-section relative w-full h-screen flex items-center justify-center px-16 overflow-hidden z-10">
-        <div
-          className="max-w-4xl w-full text-center border border-[var(--pw-border)] p-16 relative overflow-hidden backdrop-blur-md bg-black/5"
-          style={{
-            opacity: Math.min(1, Math.max(0, (scrollTop - vh * 0.7) / (vh * 0.4))),
-            transform: `translateY(${Math.max(0, 40 - ((scrollTop - vh * 0.7) / (vh * 0.4)) * 40)}px)`,
-            transition: 'opacity 0.5s ease, transform 0.5s ease'
-          }}
-        >
-          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[var(--pw-gold)]" />
-          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[var(--pw-gold)]" />
-          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[var(--pw-gold)]" />
-          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[var(--pw-gold)]" />
-
-          <span className="font-mono text-xs uppercase tracking-widest block mb-6" style={{ color: WM.gold }}>// MANIFESTO</span>
-          <p
-            className="text-3xl md:text-[54px] font-normal leading-normal text-center"
-            style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
-          >
-            “and life has always been a race.”
-          </p>
-          <div className="flex justify-between items-center mt-12 font-mono text-[9px] tracking-widest uppercase opacity-45 border-t border-[var(--pw-border)] pt-4 w-full">
-            <span>SYS.LOC: RALEIGH / CHARLOTTE</span>
-            <span>VELOCITY: 320 KM/H</span>
-            <span>CHASSIS REF: PW-01</span>
-          </div>
-          <div className="flex justify-center items-center gap-3 mt-6 font-mono text-[10px] tracking-[0.25em] uppercase" style={{ color: WM.gold }}>
-            <span>{stat1Value} {stat1Label}</span>
-            <span className="opacity-40">·</span>
-            <span>{stat2Value} {stat2Label}</span>
-            <span className="opacity-40">·</span>
-            <span>{stat3Value} {stat3Label}</span>
-          </div>
+      {/* ── SECTION 2: MANIFESTO (Vertical, 100vh, 3-panel full-bleed reveal) ── */}
+      <div className="scroll-snap-section relative w-full h-screen flex flex-row overflow-hidden z-10">
+        <div className={`manifesto-panel relative w-[33.333vw] h-full overflow-hidden${manifestoRevealed ? ' reveal-active' : ''}`} style={{ transitionDelay: '0ms' }}>
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage1} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase text-3xl md:text-5xl top-8 left-8" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline1}</span>
+        </div>
+        <div className={`manifesto-panel relative w-[33.333vw] h-full overflow-hidden${manifestoRevealed ? ' reveal-active' : ''}`} style={{ transitionDelay: '130ms' }}>
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage2} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase text-3xl md:text-5xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline2}</span>
+        </div>
+        <div className={`manifesto-panel relative w-[33.333vw] h-full overflow-hidden${manifestoRevealed ? ' reveal-active' : ''}`} style={{ transitionDelay: '260ms' }}>
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage3} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase text-3xl md:text-5xl bottom-8 right-8 text-right" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline3}</span>
         </div>
       </div>
 
