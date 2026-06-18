@@ -54,7 +54,7 @@ export function CollectionCard({ product, style }: CollectionCardProps) {
       </div>
 
       {/* Slide-up hover overlay with VIEW button (1/3 of the card) */}
-      <div className="absolute bottom-0 left-0 right-0 h-[35%] min-h-[130px] bg-white p-4 flex flex-col justify-between translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-20 border-t border-[#0C0C0C]/10">
+      <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-white p-3 flex flex-col justify-between translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-20 border-t border-[#0C0C0C]/10">
         <div className="flex flex-col gap-2.5">
           <div className="flex justify-between items-center">
             <span className="font-mono text-[8px] uppercase tracking-widest text-[#F6C917] font-bold">
@@ -84,7 +84,7 @@ export function CollectionCard({ product, style }: CollectionCardProps) {
 //      [S ][LARGE   ]
 
 const CELL = 280; // base cell height in px
-const GAP  = 6;   // gap between cards in px
+const GAP  = 2;   // gap between cards in px
 
 interface BlockProps {
   products: Product[];
@@ -296,7 +296,7 @@ interface CollectionGridProps {
   videoUrl?: string;
 }
 
-export function CollectionGrid({ videoUrl }: CollectionGridProps) {
+export function CollectionGrid({ products = [], videoUrl }: CollectionGridProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -410,9 +410,10 @@ export function CollectionGrid({ videoUrl }: CollectionGridProps) {
 
   // ── Derive display products ───────────────────────────────────────────
   const displayBlocks = useMemo(() => {
+    const dataSource = products && products.length > 0 ? products : F1_PRODUCTS;
     let filtered = selectedCategory === 'All'
-      ? F1_PRODUCTS
-      : F1_PRODUCTS.filter(p => p.category === selectedCategory);
+      ? dataSource
+      : dataSource.filter(p => p.category?.toLowerCase() === selectedCategory.toLowerCase());
 
     let sorted = [...filtered];
     if      (selectedSort === 'Price: Low to High')  sorted.sort((a, b) => getCleanPrice(a.price) - getCleanPrice(b.price));
@@ -421,7 +422,7 @@ export function CollectionGrid({ videoUrl }: CollectionGridProps) {
     else                                             sorted = shuffle(sorted); // Default: random order
 
     return chunkIntoBlocks(sorted);
-  }, [selectedCategory, selectedSort]);
+  }, [products, selectedCategory, selectedSort]);
 
   const stopPropagation = useCallback((e: React.MouseEvent) => e.stopPropagation(), []);
 

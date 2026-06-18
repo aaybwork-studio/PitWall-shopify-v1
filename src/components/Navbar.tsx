@@ -31,7 +31,7 @@ export function Navbar({ logoUrl = '', cartCount = 0 }: NavbarProps) {
   const menuItems = [
     { label: 'Home', href: '/' },
     { label: 'Shop', href: '/collections/all' },
-    { label: 'Collections', href: '/collections' },
+    { label: 'Collections', href: '/collections/all' },
     { label: 'About', href: '/pages/about' },
     { label: 'Contact', href: '/pages/contact' },
   ];

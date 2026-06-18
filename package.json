@@ -6,8 +6,8 @@
     "dev": "vite build --watch",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "shopify:dev": "npx shopify theme dev --store=16qgme-tu.myshopify.com",
-    "shopify:push": "npx shopify theme push --store=16qgme-tu.myshopify.com --allow-live"
+    "shopify:dev": "npx shopify theme dev --store=pitwall-c4hglmgu.myshopify.com",
+    "shopify:push": "npx shopify theme push --store=pitwall-c4hglmgu.myshopify.com --allow-live"
   },
   "dependencies": {
     "lucide-react": "^0.378.0",

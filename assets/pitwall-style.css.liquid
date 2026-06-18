@@ -31,6 +31,13 @@
   --font-mono: 'IBM Plex Mono', monospace;
   --font-branding: 'BTSE PS2', 'btseps2', sans-serif;
   --font-secondary: 'Bulgary Rose', 'Petit Formal Script', cursive;
+
+  /* Homepage Scrollytelling Custom Variables */
+  --pw-bg: #EDEBE5;
+  --pw-bg2: #E5E3DD;
+  --pw-gold: #E8B93B;
+  --pw-text: #0C0C0C;
+  --pw-border: rgba(12, 12, 12, 0.12);
 }
 
 /* Dark Mode Tokens */
@@ -42,6 +49,13 @@ html.dark-mode {
   --surface-2: #242424;
   --border: rgba(237, 235, 229, 0.10);
   --muted: rgba(237, 235, 229, 0.50);
+
+  /* Homepage Scrollytelling Custom Variables */
+  --pw-bg: #0F0C09;
+  --pw-bg2: #140F0B;
+  --pw-gold: #E8B93B;
+  --pw-text: #EDE8E0;
+  --pw-border: rgba(237, 235, 229, 0.12);
 }
 
 html.dark-mode .nav-header.nav-light-bg {
@@ -147,7 +161,8 @@ html, body {
   padding: 0 100px;
   transition: background-color 300ms cubic-bezier(0.16, 1, 0.3, 1), 
               border-color 300ms cubic-bezier(0.16, 1, 0.3, 1),
-              color 300ms cubic-bezier(0.16, 1, 0.3, 1);
+              color 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-header .nav-menu-btn,
@@ -165,8 +180,12 @@ html, body {
   color: var(--fg) !important;
 }
 
+.nav-header.nav-hidden {
+  transform: translateY(-100%) !important;
+}
+
 .nav-header.nav-visible {
-  transform: translateY(0);
+  transform: translateY(0) !important;
 }
 
 .nav-grid {
@@ -1608,4 +1627,12 @@ html.dark-mode .footer-section {
   background-color: #EDE8E0;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(232, 185, 59, 0.15);
+}
+
+/* F1 Telemetry Tech Grid Background Utility */
+.tech-grid-bg {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, var(--pw-border) 1px, transparent 1px),
+                    linear-gradient(to bottom, var(--pw-border) 1px, transparent 1px);
+  opacity: 0.35;
 }

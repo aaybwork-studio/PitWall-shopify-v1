@@ -346,13 +346,16 @@ function bootstrap() {
     // Keep the navbar always visible on all pages (including the hero)
     nav.classList.add('nav-visible');
 
+    let lastScrollY = window.scrollY;
     const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
       // Find the hero section on the homepage
       const hero = document.querySelector('.hero-section') as HTMLElement | null;
       if (hero) {
         // Homepage dynamic behavior: dark over hero video, light everywhere else
         const heroHeight = hero.offsetHeight || window.innerHeight;
-        if (window.scrollY >= heroHeight - 64) {
+        if (currentScrollY >= heroHeight - 64) {
           nav.classList.add('nav-light-bg');
         } else {
           nav.classList.remove('nav-light-bg');
@@ -366,85 +369,24 @@ function bootstrap() {
           nav.classList.add('nav-light-bg');
         }
       }
+
+      // Navbar auto-hide on scroll down, show on scroll up
+      if (currentScrollY <= 100) {
+        nav.classList.remove('nav-hidden');
+      } else {
+        if (currentScrollY > lastScrollY) {
+          nav.classList.add('nav-hidden');
+        } else if (currentScrollY < lastScrollY) {
+          nav.classList.remove('nav-hidden');
+        }
+      }
+      lastScrollY = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
   }
 
-  // 5. Scroll-locked tagline animation ("Because cars are not objects" -> "and life has always been a race.")
-  const taglineEl = document.querySelector('.hero-tagline') as HTMLElement | null;
-  const heroSection = document.querySelector('.hero-section') as HTMLElement | null;
-  
-  if (taglineEl && heroSection) {
-    const originalText = "Because cars are not objects";
-    const targetText = "and life has always been a race.";
-    let hasTransitioned = false;
-    let isTransitioning = false;
-
-    // Apply inline style to ensure smooth transitions
-    taglineEl.style.transition = 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-
-    const transitionText = (direction: 'down' | 'up') => {
-      isTransitioning = true;
-      taglineEl.style.opacity = '0';
-      
-      setTimeout(() => {
-        if (direction === 'down') {
-          taglineEl.textContent = targetText;
-        } else {
-          taglineEl.textContent = originalText;
-        }
-        taglineEl.style.opacity = '1';
-        
-        setTimeout(() => {
-          isTransitioning = false;
-          if (direction === 'down') {
-            hasTransitioned = true;
-          } else {
-            hasTransitioned = false;
-          }
-        }, 400);
-      }, 400);
-    };
-
-    // Scroll lock handler for wheel and touchmove events
-    let touchStartY = 0;
-    
-    const handleScrollLock = (e: WheelEvent | TouchEvent) => {
-      const scrollY = window.scrollY || document.documentElement.scrollTop;
-      
-      let isScrollingDown = false;
-      if (e instanceof WheelEvent) {
-        isScrollingDown = e.deltaY > 0;
-      } else if (e instanceof TouchEvent && e.touches.length > 0) {
-        const touch = e.touches[0];
-        isScrollingDown = touchStartY - touch.pageY > 5;
-      }
-
-      if (scrollY <= 10 && isScrollingDown && !hasTransitioned && !isTransitioning) {
-        e.preventDefault();
-        transitionText('down');
-      }
-    };
-
-    window.addEventListener('wheel', handleScrollLock, { passive: false });
-    window.addEventListener('touchmove', handleScrollLock, { passive: false });
-
-    window.addEventListener('touchstart', (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        touchStartY = e.touches[0].pageY;
-      }
-    }, { passive: true });
-
-    // Revert transition when scrolling back to the very top
-    window.addEventListener('scroll', () => {
-      const scrollY = window.scrollY || document.documentElement.scrollTop;
-      if (scrollY <= 5 && hasTransitioned && !isTransitioning) {
-        transitionText('up');
-      }
-    }, { passive: true });
-  }
 }
 
 

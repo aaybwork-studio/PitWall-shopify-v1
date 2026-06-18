@@ -4,6 +4,24 @@
   data-video-url="{{ 'F1_car_idling_on_background_202606011707.mp4' | asset_url }}"
 ></div>
 
+<script id="collection-products-data" type="application/json">
+  [
+    {%- assign target_collection = collection | default: collections.all -%}
+    {%- paginate target_collection.products by 1000 -%}
+      {%- for product in target_collection.products -%}
+        {
+          "title": {{ product.title | json }},
+          "url": {{ product.url | json }},
+          "price": {{ product.price | money | json }},
+          "image": {{ product.featured_image | img_url: '600x' | json }},
+          "specs": {{ product.metafields.custom.specs | default: "1:18 SCALE / PRECISION DETAIL" | json }},
+          "category": {{ product.type | default: "WLED Light Boxes" | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    {%- endpaginate -%}
+  ]
+</script>
+
 {% schema %}
 {
   "name": "Collection Grid",

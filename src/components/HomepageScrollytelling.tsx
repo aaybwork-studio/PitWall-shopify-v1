@@ -18,10 +18,10 @@ function getImmersivePDPUrl(product: Product): string {
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 const WM = {
-  bg:   '#0F0C09',
-  bg2:  '#140F0B',
-  gold: '#E8B93B',
-  text: '#EDE8E0',
+  bg:   'var(--pw-bg, #0F0C09)',
+  bg2:  'var(--pw-bg2, #140F0B)',
+  gold: 'var(--pw-gold, #E8B93B)',
+  text: 'var(--pw-text, #EDE8E0)',
 };
 
 // ─── Animated Price ───────────────────────────────────────────────────────────
@@ -366,16 +366,71 @@ export function HomepageScrollytelling({
     const isSnapping = { current: false }; // lightweight snapping state
     let snapTimer: any = null;
 
+    let verticalTarget = 0;
+    let verticalRafId: number | null = null;
+
     const snapTo = (top: number) => {
       const container = containerRef.current;
       if (!container) return;
       isSnapping.current = true;
-      container.scrollTo({ top, behavior: 'smooth' });
-      if (snapTimer) clearTimeout(snapTimer);
-      snapTimer = setTimeout(() => {
-        isSnapping.current = false;
-      }, 700);
+      verticalTarget = top;
+
+      const verticalLerp = () => {
+        const cur = container.scrollTop;
+        const diff = verticalTarget - cur;
+        if (Math.abs(diff) < 1) {
+          container.scrollTop = verticalTarget;
+          isSnapping.current = false;
+          verticalRafId = null;
+        } else {
+          container.scrollTop = cur + diff * 0.095;
+          verticalRafId = requestAnimationFrame(verticalLerp);
+        }
+      };
+
+      if (verticalRafId != null) cancelAnimationFrame(verticalRafId);
+      verticalRafId = requestAnimationFrame(verticalLerp);
     };
+
+    // ── Group 1 smooth horizontal scrubber (rAF lerp) ──
+    let g1Target = 0;
+    let g1RafId: number | null = null;
+    const g1Lerp = () => {
+      const g1 = group1Ref.current;
+      if (!g1) { g1RafId = null; return; }
+      const cur = g1.scrollLeft;
+      const diff = g1Target - cur;
+      if (Math.abs(diff) < 0.4) {
+        g1.scrollLeft = g1Target;
+        setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
+        g1RafId = null;
+        return;
+      }
+      g1.scrollLeft = cur + diff * 0.16;
+      setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
+      g1RafId = requestAnimationFrame(g1Lerp);
+    };
+    const startG1Lerp = () => { if (g1RafId == null) g1RafId = requestAnimationFrame(g1Lerp); };
+
+    // ── Group 2 smooth horizontal scrubber (rAF lerp) ──
+    let g2Target = 0;
+    let g2RafId: number | null = null;
+    const g2Lerp = () => {
+      const g2 = group2Ref.current;
+      if (!g2) { g2RafId = null; return; }
+      const cur = g2.scrollLeft;
+      const diff = g2Target - cur;
+      if (Math.abs(diff) < 0.4) {
+        g2.scrollLeft = g2Target;
+        setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
+        g2RafId = null;
+        return;
+      }
+      g2.scrollLeft = cur + diff * 0.16;
+      setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
+      g2RafId = requestAnimationFrame(g2Lerp);
+    };
+    const startG2Lerp = () => { if (g2RafId == null) g2RafId = requestAnimationFrame(g2Lerp); };
 
     // ── Group 3 smooth horizontal scrubber (rAF lerp for flowing motion) ──
     let g3Target = 0;
@@ -435,15 +490,14 @@ export function HomepageScrollytelling({
       const g2Top = g2.offsetTop;
       const g3Top = group3StageRef.current ? group3StageRef.current.offsetTop : g3.offsetTop;
 
-      // Define target scroll heights for the 7 states
+      // Define target scroll heights for the 6 states (Video Divider is flow-through, no snap lock)
       const sections = [
         0,              // 0: Hero
         g1Top - vh,     // 1: Manifesto
         g1Top,          // 2: Group 1 (Horizontal)
-        g1Top + vh,     // 3: Video Divider (starts immediately after Group 1)
-        g2Top,          // 4: Group 2 (Horizontal)
-        g3Top,          // 5: Group 3 (Horizontal — About Us)
-        g3Top + vh      // 6: Footer (starts immediately after Group 3)
+        g2Top,          // 3: Group 2 (Horizontal)
+        g3Top,          // 4: Group 3 (Horizontal — About Us)
+        g3Top + vh      // 5: Footer (starts immediately after Group 3)
       ];
 
       // Identify which section index we are currently closest to
@@ -458,7 +512,7 @@ export function HomepageScrollytelling({
       }
 
       // Helper to evaluate accumulator threshold for snaps
-      const threshold = 180;
+      const threshold = 120;
       const checkAccumulatorThreshold = (delta: number) => {
         scrollAccumulator.current += delta;
         if (Math.abs(scrollAccumulator.current) >= threshold) {
@@ -474,59 +528,22 @@ export function HomepageScrollytelling({
           container.scrollTop = g1Top;
         }
         const maxScroll = g1.scrollWidth - g1.clientWidth;
+        if (g1RafId == null) g1Target = g1.scrollLeft;
         const curScroll = g1.scrollLeft;
 
         if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
           e.preventDefault();
           if (checkAccumulatorThreshold(e.deltaY)) {
-            snapTo(sections[3]); // Snap to Video Divider
+            g1Target = maxScroll;
+            snapTo(sections[3]); // Snap to Group 2 directly
           }
           return;
         }
         if (e.deltaY < 0 && curScroll <= 5) {
           e.preventDefault();
           if (checkAccumulatorThreshold(e.deltaY)) {
+            g1Target = 0;
             snapTo(sections[1]); // Snap back to Manifesto
-          }
-          return;
-        }
-
-        // Inside horizontal scrolling: bypass accumulator (keep instant)
-        scrollAccumulator.current = 0;
-        if (e.deltaY > 0 && curScroll < maxScroll - 5) {
-          e.preventDefault();
-          g1.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
-          setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
-          return;
-        }
-        if (e.deltaY < 0 && curScroll > 5) {
-          e.preventDefault();
-          g1.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
-          setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
-          return;
-        }
-        return;
-      }
-
-      // 2. Group 2 Horizontal Lock
-      if (currentIdx === 4) {
-        if (Math.abs(currentScrollTop - g2Top) > 2) {
-          container.scrollTop = g2Top;
-        }
-        const maxScroll = g2.scrollWidth - g2.clientWidth;
-        const curScroll = g2.scrollLeft;
-
-        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
-          e.preventDefault();
-          if (checkAccumulatorThreshold(e.deltaY)) {
-            snapTo(sections[5]); // Snap to Group 3
-          }
-          return;
-        }
-        if (e.deltaY < 0 && curScroll <= 5) {
-          e.preventDefault();
-          if (checkAccumulatorThreshold(e.deltaY)) {
-            snapTo(sections[3]); // Snap back to Video Divider
           }
           return;
         }
@@ -535,14 +552,57 @@ export function HomepageScrollytelling({
         scrollAccumulator.current = 0;
         if (e.deltaY > 0 && curScroll < maxScroll - 5) {
           e.preventDefault();
-          g2.scrollLeft = Math.min(maxScroll, curScroll + e.deltaY * 0.85);
-          setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
+          g1Target = Math.min(maxScroll, g1Target + e.deltaY * 0.85);
+          startG1Lerp();
           return;
         }
         if (e.deltaY < 0 && curScroll > 5) {
           e.preventDefault();
-          g2.scrollLeft = Math.max(0, curScroll + e.deltaY * 0.85);
-          setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
+          g1Target = Math.max(0, g1Target + e.deltaY * 0.85);
+          startG1Lerp();
+          return;
+        }
+        return;
+      }
+
+      // 2. Group 2 Horizontal Lock
+      if (currentIdx === 3) {
+        if (Math.abs(currentScrollTop - g2Top) > 2) {
+          container.scrollTop = g2Top;
+        }
+        const maxScroll = g2.scrollWidth - g2.clientWidth;
+        if (g2RafId == null) g2Target = g2.scrollLeft;
+        const curScroll = g2.scrollLeft;
+
+        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
+          e.preventDefault();
+          if (checkAccumulatorThreshold(e.deltaY)) {
+            g2Target = maxScroll;
+            snapTo(sections[4]); // Snap to Group 3
+          }
+          return;
+        }
+        if (e.deltaY < 0 && curScroll <= 5) {
+          e.preventDefault();
+          if (checkAccumulatorThreshold(e.deltaY)) {
+            g2Target = 0;
+            snapTo(sections[2]); // Snap back to Group 1
+          }
+          return;
+        }
+
+        // Inside horizontal scrolling: bypass accumulator
+        scrollAccumulator.current = 0;
+        if (e.deltaY > 0 && curScroll < maxScroll - 5) {
+          e.preventDefault();
+          g2Target = Math.min(maxScroll, g2Target + e.deltaY * 0.85);
+          startG2Lerp();
+          return;
+        }
+        if (e.deltaY < 0 && curScroll > 5) {
+          e.preventDefault();
+          g2Target = Math.max(0, g2Target + e.deltaY * 0.85);
+          startG2Lerp();
           return;
         }
         return;
@@ -565,7 +625,7 @@ export function HomepageScrollytelling({
           e.preventDefault();
           if (checkAccumulatorThreshold(e.deltaY)) {
             g3Target = 0;
-            snapTo(sections[4]); // Snap back to Group 2
+            snapTo(sections[3]); // Snap back to Group 2
           }
           return;
         }
@@ -587,19 +647,6 @@ export function HomepageScrollytelling({
           g3Target = Math.max(0, g3Target + e.deltaY * 0.9);
           startG3Lerp();
           return;
-        }
-        return;
-      }
-
-      // 3. Video Divider Snapping
-      if (currentIdx === 3) {
-        e.preventDefault();
-        if (checkAccumulatorThreshold(e.deltaY)) {
-          if (e.deltaY > 0) {
-            snapTo(sections[4]); // Snap to Group 2
-          } else if (e.deltaY < 0) {
-            snapTo(sections[2]); // Snap to Group 1
-          }
         }
         return;
       }
@@ -628,12 +675,12 @@ export function HomepageScrollytelling({
         return;
       }
 
-      // 7. Footer Snapping
-      if (currentIdx === 6) {
-        if (e.deltaY < 0 && currentScrollTop <= sections[6] + 10) {
+      // 6. Footer Snapping
+      if (currentIdx === 5) {
+        if (e.deltaY < 0 && currentScrollTop <= sections[5] + 10) {
           e.preventDefault();
           if (checkAccumulatorThreshold(e.deltaY)) {
-            snapTo(sections[5]); // Snap to Group 3
+            snapTo(sections[4]); // Snap to Group 3
           }
         }
         return;
@@ -643,7 +690,7 @@ export function HomepageScrollytelling({
       if (e.deltaY > 0 && currentScrollTop > g3Top - vh * 0.6 && currentScrollTop < g3Top - 10) {
         e.preventDefault();
         if (checkAccumulatorThreshold(e.deltaY)) {
-          snapTo(sections[5]);
+          snapTo(sections[4]);
         }
         return;
       }
@@ -652,7 +699,7 @@ export function HomepageScrollytelling({
       if (e.deltaY < 0 && currentScrollTop > g3Top + 10 && currentScrollTop < g3Top + vh * 0.4) {
         e.preventDefault();
         if (checkAccumulatorThreshold(e.deltaY)) {
-          snapTo(sections[5]);
+          snapTo(sections[4]);
         }
         return;
       }
@@ -661,7 +708,7 @@ export function HomepageScrollytelling({
       if (e.deltaY < 0 && currentScrollTop > g2Top + 10 && currentScrollTop < g3Top - 10) {
         e.preventDefault();
         if (checkAccumulatorThreshold(e.deltaY)) {
-          snapTo(sections[4]);
+          snapTo(sections[3]);
         }
         return;
       }
@@ -673,6 +720,9 @@ export function HomepageScrollytelling({
       if (el) el.removeEventListener('wheel', handleWheel);
       if (snapTimer) clearTimeout(snapTimer);
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+      if (verticalRafId != null) cancelAnimationFrame(verticalRafId);
+      if (g1RafId != null) cancelAnimationFrame(g1RafId);
+      if (g2RafId != null) cancelAnimationFrame(g2RafId);
       if (g3RafId != null) cancelAnimationFrame(g3RafId);
     };
   }, [isMobile]);
@@ -735,37 +785,40 @@ export function HomepageScrollytelling({
     return (
       <div className="w-full flex flex-col overflow-x-hidden" style={{ backgroundColor: WM.bg, color: WM.text }}>
         {/* Hero */}
-        <section className="h-screen w-full relative flex items-center justify-center border-b border-white/10">
+        <section className="h-screen w-full relative flex items-center justify-center border-b border-[var(--pw-border)]">
           <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
-          <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.52)' }} />
           <div className="relative z-20 text-center px-4 w-full h-full flex flex-col items-center justify-center">
             {/* Centered logo */}
             <h1 className="hero-title-text select-none absolute z-10 animate-pulse-subtle" style={{ mixBlendMode: 'difference', opacity: 0.4 }}>PITWALL</h1>
-            {/* Tagline on Mobile */}
-            <div className="absolute w-full flex justify-center px-4 bottom-[90px]">
-              <p className="hero-tagline uppercase tracking-widest text-xs font-mono text-center" style={{ color: WM.gold }}>
-                Because cars are not objects
-              </p>
-            </div>
           </div>
           <HeroTicker offset={tickerOffset} itemRef={tickerItemRef} />
         </section>
 
         {/* Manifesto */}
-        <section className="min-h-[70vh] w-full relative flex flex-col justify-center px-6 py-16 border-b border-white/10">
+        <section className="min-h-[70vh] w-full relative flex flex-col justify-center px-6 py-16 border-b border-[var(--pw-border)]">
           <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
-          <div className="absolute inset-0 z-10" style={{ backgroundColor: 'rgba(15,12,9,0.52)' }} />
-          <div className="relative z-20 max-w-4xl mx-auto w-full text-center">
+          <div className="relative z-20 max-w-xl mx-auto w-full text-center border border-[var(--pw-border)] p-8 relative overflow-hidden backdrop-blur-md bg-black/5">
+            <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[var(--pw-gold)]" />
+            <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[var(--pw-gold)]" />
+            <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[var(--pw-gold)]" />
+            <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[var(--pw-gold)]" />
+            
+            <span className="font-mono text-[10px] uppercase tracking-widest block mb-4" style={{ color: WM.gold }}>// MANIFESTO</span>
             <p
               className="text-3xl md:text-[54px] font-normal leading-normal text-center"
               style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
             >
               “and life has always been a race.”
             </p>
+            <div className="flex justify-between items-center mt-6 font-mono text-[8px] tracking-widest uppercase opacity-45 border-t border-[var(--pw-border)] pt-3 w-full">
+              <span>LOC: PW.RDU</span>
+              <span>VEL: 320 KM/H</span>
+              <span>REF: PW-01</span>
+            </div>
           </div>
         </section>
         {/* Featured Product 1 */}
-        <section className="min-h-screen w-full flex flex-col justify-center px-6 py-16 border-b border-white/10" style={{ backgroundColor: WM.bg }}>
+        <section className="min-h-screen w-full flex flex-col justify-center px-6 py-16 border-b border-[var(--pw-border)]" style={{ backgroundColor: WM.bg }}>
           <div className="max-w-md mx-auto flex flex-col gap-6 w-full">
             <span className="font-mono text-xs uppercase tracking-widest" style={{ color: WM.gold }}>// SEASON SPECIMEN</span>
             <div 
@@ -824,47 +877,58 @@ export function HomepageScrollytelling({
           />
         </div>
         {/* ── GROUP 3: About Us — Mobile stacked ──────────────────────────────────── */}
-        <section className="min-h-screen w-full flex flex-col justify-center items-center px-6 py-16 border-b border-white/10 gap-8" style={{ backgroundColor: WM.bg }}>
-          <span className="font-mono text-xs uppercase tracking-widest self-start" style={{ color: WM.gold }}>// ABOUT US</span>
-          {/* Static car — no scroll animation on mobile (D-15) */}
-          <div style={{ width: '80vw', maxWidth: '480px', height: 'auto' }}>
-            <F1CarSilhouette color={WM.text} />
+        <section className="min-h-screen w-full flex flex-col justify-center items-center px-6 py-16 border-b border-[var(--pw-border)] gap-8 relative overflow-hidden" style={{ backgroundColor: WM.bg }}>
+          <div className="absolute inset-0 tech-grid-bg pointer-events-none" />
+          
+          <div className="relative z-10 w-full max-w-md border border-[var(--pw-border)] p-8 relative overflow-hidden backdrop-blur-md bg-black/5 flex flex-col items-center gap-6">
+            <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[var(--pw-gold)]" />
+            <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[var(--pw-gold)]" />
+            <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[var(--pw-gold)]" />
+            <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[var(--pw-gold)]" />
+
+            <span className="font-mono text-xs uppercase tracking-widest self-start" style={{ color: WM.gold }}>// ABOUT US</span>
+            
+            {/* Static car with subtle mobile telemetry */}
+            <div className="relative my-4" style={{ width: '80vw', maxWidth: '360px', height: 'auto' }}>
+              <div className="absolute -top-4 left-0 font-mono text-[7px] opacity-40">SYS: ACTIVE</div>
+              <div className="absolute -top-4 right-0 font-mono text-[7px] opacity-40">REF: PW-01</div>
+              <F1CarSilhouette color={WM.text} />
+            </div>
+
+            <p className="font-body-strict text-sm opacity-80 leading-relaxed text-center">
+              {foundingStory}
+            </p>
+            <a
+              href={ctaUrl}
+              className="w-full h-12 border bg-transparent font-mono text-[11px] uppercase tracking-wider font-bold flex items-center justify-center gap-1.5 hover:opacity-70"
+              style={{ borderColor: WM.text, color: WM.text }}
+            >
+              {ctaLabel} →
+            </a>
           </div>
-          <p className="font-body-strict text-base opacity-80 leading-relaxed text-center">
-            {foundingStory}
-          </p>
-          <a
-            href={ctaUrl}
-            className="h-12 px-8 border bg-transparent font-mono text-[11px] uppercase tracking-wider font-bold flex items-center justify-center gap-1.5 hover:opacity-70"
-            style={{ borderColor: WM.text, color: WM.text }}
-          >
-            {ctaLabel} →
-          </a>
         </section>
 
         {/* ── HERO VIDEO CALL TO ACTION SECTION — Mobile ─────────────────────────────────────────────── */}
         <section 
-          className="w-full relative flex flex-col items-center justify-center py-16 px-6 overflow-hidden gap-[60px]" 
-          style={{ minHeight: '80vh' }}
+          className="w-full h-screen relative flex items-center justify-center overflow-hidden" 
         >
           {/* Video background */}
           <div className="absolute inset-0 z-0 overflow-hidden">
             <VideoBackground playlist={playlist} />
-            <div className="absolute inset-0 bg-black/50 z-[1]" />
           </div>
 
           {/* Centered logo */}
           <h1 
-            className="hero-title-text select-none text-center relative z-10 animate-pulse-subtle" 
+            className="hero-title-text select-none absolute z-10 animate-pulse-subtle" 
             style={{ mixBlendMode: 'difference', opacity: 0.4 }}
           >
             PITWALL
           </h1>
           
           {/* Bottom buttons */}
-          <div className="relative z-20 flex flex-col sm:flex-row justify-center items-center gap-4 w-full px-4">
+          <div className="absolute z-20 flex flex-col sm:flex-row justify-center items-center gap-4 w-full px-4 bottom-[90px]">
             <a
-              href="/pages/collections"
+              href="/collections/all"
               className="px-6 py-3 border border-[#F6C917]/30 bg-[#F6C917]/10 backdrop-blur-md text-[#F6C917] font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-[#F6C917]/25 hover:border-[#F6C917]/60 flex items-center justify-center cursor-pointer"
               style={{ width: '100%', maxWidth: '200px' }}
             >
@@ -895,7 +959,6 @@ export function HomepageScrollytelling({
       {scrollTop < (vh * 2.3) && (
         <div className="fixed inset-0 z-0 pointer-events-none transition-opacity duration-500">
           <VideoBackground playlist={playlist} />
-          <div className="absolute inset-0" style={{ backgroundColor: 'rgba(15,12,9,0.58)' }} />
         </div>
       )}
 
@@ -904,32 +967,36 @@ export function HomepageScrollytelling({
         {/* Centered logo */}
         <h1 className="hero-title-text select-none absolute z-10" style={{ mixBlendMode: 'difference', opacity: 0.4 }}>PITWALL</h1>
 
-        {/* Tagline: "Because cars are not objects" */}
-        <div className="absolute flex items-center justify-center bottom-[90px]">
-          <p className="hero-tagline uppercase tracking-widest text-sm font-mono text-center px-4" style={{ color: WM.gold }}>
-            Because cars are not objects
-          </p>
-        </div>
-
         <HeroTicker offset={tickerOffset} itemRef={tickerItemRef} />
       </div>
 
       {/* ── SECTION 2: MANIFESTO (Vertical, 100vh) ───────────────────────── */}
       <div className="relative w-full h-screen flex items-center justify-center px-16 overflow-hidden z-10">
         <div
-          className="max-w-5xl text-center"
+          className="max-w-4xl w-full text-center border border-[var(--pw-border)] p-16 relative overflow-hidden backdrop-blur-md bg-black/5"
           style={{
             opacity: Math.min(1, Math.max(0, (scrollTop - vh * 0.7) / (vh * 0.4))),
             transform: `translateY(${Math.max(0, 40 - ((scrollTop - vh * 0.7) / (vh * 0.4)) * 40)}px)`,
             transition: 'opacity 0.5s ease, transform 0.5s ease'
           }}
         >
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[var(--pw-gold)]" />
+          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[var(--pw-gold)]" />
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[var(--pw-gold)]" />
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[var(--pw-gold)]" />
+
+          <span className="font-mono text-xs uppercase tracking-widest block mb-6" style={{ color: WM.gold }}>// MANIFESTO</span>
           <p
             className="text-3xl md:text-[54px] font-normal leading-normal text-center"
             style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
           >
             “and life has always been a race.”
           </p>
+          <div className="flex justify-between items-center mt-12 font-mono text-[9px] tracking-widest uppercase opacity-45 border-t border-[var(--pw-border)] pt-4 w-full">
+            <span>SYS.LOC: RALEIGH / CHARLOTTE</span>
+            <span>VELOCITY: 320 KM/H</span>
+            <span>CHASSIS REF: PW-01</span>
+          </div>
         </div>
       </div>
 
@@ -957,7 +1024,7 @@ export function HomepageScrollytelling({
                   <h3 className="font-display-strict text-4xl uppercase tracking-tighter font-extrabold leading-none">
                     {featProduct1.title}
                   </h3>
-                  <div className="border-t border-b border-white/10 py-3 my-2 flex items-baseline justify-between font-mono">
+                  <div className="border-t border-b border-[var(--pw-border)] py-3 my-2 flex items-baseline justify-between font-mono">
                     <span className="text-[10px] opacity-45 uppercase">PRICE:</span>
                     <span className="text-2xl font-bold" style={{ color: WM.gold }}>
                       {activeIndex1 >= 0 ? <AnimatedPrice priceString={featProduct1.price} /> : featProduct1.price}
@@ -985,17 +1052,17 @@ export function HomepageScrollytelling({
           <div className="relative z-10 h-full flex items-center px-12">
             <div className="grid-cols-custom-1">
               {/* Col 1: two stacked */}
-              <div className="flex flex-col gap-4 h-full justify-between">
+              <div className="flex flex-col gap-[2px] h-full justify-between">
                 <CollectionCard product={products[0]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} />
                 <CollectionCard product={products[1]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '100ms' } as React.CSSProperties} />
               </div>
               {/* Col 2: two stacked */}
-              <div className="flex flex-col gap-4 h-full justify-between">
+              <div className="flex flex-col gap-[2px] h-full justify-between">
                 <CollectionCard product={products[2]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '150ms' } as React.CSSProperties} />
                 <CollectionCard product={products[3]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '200ms' } as React.CSSProperties} />
               </div>
               {/* Col 3: tall + title card */}
-              <div className="flex flex-col gap-4 h-full justify-between">
+              <div className="flex flex-col gap-[2px] h-full justify-between">
                 <div className={`flex-[7] min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '250ms' } as React.CSSProperties}>
                   <CollectionCard product={products[4]} className="w-full h-full" isTall={true} />
                 </div>
@@ -1004,9 +1071,9 @@ export function HomepageScrollytelling({
                 </div>
               </div>
               {/* Col 4: large + two small */}
-              <div className="flex flex-col gap-4 h-full justify-between">
+              <div className="flex flex-col gap-[2px] h-full justify-between">
                 <CollectionCard product={products[5]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '350ms' } as React.CSSProperties} />
-                <div className="flex-[1] flex gap-4 min-h-0">
+                <div className="flex-[1] flex gap-[2px] min-h-0">
                   <CollectionCard product={products[6]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '400ms' } as React.CSSProperties} />
                   <CollectionCard product={products[7]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '450ms' } as React.CSSProperties} />
                 </div>
@@ -1047,7 +1114,7 @@ export function HomepageScrollytelling({
                   <h3 className="font-display-strict text-4xl uppercase tracking-tighter font-extrabold leading-none">
                     {featProduct2.title}
                   </h3>
-                  <div className="border-t border-b border-white/10 py-3 my-2 flex items-baseline justify-between font-mono">
+                  <div className="border-t border-b border-[var(--pw-border)] py-3 my-2 flex items-baseline justify-between font-mono">
                     <span className="text-[10px] opacity-45 uppercase">PRICE:</span>
                     <span className="text-2xl font-bold" style={{ color: WM.gold }}>
                       {activeIndex2 === 0 ? <AnimatedPrice priceString={featProduct2.price} /> : featProduct2.price}
@@ -1082,7 +1149,7 @@ export function HomepageScrollytelling({
           <div className="relative z-10 h-full flex items-center px-12">
             <div className="grid-cols-custom-2">
               {/* Col 1: tall + title card */}
-              <div className="flex flex-col gap-4 h-full justify-between">
+              <div className="flex flex-col gap-[2px] h-full justify-between">
                 <div className={`flex-[7] min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`}>
                   <CollectionCard product={products[1]} className="w-full h-full" isTall={true} />
                 </div>
@@ -1091,12 +1158,12 @@ export function HomepageScrollytelling({
                 </div>
               </div>
               {/* Col 2: two stacked */}
-              <div className="flex flex-col gap-4 h-full justify-between">
+              <div className="flex flex-col gap-[2px] h-full justify-between">
                 <CollectionCard product={products[2]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '150ms' } as React.CSSProperties} />
                 <CollectionCard product={products[3]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '200ms' } as React.CSSProperties} />
               </div>
               {/* Col 3: two stacked */}
-              <div className="flex flex-col gap-4 h-full justify-between">
+              <div className="flex flex-col gap-[2px] h-full justify-between">
                 <CollectionCard product={products[4]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '250ms' } as React.CSSProperties} />
                 <CollectionCard product={products[5]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '300ms' } as React.CSSProperties} />
               </div>
@@ -1105,9 +1172,9 @@ export function HomepageScrollytelling({
                 <CollectionCard product={products[6]} className="w-full h-full" isTall={true} />
               </div>
               {/* Col 5: one + two small */}
-              <div className="flex flex-col gap-4 h-full justify-between">
+              <div className="flex flex-col gap-[2px] h-full justify-between">
                 <CollectionCard product={products[7]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '400ms' } as React.CSSProperties} />
-                <div className="flex-[1] flex gap-4 min-h-0">
+                <div className="flex-[1] flex gap-[2px] min-h-0">
                   <CollectionCard product={products[8]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '450ms' } as React.CSSProperties} />
                   <CollectionCard product={products[0]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '500ms' } as React.CSSProperties} />
                 </div>
@@ -1126,6 +1193,9 @@ export function HomepageScrollytelling({
       >
         {/* Ambient depth gradient */}
         <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
+
+        {/* Tech Grid Background Overlay */}
+        <div className="absolute inset-0 tech-grid-bg z-0 pointer-events-none" />
 
         {/* Parallax giant wordmark — one continuous backdrop */}
         <motion.span
@@ -1173,22 +1243,44 @@ export function HomepageScrollytelling({
           <span className="block font-mono text-[10px] uppercase tracking-[0.3em] opacity-70">ABOUT US / 01</span>
         </motion.div>
 
-        {/* Founding story + CTA — fades/slides in as the car arrives */}
-        <motion.div className="g3-story" style={{ opacity: storyOpacity, transform: storyTransform, color: WM.text }}>
-          <span className="font-mono text-xs uppercase tracking-widest" style={{ color: WM.gold }}>
+        {/* Founding story + CTA — fades/slides in as the car arrives (wrapped in tech bordered panel) */}
+        <motion.div 
+          className="g3-story border border-[var(--pw-border)] p-8 backdrop-blur-md bg-black/10 relative" 
+          style={{ opacity: storyOpacity, transform: storyTransform, color: WM.text }}
+        >
+          <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[var(--pw-gold)]" />
+          <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[var(--pw-gold)]" />
+          <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[var(--pw-gold)]" />
+          <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[var(--pw-gold)]" />
+
+          <span className="font-mono text-xs uppercase tracking-widest block" style={{ color: WM.gold }}>
             // PITWALL / ORIGIN
           </span>
-          <p className="font-body-strict text-base opacity-80 leading-relaxed">
+          <p className="font-body-strict text-sm opacity-80 leading-relaxed">
             {foundingStory}
           </p>
-          <a href={ctaUrl} className="g3-cta font-mono" style={{ borderColor: WM.text, color: WM.text }}>
+          <a href={ctaUrl} className="g3-cta font-mono w-full" style={{ borderColor: WM.text, color: WM.text }}>
             {ctaLabel} →
           </a>
         </motion.div>
 
-        {/* The single car — travels continuously across the whole scene */}
-        <motion.div className="g3-car" style={{ transform: carTransform }}>
+        {/* The single car — travels continuously across the whole scene, adorned with moving telemetry tags */}
+        <motion.div className="g3-car relative" style={{ transform: carTransform }}>
+          <div className="absolute -top-8 left-0 font-mono text-[9px] tracking-wider uppercase opacity-40 select-none whitespace-nowrap">
+            SYS.STATUS: ACTIVE [OK]
+          </div>
+          <div className="absolute -top-8 right-0 font-mono text-[9px] tracking-wider uppercase opacity-40 select-none whitespace-nowrap">
+            COORD: X_1042 // Y_-480
+          </div>
+          
           <F1CarSilhouette color={WM.text} />
+          
+          <div className="absolute -bottom-8 left-0 font-mono text-[9px] tracking-wider uppercase opacity-40 select-none whitespace-nowrap">
+            DOWNFORCE: 16.2 KN
+          </div>
+          <div className="absolute -bottom-8 right-0 font-mono text-[9px] tracking-wider uppercase opacity-40 select-none whitespace-nowrap">
+            RPM: 12500 // GEAR: 7
+          </div>
         </motion.div>
 
         {/* Scroll hint */}
@@ -1201,28 +1293,27 @@ export function HomepageScrollytelling({
       </div>
 
       {/* ── HERO VIDEO CALL TO ACTION SECTION (after Group 3, before Footer) ─── */}
+      {/* ── HERO VIDEO CALL TO ACTION SECTION (after Group 3, before Footer) ─── */}
       <div 
-        className="w-full relative flex flex-col items-center justify-center py-16 px-6 z-10 overflow-hidden gap-[60px]" 
-        style={{ minHeight: '100vh' }}
+        className="w-full h-screen relative flex items-center justify-center z-10 overflow-hidden" 
       >
         {/* Video background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <VideoBackground playlist={playlist} />
-          <div className="absolute inset-0 bg-black/50 z-[1]" />
         </div>
 
         {/* Centered logo */}
         <h1 
-          className="hero-title-text select-none text-center relative z-10" 
+          className="hero-title-text select-none absolute z-10" 
           style={{ mixBlendMode: 'difference', opacity: 0.4 }}
         >
           PITWALL
         </h1>
 
         {/* Bottom buttons */}
-        <div className="relative z-20 flex flex-row flex-wrap justify-center items-center gap-6">
+        <div className="absolute z-20 flex flex-row flex-wrap justify-center items-center gap-6 bottom-[90px]">
           <a
-            href="/pages/collections"
+            href="/collections/all"
             className="px-8 py-3.5 border border-[#F6C917]/30 bg-[#F6C917]/10 backdrop-blur-md text-[#F6C917] font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-[#F6C917]/25 hover:border-[#F6C917]/60 flex items-center justify-center cursor-pointer"
           >
             Collections

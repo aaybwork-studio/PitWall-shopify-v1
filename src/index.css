@@ -30,6 +30,13 @@
   --surface-2: #E5E3DD;
   --border: rgba(12, 12, 12, 0.10);
   --muted: rgba(12, 12, 12, 0.50);
+
+  /* Homepage Scrollytelling Custom Variables */
+  --pw-bg: #EDEBE5;
+  --pw-bg2: #E5E3DD;
+  --pw-gold: #E8B93B;
+  --pw-text: #0C0C0C;
+  --pw-border: rgba(12, 12, 12, 0.12);
 }
 
 html.dark-mode {
@@ -47,6 +54,13 @@ html.dark-mode {
   --surface-2: #242424;
   --border: rgba(237, 235, 229, 0.10);
   --muted: rgba(237, 235, 229, 0.50);
+
+  /* Homepage Scrollytelling Custom Variables */
+  --pw-bg: #0F0C09;
+  --pw-bg2: #140F0B;
+  --pw-gold: #E8B93B;
+  --pw-text: #EDE8E0;
+  --pw-border: rgba(237, 235, 229, 0.12);
 }
 
 /* Force all Shopify parent wrappers to be 100% full-bleed and full-width */
@@ -466,19 +480,21 @@ html:not(.homepage-scrollytelling-active) body {
   flex: 1;
 }
 
-.pw-menu-links-list {
+.pw-menu-links-list,
+.menu-links-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
   padding: 0;
   margin: 0;
 }
 @media (min-width: 768px) {
-  .pw-menu-links-list {
-    height: 100%;
-    justify-content: space-between;
-    gap: 0;
+  .pw-menu-links-list,
+  .menu-links-list {
+    height: auto !important;
+    justify-content: flex-start !important;
+    gap: clamp(32px, 5vh, 48px) !important;
   }
 }
 
@@ -1017,25 +1033,59 @@ html:not(.homepage-scrollytelling-active) body {
   transform: translateX(0);
 }
 
+/* Hover dimming and highlighting effect on menu links list */
+.menu-links-list:hover .menu-link-item,
+.pw-menu-links-list:hover .pw-menu-link-item {
+  opacity: 0.35;
+}
+
+.menu-links-list .menu-link-item:hover,
+.pw-menu-links-list .pw-menu-link-item:hover {
+  opacity: 1;
+}
+
+/* Revert highlight color of active item when another item is hovered */
+.menu-links-list:hover .menu-link-item.is-active:not(:hover) .menu-link,
+.pw-menu-links-list:hover .pw-menu-link-item.is-active:not(:hover) .pw-menu-link {
+  color: #EDEBE5 !important;
+}
+.menu-links-list:hover .menu-link-item.is-active:not(:hover) .menu-bullet-svg,
+.pw-menu-links-list:hover .pw-menu-link-item.is-active:not(:hover) .pw-menu-bullet-svg {
+  opacity: 0.35;
+}
+
+.menu-link-item,
+.pw-menu-link-item {
+  transition: opacity 250ms cubic-bezier(0.16, 1, 0.3, 1), transform 250ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.menu-link,
+.pw-menu-link {
+  white-space: nowrap !important; /* Prevent text wrapping from expanding menu height */
+}
+
 .menu-submenu-middle {
-  margin-top: 16px;
+  margin-top: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px !important;
+  gap: 8px !important; /* Compact gap to prevent menu expansion */
   list-style: none;
-  padding: 0;
+  padding: 0 0 0 20px !important;
   background-color: transparent !important;
-  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: 2px solid rgba(246, 201, 23, 0.3) !important; /* Left border separator */
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   min-width: unset !important;
 }
 
 .menu-submenu-middle-link {
-  font-family: var(--font-mono, "IBM Plex Mono", monospace) !important;
-  font-size: 9px !important;
+  font-family: var(--font-display, "Syne", sans-serif) !important;
+  font-size: clamp(14px, 1.5vw, 18px) !important; /* Sized for display but compact enough to not overflow */
   font-weight: 700 !important;
-  letter-spacing: 0.15em !important;
+  letter-spacing: 0.05em !important;
   text-transform: uppercase !important;
   text-decoration: none !important;
   background-color: transparent !important;
@@ -1043,6 +1093,7 @@ html:not(.homepage-scrollytelling-active) body {
   padding: 4px 0 !important;
   text-align: left !important;
   display: block !important;
+  white-space: nowrap !important;
   transition: color 120ms ease, padding-left 120ms ease !important;
   width: auto !important;
   box-sizing: border-box !important;
@@ -1052,7 +1103,7 @@ html:not(.homepage-scrollytelling-active) body {
 .menu-submenu-middle-link.is-active {
   background-color: transparent !important;
   color: #F6C917 !important;
-  padding-left: 6px !important;
+  padding-left: 8px !important;
 }
 
 /* Bottom Dropdown Wordmark Logo Text (using BTSE PS2 font, centered, size reduced, color inverted dynamically) */
@@ -1203,7 +1254,7 @@ html.dark-mode .menu-wordmark-text {
 .grid-cols-custom-1 {
   display: grid;
   grid-template-columns: 300px 300px 300px 580px 320px;
-  gap: 16px;
+  gap: 2px;
   height: 82vh;
   width: max-content;
 }
@@ -1211,7 +1262,7 @@ html.dark-mode .menu-wordmark-text {
 .grid-cols-custom-2 {
   display: grid;
   grid-template-columns: 320px 300px 300px 300px 580px;
-  gap: 16px;
+  gap: 2px;
   height: 82vh;
   width: max-content;
 }
@@ -1225,6 +1276,14 @@ html.dark-mode .menu-wordmark-text {
 .reveal-dashboard-item.reveal-active {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* F1 Telemetry Tech Grid Background Utility */
+.tech-grid-bg {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, var(--pw-border) 1px, transparent 1px),
+                    linear-gradient(to bottom, var(--pw-border) 1px, transparent 1px);
+  opacity: 0.35;
 }
 
 

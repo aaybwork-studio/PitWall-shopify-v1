@@ -33,7 +33,7 @@ export function Footer() {
         {/* Right Column (60%) */}
         <div className="pw-footer-right">
           <a href="/" className="pw-footer-nav-link">Shop</a>
-          <a href="/collections" className="pw-footer-nav-link">Collections</a>
+          <a href="/collections/all" className="pw-footer-nav-link">Collections</a>
           <a href="/pages/about" className="pw-footer-nav-link">About</a>
           <a href="/pages/contact" className="pw-footer-nav-link">Contact</a>
         </div>
