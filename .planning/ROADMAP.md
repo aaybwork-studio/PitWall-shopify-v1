@@ -15,7 +15,7 @@
 - [ ] **Phase 02.2: Homepage Interaction Overhaul (INSERTED)** — Deliver an advanced scrollytelling experience on the homepage featuring scroll-locking, mirrored featured products, continuous video backgrounds, interactive ticker, and custom columns collections grids
 - [x] **Phase 02.3: About Us Car Scrollytelling (INSERTED)** — Add a Group 3 horizontal scrollytelling section with an animated F1 car traveling across 3 panels, followed by a vertical About Us content section, inserted between Group 2 and Footer (completed 2026-06-07)
 - [ ] **Phase 02.4: Redesign Collections Page (INSERTED)** — Redesign the collections page with a top video hero, difference-blended title overlay, yellow filter/sort bar, and a masonry dynamic product grid with landing page style cards
-- [ ] **Phase 02.5: Redesign Manifesto Section (INSERTED)** — Replace the text-only Manifesto section with a 3-equal-panel image reveal, each panel difference-blended with a tagline, animated in via smooth scroll-triggered reveals, no hero video background
+- [x] **Phase 02.5: Redesign Manifesto Section (INSERTED)** — Replace the text-only Manifesto section with a 3-equal-panel image reveal, each panel difference-blended with a tagline, animated in via smooth scroll-triggered reveals, no hero video background (completed 2026-06-18)
 - [ ] **Phase 3: Helmets PDP & Dynamic Routing** — Deliver a complete, shippable helmets product page with autocalibrated WebGL helmet models, zero-lag browser URL state switches via HTML5 History API, and separate catalog listings in `/collections/all`
 
 ---
@@ -118,8 +118,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02.5-01-PLAN.md — Manifesto image_picker + tagline schema settings in hero-canvas.liquid, wired through main.tsx as new props
-- [ ] 02.5-02-PLAN.md — Desktop 3-panel staggered scale-up reveal + mobile stacked panels in HomepageScrollytelling.tsx, plus lowered VideoBackground gate threshold
+- [x] 02.5-01-PLAN.md — Manifesto image_picker + tagline schema settings in hero-canvas.liquid, wired through main.tsx as new props
+- [x] 02.5-02-PLAN.md — Desktop 3-panel staggered scale-up reveal + mobile stacked panels in HomepageScrollytelling.tsx, plus lowered VideoBackground gate threshold
 
 ---
 
@@ -149,7 +149,7 @@ Plans:
 | 02.2. Homepage Interaction Overhaul | - | Completed | 2026-06-07 |
 | 02.3. About Us Car Scrollytelling | 6/6 | Complete    | 2026-06-07 |
 | 02.4. Redesign Collections Page | 0/? | Not started | - |
-| 02.5. Redesign Manifesto Section | 0/2 | Not started | - |
+| 02.5. Redesign Manifesto Section | 2/2 | Complete   | 2026-06-18 |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
 ---

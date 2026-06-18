@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_plan
-last_updated: "2026-06-18T18:19:54.242Z"
+status: Executing Phase 02.5
+last_updated: "2026-06-18T19:42:22.502Z"
 progress:
   total_phases: 8
   completed_phases: 2
-  total_plans: 8
+  total_plans: 10
   completed_plans: 8
-  percent: 100
+  percent: 25
 ---
 
 # Project State
@@ -23,14 +23,14 @@ progress:
 
 **Core Value:** The homepage redesign and new pages must look unmistakably Pitwall (brutalist F1 aesthetic + existing tokens) while delivering the editorial structure of the reference designs.
 
-**Current Focus:** Phase 3 — Helmets PDP & Dynamic Routing (next up)
+**Current Focus:** Phase 02.5 — redesign-manifesto-section
 
 ---
 
 ## Current Position
 
-Phase: 03
-Plan: Not started
+Phase: 02.5 (redesign-manifesto-section) — EXECUTING
+Plan: 1 of 2
 | Field | Value |
 |-------|-------|
 | Phase | 02.3 — About Us Car Scrollytelling |
