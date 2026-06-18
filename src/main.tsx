@@ -346,43 +346,46 @@ function bootstrap() {
     // Keep the navbar always visible on all pages (including the hero)
     nav.classList.add('nav-visible');
 
-    let lastScrollY = window.scrollY;
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+    // The homepage scrolls a custom div (homepage-scroll-container), not the
+    // window — html/body are overflow-locked there, so window.scrollY never
+    // changes. Read scrollTop off that container when present, else window.
+    const homepageScroller = document.querySelector('.homepage-scroll-container') as HTMLElement | null;
+    const getScrollY = () => (homepageScroller ? homepageScroller.scrollTop : window.scrollY);
 
-      // Find the hero section on the homepage
-      const hero = document.querySelector('.hero-section') as HTMLElement | null;
-      if (hero) {
+    let lastScrollY = getScrollY();
+    const handleScroll = () => {
+      const currentScrollY = getScrollY();
+
+      const isPDP = document.querySelector('#product-scrollytelling-root') !== null;
+      if (homepageScroller) {
         // Homepage dynamic behavior: dark over hero video, light everywhere else
-        const heroHeight = hero.offsetHeight || window.innerHeight;
-        if (currentScrollY >= heroHeight - 64) {
+        if (currentScrollY >= window.innerHeight - 64) {
           nav.classList.add('nav-light-bg');
         } else {
           nav.classList.remove('nav-light-bg');
         }
+      } else if (isPDP) {
+        nav.classList.remove('nav-light-bg');
       } else {
-        // Standard pages dynamic behavior: PDP is dark, collections/standard pages are light
-        const isPDP = document.querySelector('#product-scrollytelling-root') !== null;
-        if (isPDP) {
-          nav.classList.remove('nav-light-bg');
-        } else {
-          nav.classList.add('nav-light-bg');
-        }
+        nav.classList.add('nav-light-bg');
       }
 
       // Navbar auto-hide on scroll down, show on scroll up
       if (currentScrollY <= 100) {
         nav.classList.remove('nav-hidden');
-      } else {
+      } else if (Math.abs(currentScrollY - lastScrollY) > 5) {
         if (currentScrollY > lastScrollY) {
           nav.classList.add('nav-hidden');
-        } else if (currentScrollY < lastScrollY) {
+        } else {
           nav.classList.remove('nav-hidden');
         }
       }
       lastScrollY = currentScrollY;
     };
 
+    if (homepageScroller) {
+      homepageScroller.addEventListener('scroll', handleScroll, { passive: true });
+    }
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
   }

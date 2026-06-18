@@ -195,6 +195,12 @@ export function HomepageScrollytelling({
   ctaLabel = 'OUR STORY',
   ctaUrl = '/pages/about',
   foundingStory = 'Pitwall was born from obsession. We build objects that earn their place alongside the machines we worship.',
+  stat1Value = 'ZERO',
+  stat1Label = 'COMPROMISE',
+  stat2Value = 'ONE',
+  stat2Label = 'PURSUIT',
+  stat3Value = 'INFINITE',
+  stat3Label = 'PRECISION',
 }: HomepageScrollytellingProps) {
   // ── Products ────────────────────────────────────────────────────────────────
   const products: Product[] = React.useMemo(() => {
@@ -815,6 +821,13 @@ export function HomepageScrollytelling({
               <span>VEL: 320 KM/H</span>
               <span>REF: PW-01</span>
             </div>
+            <div className="flex flex-wrap justify-center items-center gap-2 mt-5 font-mono text-[9px] tracking-[0.2em] uppercase" style={{ color: WM.gold }}>
+              <span>{stat1Value} {stat1Label}</span>
+              <span className="opacity-40">·</span>
+              <span>{stat2Value} {stat2Label}</span>
+              <span className="opacity-40">·</span>
+              <span>{stat3Value} {stat3Label}</span>
+            </div>
           </div>
         </section>
         {/* Featured Product 1 */}
@@ -996,6 +1009,13 @@ export function HomepageScrollytelling({
             <span>SYS.LOC: RALEIGH / CHARLOTTE</span>
             <span>VELOCITY: 320 KM/H</span>
             <span>CHASSIS REF: PW-01</span>
+          </div>
+          <div className="flex justify-center items-center gap-3 mt-6 font-mono text-[10px] tracking-[0.25em] uppercase" style={{ color: WM.gold }}>
+            <span>{stat1Value} {stat1Label}</span>
+            <span className="opacity-40">·</span>
+            <span>{stat2Value} {stat2Label}</span>
+            <span className="opacity-40">·</span>
+            <span>{stat3Value} {stat3Label}</span>
           </div>
         </div>
       </div>
@@ -1191,11 +1211,36 @@ export function HomepageScrollytelling({
         className="group3-stage z-10"
         style={{ position: 'relative', height: '100vh', overflow: 'hidden', backgroundColor: WM.bg }}
       >
+        {/* Racing-yellow accent bar — top edge separation */}
+        <div className="absolute top-0 left-0 w-full z-20" style={{ height: '3px', backgroundColor: WM.gold }} />
+
         {/* Ambient depth gradient */}
         <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
 
+        {/* Track-map SVG — sits behind the telemetry lines for depth */}
+        <svg className="absolute inset-0 w-full h-full z-0 pointer-events-none" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" opacity="0.06" aria-hidden="true">
+          <path
+            d="M180,860 C120,700 260,560 420,560 C540,560 560,440 480,360 C400,280 460,160 600,160 L1280,160 C1400,160 1440,260 1380,340 C1320,420 1380,520 1480,520 L1700,520 C1800,520 1820,640 1740,700 L1500,880 C1440,930 1340,930 1280,880 L900,640 C840,600 760,600 700,640 L380,880 C320,920 220,920 180,860 Z"
+            fill="none" stroke={WM.text} strokeWidth="3"
+          />
+        </svg>
+
         {/* Tech Grid Background Overlay */}
         <div className="absolute inset-0 tech-grid-bg z-0 pointer-events-none" />
+
+        {/* Extra telemetry readouts — ambient decorative data */}
+        <div className="absolute top-8 left-8 z-10 font-mono text-[9px] tracking-widest uppercase opacity-35 select-none" style={{ color: WM.text }}>
+          SPEED: 312 KM/H
+        </div>
+        <div className="absolute top-8 right-8 z-10 font-mono text-[9px] tracking-widest uppercase opacity-35 select-none text-right" style={{ color: WM.text }}>
+          LAP: 47 / 58
+        </div>
+        <div className="absolute bottom-8 left-8 z-10 font-mono text-[9px] tracking-widest uppercase opacity-35 select-none" style={{ color: WM.text }}>
+          SECTOR 1: 28.402
+        </div>
+        <div className="absolute bottom-8 right-8 z-10 font-mono text-[9px] tracking-widest uppercase opacity-35 select-none text-right" style={{ color: WM.text }}>
+          SECTOR 2: 31.117
+        </div>
 
         {/* Parallax giant wordmark — one continuous backdrop */}
         <motion.span
