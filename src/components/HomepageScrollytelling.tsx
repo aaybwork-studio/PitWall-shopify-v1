@@ -214,6 +214,10 @@ export function HomepageScrollytelling({
   manifestoImage3 = '',
   manifestoTagline3 = 'YOURS.',
 }: HomepageScrollytellingProps) {
+  // stat1Value/stat1Label/stat2Value/stat2Label/stat3Value/stat3Label remain valid
+  // schema-driven props (Plan 01's prior phase) but are no longer rendered now that
+  // the Manifesto section has been redesigned into a 3-panel image reveal (Phase 02.5).
+  void stat1Value; void stat1Label; void stat2Value; void stat2Label; void stat3Value; void stat3Label;
   // ── Products ────────────────────────────────────────────────────────────────
   const products: Product[] = React.useMemo(() => {
     let parsed: Product[] = [];
@@ -261,8 +265,11 @@ export function HomepageScrollytelling({
   // Manifesto section's own arrival progress (0→1), derived from scrollTop/vh —
   // drives the staggered scale-up-from-center panel reveal via reveal-active class.
   const manifestoProgressMV = useMotionValue(0);
+  // Defined per spec for potential motion-value-driven consumers; the panel reveal
+  // itself uses the simpler CSS .manifesto-panel/.reveal-active class pair (see JSX below).
   const manifestoPanelOpacity = useTransform(manifestoProgressMV, [0, 0.6], [0, 1]);
   const manifestoPanelScale = useTransform(manifestoProgressMV, [0, 0.6], [0.88, 1]);
+  void manifestoPanelOpacity; void manifestoPanelScale;
   const [manifestoRevealed, setManifestoRevealed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [tickerOffset, setTickerOffset] = useState(0);
