@@ -580,34 +580,17 @@ export function HomepageScrollytelling({
         </section>
 
         {/* Manifesto */}
-        <section className="min-h-[70vh] w-full relative flex flex-col justify-center px-6 py-16 border-b border-[var(--pw-border)]">
-          <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
-          <div className="relative z-20 max-w-xl mx-auto w-full text-center border border-[var(--pw-border)] p-8 relative overflow-hidden backdrop-blur-md bg-black/5">
-            <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[var(--pw-gold)]" />
-            <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[var(--pw-gold)]" />
-            <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[var(--pw-gold)]" />
-            <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[var(--pw-gold)]" />
-            
-            <span className="font-mono text-[10px] uppercase tracking-widest block mb-4" style={{ color: WM.gold }}>// MANIFESTO</span>
-            <p
-              className="text-3xl md:text-[54px] font-normal leading-normal text-center"
-              style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
-            >
-              “and life has always been a race.”
-            </p>
-            <div className="flex justify-between items-center mt-6 font-mono text-[8px] tracking-widest uppercase opacity-45 border-t border-[var(--pw-border)] pt-3 w-full">
-              <span>LOC: PW.RDU</span>
-              <span>VEL: 320 KM/H</span>
-              <span>REF: PW-01</span>
-            </div>
-            <div className="flex flex-wrap justify-center items-center gap-2 mt-5 font-mono text-[9px] tracking-[0.2em] uppercase" style={{ color: WM.gold }}>
-              <span>{stat1Value} {stat1Label}</span>
-              <span className="opacity-40">·</span>
-              <span>{stat2Value} {stat2Label}</span>
-              <span className="opacity-40">·</span>
-              <span>{stat3Value} {stat3Label}</span>
-            </div>
-          </div>
+        <section className="manifesto-panel relative w-full h-[55vh] overflow-hidden reveal-active">
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage1} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase top-6 left-6" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline1}</span>
+        </section>
+        <section className="manifesto-panel relative w-full h-[55vh] overflow-hidden reveal-active">
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage2} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline2}</span>
+        </section>
+        <section className="manifesto-panel relative w-full h-[55vh] overflow-hidden reveal-active">
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage3} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase bottom-6 right-6 text-right" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline3}</span>
         </section>
         {/* Featured Product 1 */}
         <section className="min-h-screen w-full flex flex-col justify-center px-6 py-16 border-b border-[var(--pw-border)]" style={{ backgroundColor: WM.bg }}>
