@@ -762,40 +762,19 @@ export function HomepageScrollytelling({
         <HeroTicker offset={tickerOffset} itemRef={tickerItemRef} />
       </div>
 
-      {/* ── SECTION 2: MANIFESTO (Vertical, 100vh) ───────────────────────── */}
-      <div className="scroll-snap-section relative w-full h-screen flex items-center justify-center px-16 overflow-hidden z-10">
-        <div
-          className="max-w-4xl w-full text-center border border-[var(--pw-border)] p-16 relative overflow-hidden backdrop-blur-md bg-black/5"
-          style={{
-            opacity: Math.min(1, Math.max(0, (scrollTop - vh * 0.7) / (vh * 0.4))),
-            transform: `translateY(${Math.max(0, 40 - ((scrollTop - vh * 0.7) / (vh * 0.4)) * 40)}px)`,
-            transition: 'opacity 0.5s ease, transform 0.5s ease'
-          }}
-        >
-          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[var(--pw-gold)]" />
-          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[var(--pw-gold)]" />
-          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[var(--pw-gold)]" />
-          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[var(--pw-gold)]" />
-
-          <span className="font-mono text-xs uppercase tracking-widest block mb-6" style={{ color: WM.gold }}>// MANIFESTO</span>
-          <p
-            className="text-3xl md:text-[54px] font-normal leading-normal text-center"
-            style={{ fontFamily: 'var(--font-manifesto)', color: WM.text }}
-          >
-            “and life has always been a race.”
-          </p>
-          <div className="flex justify-between items-center mt-12 font-mono text-[9px] tracking-widest uppercase opacity-45 border-t border-[var(--pw-border)] pt-4 w-full">
-            <span>SYS.LOC: RALEIGH / CHARLOTTE</span>
-            <span>VELOCITY: 320 KM/H</span>
-            <span>CHASSIS REF: PW-01</span>
-          </div>
-          <div className="flex justify-center items-center gap-3 mt-6 font-mono text-[10px] tracking-[0.25em] uppercase" style={{ color: WM.gold }}>
-            <span>{stat1Value} {stat1Label}</span>
-            <span className="opacity-40">·</span>
-            <span>{stat2Value} {stat2Label}</span>
-            <span className="opacity-40">·</span>
-            <span>{stat3Value} {stat3Label}</span>
-          </div>
+      {/* ── SECTION 2: MANIFESTO (Vertical, 100vh, 3-panel full-bleed reveal) ── */}
+      <div className="scroll-snap-section relative w-full h-screen flex flex-row overflow-hidden z-10">
+        <div className={`manifesto-panel relative w-[33.333vw] h-full overflow-hidden${manifestoRevealed ? ' reveal-active' : ''}`} style={{ transitionDelay: '0ms' }}>
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage1} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase text-3xl md:text-5xl top-8 left-8" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline1}</span>
+        </div>
+        <div className={`manifesto-panel relative w-[33.333vw] h-full overflow-hidden${manifestoRevealed ? ' reveal-active' : ''}`} style={{ transitionDelay: '130ms' }}>
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage2} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase text-3xl md:text-5xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline2}</span>
+        </div>
+        <div className={`manifesto-panel relative w-[33.333vw] h-full overflow-hidden${manifestoRevealed ? ' reveal-active' : ''}`} style={{ transitionDelay: '260ms' }}>
+          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage3} alt="" loading="lazy" />
+          <span className="font-display-strict select-none absolute uppercase text-3xl md:text-5xl bottom-8 right-8 text-right" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline3}</span>
         </div>
       </div>
 

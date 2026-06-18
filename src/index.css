@@ -1287,6 +1287,17 @@ html.dark-mode .menu-wordmark-text {
   transform: translateY(0);
 }
 
+/* Manifesto 3-panel staggered scale-up-from-center reveal */
+.manifesto-panel {
+  opacity: 0;
+  transform: scale(0.88);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.manifesto-panel.reveal-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
 /* F1 Telemetry Tech Grid Background Utility */
 .tech-grid-bg {
   background-size: 40px 40px;
