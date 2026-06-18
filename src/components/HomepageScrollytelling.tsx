@@ -538,6 +538,18 @@ export function HomepageScrollytelling({
         g3Top + vh      // 5: Footer (starts immediately after Group 3)
       ];
 
+      // Hero + Manifesto: fully free, natural scroll in both directions —
+      // clamped at the Group 1 boundary so a fast flick can never overshoot
+      // into Group 1's territory. Without this clamp, the Group 1 lock below
+      // (which engages on "nearest of 6 reference points", not exact
+      // proximity) would catch the overshoot and yank scrollTop back to
+      // g1Top instantly/unanimated, which is what felt "broken".
+      if (currentScrollTop < g1Top) {
+        e.preventDefault();
+        container.scrollTop = Math.min(g1Top, Math.max(0, currentScrollTop + e.deltaY));
+        return;
+      }
+
       // Identify which section index we are currently closest to
       let currentIdx = 0;
       let minDiff = Infinity;
@@ -689,11 +701,9 @@ export function HomepageScrollytelling({
         return;
       }
 
-      // 4/5/6. Hero, Manifesto, Footer, and the gaps around Group 3 all scroll
-      // completely natively now — no preventDefault, no accumulator dead-zone.
-      // scheduleSettleSnap() (called above) glides to the nearest section once
-      // the user stops scrolling, but only lets the page move freely while
-      // they're actively scrolling.
+      // Footer: fully free, natural scroll in both directions. Group 3's own
+      // lock above already gates re-entry with a tight (<10px) proximity
+      // check, so no overshoot clamp is needed on this side.
     };
 
     const el = containerRef.current;
