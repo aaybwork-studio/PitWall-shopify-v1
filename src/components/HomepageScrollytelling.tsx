@@ -185,6 +185,12 @@ interface HomepageScrollytellingProps {
   stat3Label?: string;
   brandParagraph?: string;
   exploreCta?: string;
+  manifestoImage1?: string;
+  manifestoTagline1?: string;
+  manifestoImage2?: string;
+  manifestoTagline2?: string;
+  manifestoImage3?: string;
+  manifestoTagline3?: string;
 }
 
 export function HomepageScrollytelling({
@@ -201,6 +207,12 @@ export function HomepageScrollytelling({
   stat2Label = 'PURSUIT',
   stat3Value = 'INFINITE',
   stat3Label = 'PRECISION',
+  manifestoImage1 = '',
+  manifestoTagline1 = 'THE RACE.',
+  manifestoImage2 = '',
+  manifestoTagline2 = 'THE MOMENT.',
+  manifestoImage3 = '',
+  manifestoTagline3 = 'YOURS.',
 }: HomepageScrollytellingProps) {
   // ── Products ────────────────────────────────────────────────────────────────
   const products: Product[] = React.useMemo(() => {
@@ -246,6 +258,12 @@ export function HomepageScrollytelling({
   // Group 3 scroll progress (0→1) as a motion value — drives the drive-scene
   // directly from the rAF loop, so scroll animation never re-renders React.
   const progressMV = useMotionValue(0);
+  // Manifesto section's own arrival progress (0→1), derived from scrollTop/vh —
+  // drives the staggered scale-up-from-center panel reveal via reveal-active class.
+  const manifestoProgressMV = useMotionValue(0);
+  const manifestoPanelOpacity = useTransform(manifestoProgressMV, [0, 0.6], [0, 1]);
+  const manifestoPanelScale = useTransform(manifestoProgressMV, [0, 0.6], [0.88, 1]);
+  const [manifestoRevealed, setManifestoRevealed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [tickerOffset, setTickerOffset] = useState(0);
   const tickerVelocity = useRef(1.0);
@@ -359,6 +377,17 @@ export function HomepageScrollytelling({
       container.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // ── Manifesto arrival progress (drives the 3-panel staggered reveal) ───────
+  useEffect(() => {
+    const start = vh * 0.7;
+    const end = vh * 1.3;
+    const progress = Math.min(1, Math.max(0, (scrollTop - start) / (end - start)));
+    manifestoProgressMV.set(progress);
+    if (progress > 0.05) {
+      setManifestoRevealed(true);
+    }
+  }, [scrollTop, vh]);
 
   // ── Vertical section snapping is handled entirely by native CSS
   // scroll-snap (see .homepage-scroll-container / .scroll-snap-section in
@@ -719,7 +748,7 @@ export function HomepageScrollytelling({
     <div ref={containerRef} className="homepage-scroll-container">
 
       {/* ── Fixed Video Background (For Hero & Manifesto scroll zone) ────────── */}
-      {scrollTop < (vh * 2.3) && (
+      {scrollTop < (vh * 1) && (
         <div className="fixed inset-0 z-0 pointer-events-none transition-opacity duration-500">
           <VideoBackground playlist={playlist} />
         </div>
