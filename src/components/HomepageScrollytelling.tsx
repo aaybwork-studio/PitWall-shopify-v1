@@ -240,11 +240,6 @@ export function HomepageScrollytelling({
   const group3StageRef = useRef<HTMLDivElement>(null);
   const tickerItemRef = useRef<HTMLDivElement>(null);
 
-  // Scroll snapping accumulator refs to prevent hyper-sensitive snapping
-  const scrollAccumulator = useRef(0);
-  const scrollDirection = useRef(0);
-  const scrollTimeout = useRef<any>(null);
-
   // ── State ──────────────────────────────────────────────────────────────────
   const [activeIndex1, setActiveIndex1] = useState(0);
   const [activeIndex2, setActiveIndex2] = useState(0);
@@ -365,358 +360,95 @@ export function HomepageScrollytelling({
     };
   }, []);
 
-  // ── Main wheel handler — single scrollLeft system ────────────────────────────
+  // ── Vertical section snapping is handled entirely by native CSS
+  // scroll-snap (see .homepage-scroll-container / .scroll-snap-section in
+  // index.css) — the browser scrolls naturally and settles on the nearest
+  // section on its own, with no custom JS, no dead zones, no yank-back.
+  //
+  // The only thing JS needs to do is redirect vertical wheel input into
+  // horizontal scrollLeft while a product-grid group is the active
+  // full-screen section, and release it back to native vertical scroll once
+  // the user reaches either end of that group's horizontal scroll range.
   useEffect(() => {
     if (isMobile) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const isSnapping = { current: false }; // lightweight snapping state
-    let snapTimer: any = null;
-
-    let verticalTarget = 0;
-    let verticalRafId: number | null = null;
-
-    const snapTo = (top: number) => {
-      const container = containerRef.current;
-      if (!container) return;
-      isSnapping.current = true;
-      verticalTarget = top;
-
-      const verticalLerp = () => {
-        const cur = container.scrollTop;
-        const diff = verticalTarget - cur;
-        if (Math.abs(diff) < 1) {
-          container.scrollTop = verticalTarget;
-          isSnapping.current = false;
-          verticalRafId = null;
-        } else {
-          container.scrollTop = cur + diff * 0.26;
-          verticalRafId = requestAnimationFrame(verticalLerp);
-        }
-      };
-
-      if (verticalRafId != null) cancelAnimationFrame(verticalRafId);
-      verticalRafId = requestAnimationFrame(verticalLerp);
-    };
-
-    // ── Settle-snap: let Hero/Manifesto/Footer scroll completely naturally;
-    // once the user stops scrolling, glide to the nearest section only if
-    // they're already close to one (so deep footer scrolling is untouched).
-    let settleTimer: any = null;
-    const scheduleSettleSnap = () => {
-      if (settleTimer) clearTimeout(settleTimer);
-      settleTimer = setTimeout(() => {
-        const container = containerRef.current;
-        const g1 = group1Ref.current;
-        const g2 = group2Ref.current;
-        const g3 = group3Ref.current;
-        if (!container || !g1 || !g2 || !g3 || isSnapping.current) return;
-        const vh = container.clientHeight;
-        const g1Top = g1.offsetTop;
-        const g2Top = g2.offsetTop;
-        const g3Top = group3StageRef.current ? group3StageRef.current.offsetTop : g3.offsetTop;
-        const sections = [0, g1Top - vh, g1Top, g2Top, g3Top, g3Top + vh];
-        const cur = container.scrollTop;
-        let nearest = sections[0];
-        let minDiff = Infinity;
-        for (const s of sections) {
-          const diff = Math.abs(cur - s);
-          if (diff < minDiff) { minDiff = diff; nearest = s; }
-        }
-        if (minDiff > 2 && minDiff < vh * 0.45) {
-          snapTo(nearest);
-        }
-      }, 130);
-    };
-
-    // ── Group 1 smooth horizontal scrubber (rAF lerp) ──
-    let g1Target = 0;
-    let g1RafId: number | null = null;
-    const g1Lerp = () => {
-      const g1 = group1Ref.current;
-      if (!g1) { g1RafId = null; return; }
-      const cur = g1.scrollLeft;
-      const diff = g1Target - cur;
-      if (Math.abs(diff) < 0.4) {
-        g1.scrollLeft = g1Target;
-        setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
-        g1RafId = null;
-        return;
-      }
-      g1.scrollLeft = cur + diff * 0.16;
-      setActiveIndex1(getSlideIndex(g1, g1.scrollLeft));
-      g1RafId = requestAnimationFrame(g1Lerp);
-    };
-    const startG1Lerp = () => { if (g1RafId == null) g1RafId = requestAnimationFrame(g1Lerp); };
-
-    // ── Group 2 smooth horizontal scrubber (rAF lerp) ──
-    let g2Target = 0;
-    let g2RafId: number | null = null;
-    const g2Lerp = () => {
-      const g2 = group2Ref.current;
-      if (!g2) { g2RafId = null; return; }
-      const cur = g2.scrollLeft;
-      const diff = g2Target - cur;
-      if (Math.abs(diff) < 0.4) {
-        g2.scrollLeft = g2Target;
-        setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
-        g2RafId = null;
-        return;
-      }
-      g2.scrollLeft = cur + diff * 0.16;
-      setActiveIndex2(getSlideIndex(g2, g2.scrollLeft));
-      g2RafId = requestAnimationFrame(g2Lerp);
-    };
-    const startG2Lerp = () => { if (g2RafId == null) g2RafId = requestAnimationFrame(g2Lerp); };
-
-    // ── Group 3 smooth horizontal scrubber (rAF lerp for flowing motion) ──
-    let g3Target = 0;
-    let g3RafId: number | null = null;
     const syncProgress = (g3: HTMLDivElement) => {
       const max = Math.max(1, g3.scrollWidth - g3.clientWidth);
       progressMV.set(Math.min(1, Math.max(0, g3.scrollLeft / max)));
     };
-    const g3Lerp = () => {
-      const g3 = group3Ref.current;
-      if (!g3) { g3RafId = null; return; }
-      const cur = g3.scrollLeft;
-      const diff = g3Target - cur;
-      if (Math.abs(diff) < 0.4) {
-        g3.scrollLeft = g3Target;
-        syncProgress(g3);
-        g3RafId = null;
-        return;
-      }
-      g3.scrollLeft = cur + diff * 0.16;
-      syncProgress(g3);
-      g3RafId = requestAnimationFrame(g3Lerp);
+
+    type GroupKey = 'g1' | 'g2' | 'g3';
+    // The horizontal scrub track to redirect wheel input into.
+    const trackMap: Record<GroupKey, React.RefObject<HTMLDivElement>> = {
+      g1: group1Ref, g2: group2Ref, g3: group3Ref,
     };
-    const startG3Lerp = () => { if (g3RafId == null) g3RafId = requestAnimationFrame(g3Lerp); };
+    // The actual scroll-snap-aligned section element (for g3 this is the
+    // stage wrapper, not the invisible inner scrub track).
+    const sectionMap: Record<GroupKey, React.RefObject<HTMLDivElement>> = {
+      g1: group1Ref, g2: group2Ref, g3: group3StageRef,
+    };
+    let activeGroup: GroupKey | null = null;
+
+    const targets: [HTMLElement | null, GroupKey][] = [
+      [group1Ref.current, 'g1'],
+      [group2Ref.current, 'g2'],
+      [group3StageRef.current, 'g3'],
+    ];
+    targets.forEach(([el, key]) => { if (el) el.dataset.group = key; });
+
+    // Hysteresis: only engage horizontal redirect once a section is almost
+    // fully in view (so the vertical position is already essentially
+    // snapped, no visible jump), but don't disengage until well past half —
+    // otherwise a section right at the resting scroll-snap point could
+    // flicker in and out of "active" on tiny scroll jitter.
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const key = (entry.target as HTMLElement).dataset.group as GroupKey | undefined;
+        if (!key) return;
+        if (entry.intersectionRatio >= 0.92) {
+          activeGroup = key;
+        } else if (activeGroup === key && entry.intersectionRatio <= 0.5) {
+          activeGroup = null;
+        }
+      });
+    }, { root: container, threshold: [0.5, 0.92] });
+    targets.forEach(([el]) => { if (el) observer.observe(el); });
 
     const handleWheel = (e: WheelEvent) => {
-      scheduleSettleSnap();
+      if (!activeGroup) return; // let native vertical scroll-snap handle it
+      const el = trackMap[activeGroup].current;
+      const sectionEl = sectionMap[activeGroup].current;
+      if (!el || !sectionEl) return;
 
-      // 1. Maintain accumulator timeout to reset delta on inactivity
-      if (scrollTimeout.current) {
-        clearTimeout(scrollTimeout.current);
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      const atStart = el.scrollLeft <= 0;
+      const atEnd = el.scrollLeft >= maxScroll - 1;
+
+      // At either edge of the horizontal range: release to native vertical
+      // scroll so it can carry on to the next/previous section.
+      if (e.deltaY > 0 && atEnd) return;
+      if (e.deltaY < 0 && atStart) return;
+
+      e.preventDefault();
+      // Keep the section pinned exactly in frame while scrubbing (small
+      // safety correction — the 0.92 intersection threshold already keeps
+      // this within a few px in practice).
+      if (Math.abs(container.scrollTop - sectionEl.offsetTop) > 1) {
+        container.scrollTop = sectionEl.offsetTop;
       }
-      scrollTimeout.current = setTimeout(() => {
-        scrollAccumulator.current = 0;
-        scrollDirection.current = 0;
-      }, 300);
+      el.scrollLeft = Math.max(0, Math.min(maxScroll, el.scrollLeft + e.deltaY));
 
-      // 2. Reset accumulator if direction changes
-      const currentDir = e.deltaY > 0 ? 1 : -1;
-      if (scrollDirection.current !== currentDir) {
-        scrollAccumulator.current = 0;
-        scrollDirection.current = currentDir;
-      }
-
-      if (isSnapping.current) {
-        e.preventDefault();
-        return;
-      }
-
-      const container = containerRef.current;
-      const g1 = group1Ref.current;
-      const g2 = group2Ref.current;
-      const g3 = group3Ref.current;
-      if (!container || !g1 || !g2 || !g3) return;
-
-      const currentScrollTop = container.scrollTop;
-      const vh = container.clientHeight;
-      const g1Top = g1.offsetTop;
-      const g2Top = g2.offsetTop;
-      const g3Top = group3StageRef.current ? group3StageRef.current.offsetTop : g3.offsetTop;
-
-      // Define target scroll heights for the 6 states (Video Divider is flow-through, no snap lock)
-      const sections = [
-        0,              // 0: Hero
-        g1Top - vh,     // 1: Manifesto
-        g1Top,          // 2: Group 1 (Horizontal)
-        g2Top,          // 3: Group 2 (Horizontal)
-        g3Top,          // 4: Group 3 (Horizontal — About Us)
-        g3Top + vh      // 5: Footer (starts immediately after Group 3)
-      ];
-
-      // Hero + Manifesto: fully free, natural scroll in both directions —
-      // clamped at the Group 1 boundary so a fast flick can never overshoot
-      // into Group 1's territory. Without this clamp, the Group 1 lock below
-      // (which engages on "nearest of 6 reference points", not exact
-      // proximity) would catch the overshoot and yank scrollTop back to
-      // g1Top instantly/unanimated, which is what felt "broken".
-      if (currentScrollTop < g1Top) {
-        e.preventDefault();
-        container.scrollTop = Math.min(g1Top, Math.max(0, currentScrollTop + e.deltaY));
-        return;
-      }
-
-      // Identify which section index we are currently closest to
-      let currentIdx = 0;
-      let minDiff = Infinity;
-      for (let i = 0; i < sections.length; i++) {
-        const diff = Math.abs(currentScrollTop - sections[i]);
-        if (diff < minDiff) {
-          minDiff = diff;
-          currentIdx = i;
-        }
-      }
-
-      // Helper to evaluate accumulator threshold for snaps
-      const threshold = 70;
-      const checkAccumulatorThreshold = (delta: number) => {
-        scrollAccumulator.current += delta;
-        if (Math.abs(scrollAccumulator.current) >= threshold) {
-          scrollAccumulator.current = 0;
-          return true;
-        }
-        return false;
-      };
-
-      // 1. Group 1 Horizontal Lock
-      if (currentIdx === 2) {
-        if (Math.abs(currentScrollTop - g1Top) > 2) {
-          container.scrollTop = g1Top;
-        }
-        const maxScroll = g1.scrollWidth - g1.clientWidth;
-        if (g1RafId == null) g1Target = g1.scrollLeft;
-        const curScroll = g1.scrollLeft;
-
-        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
-          e.preventDefault();
-          if (checkAccumulatorThreshold(e.deltaY)) {
-            g1Target = maxScroll;
-            snapTo(sections[3]); // Snap to Group 2 directly
-          }
-          return;
-        }
-        if (e.deltaY < 0 && curScroll <= 5) {
-          e.preventDefault();
-          if (checkAccumulatorThreshold(e.deltaY)) {
-            g1Target = 0;
-            snapTo(sections[1]); // Snap back to Manifesto
-          }
-          return;
-        }
-
-        // Inside horizontal scrolling: bypass accumulator
-        scrollAccumulator.current = 0;
-        if (e.deltaY > 0 && curScroll < maxScroll - 5) {
-          e.preventDefault();
-          g1Target = Math.min(maxScroll, g1Target + e.deltaY * 0.85);
-          startG1Lerp();
-          return;
-        }
-        if (e.deltaY < 0 && curScroll > 5) {
-          e.preventDefault();
-          g1Target = Math.max(0, g1Target + e.deltaY * 0.85);
-          startG1Lerp();
-          return;
-        }
-        return;
-      }
-
-      // 2. Group 2 Horizontal Lock
-      if (currentIdx === 3) {
-        if (Math.abs(currentScrollTop - g2Top) > 2) {
-          container.scrollTop = g2Top;
-        }
-        const maxScroll = g2.scrollWidth - g2.clientWidth;
-        if (g2RafId == null) g2Target = g2.scrollLeft;
-        const curScroll = g2.scrollLeft;
-
-        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
-          e.preventDefault();
-          if (checkAccumulatorThreshold(e.deltaY)) {
-            g2Target = maxScroll;
-            snapTo(sections[4]); // Snap to Group 3
-          }
-          return;
-        }
-        if (e.deltaY < 0 && curScroll <= 5) {
-          e.preventDefault();
-          if (checkAccumulatorThreshold(e.deltaY)) {
-            g2Target = 0;
-            snapTo(sections[2]); // Snap back to Group 1
-          }
-          return;
-        }
-
-        // Inside horizontal scrolling: bypass accumulator
-        scrollAccumulator.current = 0;
-        if (e.deltaY > 0 && curScroll < maxScroll - 5) {
-          e.preventDefault();
-          g2Target = Math.min(maxScroll, g2Target + e.deltaY * 0.85);
-          startG2Lerp();
-          return;
-        }
-        if (e.deltaY < 0 && curScroll > 5) {
-          e.preventDefault();
-          g2Target = Math.max(0, g2Target + e.deltaY * 0.85);
-          startG2Lerp();
-          return;
-        }
-        return;
-      }
-
-      // 3. Group 3 Horizontal Lock — smooth scrubber drives the continuous drive-scene
-      if (Math.abs(currentScrollTop - g3Top) < 10) {
-        const maxScroll = g3.scrollWidth - g3.clientWidth;
-        if (g3RafId == null) g3Target = g3.scrollLeft; // resync target when idle
-        const curScroll = g3.scrollLeft;
-
-        // If we are at the end of Group 3 and scrolling down, release to vertical immediately
-        if (e.deltaY > 0 && curScroll >= maxScroll - 5) {
-          g3Target = maxScroll;
-          scrollAccumulator.current = 0;
-          return; // Release to vertical (stats/footer)
-        }
-
-        if (e.deltaY < 0 && curScroll <= 5) {
-          e.preventDefault();
-          if (checkAccumulatorThreshold(e.deltaY)) {
-            g3Target = 0;
-            snapTo(sections[3]); // Snap back to Group 2
-          }
-          return;
-        }
-
-        if (Math.abs(currentScrollTop - g3Top) > 2) {
-          container.scrollTop = g3Top;
-        }
-
-        // Inside horizontal scrubbing: bypass accumulator
-        scrollAccumulator.current = 0;
-        if (e.deltaY > 0 && curScroll < maxScroll - 5) {
-          e.preventDefault();
-          g3Target = Math.min(maxScroll, g3Target + e.deltaY * 0.9);
-          startG3Lerp();
-          return;
-        }
-        if (e.deltaY < 0 && curScroll > 5) {
-          e.preventDefault();
-          g3Target = Math.max(0, g3Target + e.deltaY * 0.9);
-          startG3Lerp();
-          return;
-        }
-        return;
-      }
-
-      // Footer: fully free, natural scroll in both directions. Group 3's own
-      // lock above already gates re-entry with a tight (<10px) proximity
-      // check, so no overshoot clamp is needed on this side.
+      if (activeGroup === 'g1') setActiveIndex1(getSlideIndex(el, el.scrollLeft));
+      else if (activeGroup === 'g2') setActiveIndex2(getSlideIndex(el, el.scrollLeft));
+      else if (activeGroup === 'g3') syncProgress(el);
     };
 
-    const el = containerRef.current;
-    if (el) el.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
-      if (el) el.removeEventListener('wheel', handleWheel);
-      if (snapTimer) clearTimeout(snapTimer);
-      if (settleTimer) clearTimeout(settleTimer);
-      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-      if (verticalRafId != null) cancelAnimationFrame(verticalRafId);
-      if (g1RafId != null) cancelAnimationFrame(g1RafId);
-      if (g2RafId != null) cancelAnimationFrame(g2RafId);
-      if (g3RafId != null) cancelAnimationFrame(g3RafId);
+      container.removeEventListener('wheel', handleWheel);
+      observer.disconnect();
     };
   }, [isMobile]);
 
@@ -963,7 +695,7 @@ export function HomepageScrollytelling({
       )}
 
       {/* ── SECTION 1: HERO (Vertical, 100vh) ────────────────────────────── */}
-      <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
+      <div className="scroll-snap-section relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
         {/* Centered logo */}
         <h1 className="hero-title-text select-none absolute z-10" style={{ mixBlendMode: 'difference', opacity: 0.4 }}>PITWALL</h1>
 
@@ -971,7 +703,7 @@ export function HomepageScrollytelling({
       </div>
 
       {/* ── SECTION 2: MANIFESTO (Vertical, 100vh) ───────────────────────── */}
-      <div className="relative w-full h-screen flex items-center justify-center px-16 overflow-hidden z-10">
+      <div className="scroll-snap-section relative w-full h-screen flex items-center justify-center px-16 overflow-hidden z-10">
         <div
           className="max-w-4xl w-full text-center border border-[var(--pw-border)] p-16 relative overflow-hidden backdrop-blur-md bg-black/5"
           style={{
@@ -1326,8 +1058,8 @@ export function HomepageScrollytelling({
 
       {/* ── HERO VIDEO CALL TO ACTION SECTION (after Group 3, before Footer) ─── */}
       {/* ── HERO VIDEO CALL TO ACTION SECTION (after Group 3, before Footer) ─── */}
-      <div 
-        className="w-full h-screen relative flex items-center justify-center z-10 overflow-hidden" 
+      <div
+        className="scroll-snap-section w-full h-screen relative flex items-center justify-center z-10 overflow-hidden"
       >
         {/* Video background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
@@ -1335,7 +1067,7 @@ export function HomepageScrollytelling({
         </div>
 
         {/* Centered logo */}
-        <h1 
+        <h1
           className="hero-title-text select-none absolute z-10" 
           style={{ mixBlendMode: 'difference', opacity: 0.4 }}
         >

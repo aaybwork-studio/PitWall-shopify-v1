@@ -681,9 +681,17 @@ html:not(.homepage-scrollytelling-active) body {
   scroll-behavior: smooth;
   overscroll-behavior: none;
   z-index: 0;
+  /* Native vertical section snapping — the browser handles settling on the
+     nearest section itself: no dead zones, no custom JS race conditions. */
+  scroll-snap-type: y proximity;
 }
 .homepage-scroll-container::-webkit-scrollbar {
   display: none;
+}
+
+/* Any direct vertical section of the homepage that should snap into place */
+.scroll-snap-section {
+  scroll-snap-align: start;
 }
 
 /* Each group is a full-viewport horizontal row */
@@ -697,6 +705,7 @@ html:not(.homepage-scrollytelling-active) body {
   position: relative;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  scroll-snap-align: start;
 }
 .horizontal-scroll-group::-webkit-scrollbar {
   display: none;
@@ -735,7 +744,7 @@ html:not(.homepage-scrollytelling-active) body {
 }
 
 /* ── Group 3: continuous "drive" scene ─────────────────────────────── */
-.group3-stage { position: relative; }
+.group3-stage { position: relative; scroll-snap-align: start; }
 
 /* Invisible horizontal scrubber — provides scroll distance, no visuals */
 .g3-track {
