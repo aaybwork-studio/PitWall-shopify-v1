@@ -416,6 +416,29 @@ export function HomepageScrollytelling({
     }, { root: container, threshold: [0.5, 0.92] });
     targets.forEach(([el]) => { if (el) observer.observe(el); });
 
+    // Group 3's scrollLeft drives a spring-smoothed parallax scene
+    // (driveProgress = useSpring(progressMV, ...)). Feeding it raw, chunky
+    // 1:1 jumps made the spring overshoot/oscillate — visibly "glitchy".
+    // A light rAF lerp keeps the input continuous without reintroducing the
+    // sluggish, multi-hundred-ms lag the old system had everywhere.
+    let g3Target = 0;
+    let g3RafId: number | null = null;
+    const g3Lerp = () => {
+      const g3 = group3Ref.current;
+      if (!g3) { g3RafId = null; return; }
+      const cur = g3.scrollLeft;
+      const diff = g3Target - cur;
+      if (Math.abs(diff) < 0.4) {
+        g3.scrollLeft = g3Target;
+        syncProgress(g3);
+        g3RafId = null;
+        return;
+      }
+      g3.scrollLeft = cur + diff * 0.32;
+      syncProgress(g3);
+      g3RafId = requestAnimationFrame(g3Lerp);
+    };
+
     const handleWheel = (e: WheelEvent) => {
       if (!activeGroup) return; // let native vertical scroll-snap handle it
       const el = trackMap[activeGroup].current;
@@ -423,8 +446,9 @@ export function HomepageScrollytelling({
       if (!el || !sectionEl) return;
 
       const maxScroll = el.scrollWidth - el.clientWidth;
-      const atStart = el.scrollLeft <= 0;
-      const atEnd = el.scrollLeft >= maxScroll - 1;
+      const refScrollLeft = activeGroup === 'g3' ? (g3RafId != null ? g3Target : el.scrollLeft) : el.scrollLeft;
+      const atStart = refScrollLeft <= 0;
+      const atEnd = refScrollLeft >= maxScroll - 1;
 
       // At either edge of the horizontal range: release to native vertical
       // scroll so it can carry on to the next/previous section.
@@ -438,17 +462,24 @@ export function HomepageScrollytelling({
       if (Math.abs(container.scrollTop - sectionEl.offsetTop) > 1) {
         container.scrollTop = sectionEl.offsetTop;
       }
+
+      if (activeGroup === 'g3') {
+        g3Target = Math.max(0, Math.min(maxScroll, refScrollLeft + e.deltaY));
+        if (g3RafId == null) g3RafId = requestAnimationFrame(g3Lerp);
+        return;
+      }
+
       el.scrollLeft = Math.max(0, Math.min(maxScroll, el.scrollLeft + e.deltaY));
 
       if (activeGroup === 'g1') setActiveIndex1(getSlideIndex(el, el.scrollLeft));
       else if (activeGroup === 'g2') setActiveIndex2(getSlideIndex(el, el.scrollLeft));
-      else if (activeGroup === 'g3') syncProgress(el);
     };
 
     container.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       container.removeEventListener('wheel', handleWheel);
       observer.disconnect();
+      if (g3RafId != null) cancelAnimationFrame(g3RafId);
     };
   }, [isMobile]);
 
@@ -788,7 +819,10 @@ export function HomepageScrollytelling({
         {/* Collection Grid 1 (wider than viewport) */}
         <div className="horizontal-slide grid-slide-wide" style={{ backgroundColor: WM.bg }}>
           <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
-          <div className="relative z-10 h-full flex items-center px-12">
+          {/* pt-16 (64px) offsets centering by the fixed nav-header's height —
+              without it, the header eats into the grid's top margin, leaving
+              a visibly larger gap below than above. */}
+          <div className="relative z-10 h-full flex items-center px-12 pt-16">
             <div className="grid-cols-custom-1">
               {/* Col 1: two stacked */}
               <div className="flex flex-col gap-[2px] h-full justify-between">
@@ -811,8 +845,8 @@ export function HomepageScrollytelling({
               </div>
               {/* Col 4: large + two small */}
               <div className="flex flex-col gap-[2px] h-full justify-between">
-                <CollectionCard product={products[5]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '350ms' } as React.CSSProperties} />
-                <div className="flex-[1] flex gap-[2px] min-h-0">
+                <CollectionCard product={products[5]} className={`w-full flex-[7] min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '350ms' } as React.CSSProperties} />
+                <div className="flex-[3] flex gap-[2px] min-h-0">
                   <CollectionCard product={products[6]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '400ms' } as React.CSSProperties} />
                   <CollectionCard product={products[7]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex1 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '450ms' } as React.CSSProperties} />
                 </div>
@@ -885,7 +919,10 @@ export function HomepageScrollytelling({
         {/* Flipped Collection Grid 2 (wider than viewport) */}
         <div className="horizontal-slide grid-slide-wide" style={{ backgroundColor: WM.bg2 }}>
           <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
-          <div className="relative z-10 h-full flex items-center px-12">
+          {/* pt-16 (64px) offsets centering by the fixed nav-header's height —
+              without it, the header eats into the grid's top margin, leaving
+              a visibly larger gap below than above. */}
+          <div className="relative z-10 h-full flex items-center px-12 pt-16">
             <div className="grid-cols-custom-2">
               {/* Col 1: tall + title card */}
               <div className="flex flex-col gap-[2px] h-full justify-between">
@@ -912,8 +949,8 @@ export function HomepageScrollytelling({
               </div>
               {/* Col 5: one + two small */}
               <div className="flex flex-col gap-[2px] h-full justify-between">
-                <CollectionCard product={products[7]} className={`w-full flex-1 min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '400ms' } as React.CSSProperties} />
-                <div className="flex-[1] flex gap-[2px] min-h-0">
+                <CollectionCard product={products[7]} className={`w-full flex-[7] min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '400ms' } as React.CSSProperties} />
+                <div className="flex-[3] flex gap-[2px] min-h-0">
                   <CollectionCard product={products[8]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '450ms' } as React.CSSProperties} />
                   <CollectionCard product={products[0]} className={`flex-1 min-h-0 reveal-dashboard-item ${activeIndex2 >= 1 ? 'reveal-active' : ''}`} style={{ transitionDelay: '500ms' } as React.CSSProperties} />
                 </div>

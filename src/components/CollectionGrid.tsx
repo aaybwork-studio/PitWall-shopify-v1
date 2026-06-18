@@ -21,13 +21,13 @@ interface CollectionCardProps {
   ctaLabel?: 'CALIBRATE' | 'VIEW';
 }
 
-export function CollectionCard({ product, style }: CollectionCardProps) {
+export function CollectionCard({ product, style, className }: CollectionCardProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
     <a
       href={product.url}
-      className="group relative flex flex-col justify-end overflow-hidden bg-white text-[#0C0C0C] border border-[#0C0C0C]/10 transition-all duration-300 w-full h-full"
+      className={`group relative flex flex-col justify-end overflow-hidden bg-white text-[#0C0C0C] border border-[#0C0C0C]/10 transition-all duration-300 w-full h-full ${className || ''}`}
       style={style}
     >
       {/* Full-bleed background image */}
