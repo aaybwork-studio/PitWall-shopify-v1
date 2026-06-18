@@ -389,7 +389,7 @@ export function HomepageScrollytelling({
           isSnapping.current = false;
           verticalRafId = null;
         } else {
-          container.scrollTop = cur + diff * 0.095;
+          container.scrollTop = cur + diff * 0.26;
           verticalRafId = requestAnimationFrame(verticalLerp);
         }
       };
@@ -518,7 +518,7 @@ export function HomepageScrollytelling({
       }
 
       // Helper to evaluate accumulator threshold for snaps
-      const threshold = 120;
+      const threshold = 70;
       const checkAccumulatorThreshold = (delta: number) => {
         scrollAccumulator.current += delta;
         if (Math.abs(scrollAccumulator.current) >= threshold) {
