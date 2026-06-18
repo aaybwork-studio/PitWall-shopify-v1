@@ -114,11 +114,12 @@ Plans:
 **Goal**: Replace the current text-only Manifesto section with a 3-equal-panel image reveal (THE RACE / THE MOMENT / YOURS style reference), each panel difference-blended with a tagline in matching placement, animated in via smooth scroll-triggered reveals, with no hero video background on this section.
 **Mode**: standard
 **Depends on**: Phase 02.2
-**Requirements**: (inline — decisions to be captured in 02.5-CONTEXT.md)
-**Plans**: TBD
+**Requirements**: (inline — decisions D-01 through D-15 from 02.5-CONTEXT.md)
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 02.5 to break down)
+- [ ] 02.5-01-PLAN.md — Manifesto image_picker + tagline schema settings in hero-canvas.liquid, wired through main.tsx as new props
+- [ ] 02.5-02-PLAN.md — Desktop 3-panel staggered scale-up reveal + mobile stacked panels in HomepageScrollytelling.tsx, plus lowered VideoBackground gate threshold
 
 ---
 
@@ -148,7 +149,7 @@ Plans:
 | 02.2. Homepage Interaction Overhaul | - | Completed | 2026-06-07 |
 | 02.3. About Us Car Scrollytelling | 6/6 | Complete    | 2026-06-07 |
 | 02.4. Redesign Collections Page | 0/? | Not started | - |
-| 02.5. Redesign Manifesto Section | 0/? | Not started | - |
+| 02.5. Redesign Manifesto Section | 0/2 | Not started | - |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
 ---
