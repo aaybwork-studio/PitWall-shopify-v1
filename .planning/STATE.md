@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready_to_plan
-last_updated: "2026-06-07T08:46:58.489Z"
+last_updated: "2026-06-18T18:19:54.242Z"
 progress:
-  total_phases: 6
-  completed_phases: 3
+  total_phases: 8
+  completed_phases: 2
   total_plans: 8
   completed_plans: 8
-  percent: 50
+  percent: 100
 ---
 
 # Project State
@@ -103,7 +103,8 @@ None.
 - Phase 02.3 Plan 05 (mobile Group 3 audit + checkpoint) completed and approved on 2026-06-07 — no CSS changes needed; human visually verified mobile layout at 375px viewport.
 - Phase 02.3 Plan 06 (final desktop verification + production build) completed and approved on 2026-06-07 — checkpoint approved after fixing a Shopify schema validation error (`cta_url` type changed url→text, commit `de0c211`); `npm run build` passed cleanly. **Phase 02.3 is now COMPLETE.**
 - Next action: plan Phase 3 (Helmets PDP & Dynamic Routing) via `/gsd-plan-phase 3`, then push Phase 02.3 theme changes to Shopify.
+- Phase 02.5 (Redesign Manifesto Section) inserted into roadmap on 2026-06-18 — urgent request to replace the text-only Manifesto with a 3-equal-panel image reveal (THE RACE / THE MOMENT / YOURS). Context gathered same day; 3 source images still need to be saved to disk before planning can wire them as real schema image defaults (see 02.5-CONTEXT.md `<specifics>` blocker note).
 
 ---
 
-*State updated: 2026-06-07*
+*State updated: 2026-06-18*
