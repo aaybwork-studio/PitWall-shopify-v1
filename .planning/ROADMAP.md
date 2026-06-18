@@ -149,7 +149,7 @@ Plans:
 | 02.2. Homepage Interaction Overhaul | - | Completed | 2026-06-07 |
 | 02.3. About Us Car Scrollytelling | 6/6 | Complete    | 2026-06-07 |
 | 02.4. Redesign Collections Page | 0/? | Not started | - |
-| 02.5. Redesign Manifesto Section | 2/2 | Complete   | 2026-06-18 |
+| 02.5. Redesign Manifesto Section | 2/2 | Complete    | 2026-06-18 |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
 ---
