@@ -15,6 +15,7 @@
 - [ ] **Phase 02.2: Homepage Interaction Overhaul (INSERTED)** — Deliver an advanced scrollytelling experience on the homepage featuring scroll-locking, mirrored featured products, continuous video backgrounds, interactive ticker, and custom columns collections grids
 - [x] **Phase 02.3: About Us Car Scrollytelling (INSERTED)** — Add a Group 3 horizontal scrollytelling section with an animated F1 car traveling across 3 panels, followed by a vertical About Us content section, inserted between Group 2 and Footer (completed 2026-06-07)
 - [ ] **Phase 02.4: Redesign Collections Page (INSERTED)** — Redesign the collections page with a top video hero, difference-blended title overlay, yellow filter/sort bar, and a masonry dynamic product grid with landing page style cards
+- [ ] **Phase 02.5: Redesign Manifesto Section (INSERTED)** — Replace the text-only Manifesto section with a 3-equal-panel image reveal, each panel difference-blended with a tagline, animated in via smooth scroll-triggered reveals, no hero video background
 - [ ] **Phase 3: Helmets PDP & Dynamic Routing** — Deliver a complete, shippable helmets product page with autocalibrated WebGL helmet models, zero-lag browser URL state switches via HTML5 History API, and separate catalog listings in `/collections/all`
 
 ---
@@ -109,6 +110,18 @@ Plans:
 
 ---
 
+### Phase 02.5: Redesign Manifesto Section (INSERTED)
+**Goal**: Replace the current text-only Manifesto section with a 3-equal-panel image reveal (THE RACE / THE MOMENT / YOURS style reference), each panel difference-blended with a tagline in matching placement, animated in via smooth scroll-triggered reveals, with no hero video background on this section.
+**Mode**: standard
+**Depends on**: Phase 02.2
+**Requirements**: (inline — decisions to be captured in 02.5-CONTEXT.md)
+**Plans**: TBD
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 02.5 to break down)
+
+---
+
 ### Phase 3: Helmets PDP & Dynamic Routing
 **Goal**: Integrate two F1 Helmet WebGL models (`f1_helmet_lando_norris.glb` and `michael_schumacher_2002_helmet.glb`) into a dedicated Helmet Product page, with zero-lag URL switches using HTML5 History API and separated grid items in `/collections/all`
 **Mode:** mvp
@@ -135,6 +148,7 @@ Plans:
 | 02.2. Homepage Interaction Overhaul | - | Completed | 2026-06-07 |
 | 02.3. About Us Car Scrollytelling | 6/6 | Complete    | 2026-06-07 |
 | 02.4. Redesign Collections Page | 0/? | Not started | - |
+| 02.5. Redesign Manifesto Section | 0/? | Not started | - |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
 ---
