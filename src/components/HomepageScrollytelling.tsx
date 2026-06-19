@@ -790,7 +790,10 @@ export function HomepageScrollytelling({
         </div>
         {/* ── GROUP 3: About Us — Mobile stacked ──────────────────────────────────── */}
         <AboutUsMarqueeTicker style={{ position: 'relative', top: 'auto', bottom: 'auto' }} />
-        <section className="min-h-screen w-full flex flex-col justify-center items-center px-6 py-16 border-b border-[var(--pw-border)] gap-8 relative overflow-hidden" style={{ backgroundColor: WM.bg }}>
+        <section 
+          className="min-h-screen w-full flex flex-col justify-center items-center px-6 py-16 border-b border-[var(--pw-border)] gap-8 relative overflow-hidden z-20" 
+          style={{ backgroundColor: WM.bg, zIndex: 20 }}
+        >
           
           <div className="relative z-10 w-full max-w-md border border-[var(--pw-border)] p-8 relative overflow-hidden backdrop-blur-md bg-black/5 flex flex-col items-center gap-6">
             <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[var(--pw-gold)]" />
@@ -1088,8 +1091,8 @@ export function HomepageScrollytelling({
       {/* ── GROUP 3: About Us — single continuous "drive" scene ─────────── */}
       <div
         ref={group3StageRef}
-        className="group3-stage z-10"
-        style={{ position: 'relative', height: '100vh', overflow: 'hidden', backgroundColor: WM.bg }}
+        className="group3-stage z-20"
+        style={{ position: 'relative', height: '100vh', overflow: 'hidden', backgroundColor: WM.bg, zIndex: 20 }}
       >
         {/* Ticker element section divider */}
         <AboutUsMarqueeTicker style={{ top: 0, bottom: 'auto' }} />

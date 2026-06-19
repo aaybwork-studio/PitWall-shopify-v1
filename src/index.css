@@ -181,7 +181,7 @@ html:not(.homepage-scrollytelling-active) body {
   flex-direction: column;
   overflow: hidden;
   position: relative;
-  z-index: 1;
+  z-index: 20;
 }
 
 .pw-footer-columns {
