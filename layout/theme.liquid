@@ -52,85 +52,318 @@
 
     <!-- Global Navigation Header -->
     <header class="nav-header">
-      <div class="nav-grid">
-        <button id="menu-trigger-btn" class="nav-menu-btn" aria-label="Toggle menu">MENU</button>
-        <a href="/" class="nav-logo-link">
-          <img src="{{ 'emblem.png' | asset_url }}" alt="PITWALL" class="nav-logo-img" />
+      <div class="nav-grid-new">
+        <!-- Mobile Trigger -->
+        <button id="menu-trigger-btn-mobile" class="menu-trigger-btn-mobile" aria-label="Toggle menu">MENU</button>
+
+        <!-- Logo (Left) -->
+        <a href="/" class="nav-logo-link-new">
+          <img src="{{ 'emblem.png' | asset_url }}" alt="PITWALL" class="nav-logo-img-new" />
+          <span class="nav-logo-text-new">PITWALL</span>
         </a>
-        <div style="display:flex; justify-self: end; align-items: center; gap: 16px;">
-          <button id="theme-toggle-btn" class="nav-menu-btn" aria-label="Toggle theme" style="display: flex; align-items: center; justify-content: center; padding: 6px;">
-            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; display: none;">
-              <circle cx="12" cy="12" r="4"></circle>
-              <path d="M12 2v2"></path>
-              <path d="M12 20v2"></path>
-              <path d="m4.93 4.93 1.41 1.41"></path>
-              <path d="m17.66 17.66 1.41 1.41"></path>
-              <path d="M2 12h2"></path>
-              <path d="M20 12h2"></path>
-              <path d="m6.34 17.66-1.41 1.41"></path>
-              <path d="m19.07 4.93-1.41 1.41"></path>
+
+        <!-- Main Navigation Links (Center) -->
+        <nav class="nav-menu-desktop">
+          <div class="nav-menu-item" data-dropdown="new-arrivals">
+            <a href="/collections/new-arrivals" class="nav-menu-link">NEW ARRIVALS</a>
+          </div>
+          <div class="nav-menu-item" data-dropdown="drivers">
+            <span class="nav-menu-link">DRIVERS</span>
+          </div>
+          <div class="nav-menu-item" data-dropdown="teams">
+            <span class="nav-menu-link">TEAMS</span>
+          </div>
+          <div class="nav-menu-item" data-dropdown="f1-gifts">
+            <span class="nav-menu-link">F1 GIFTS</span>
+          </div>
+          <div class="nav-menu-item" data-dropdown="categories">
+            <span class="nav-menu-link">CATEGORIES</span>
+          </div>
+        </nav>
+
+        <!-- Right Icons (Right) -->
+        <div class="nav-icons-right">
+          <!-- Search trigger -->
+          <a href="/search" class="nav-icon-btn" aria-label="Search">
+            <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; display: none;">
+          </a>
+          <!-- Account link -->
+          <a href="/account" class="nav-icon-btn" aria-label="Account">
+            <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </a>
+          <!-- Theme toggle -->
+          <button id="theme-toggle-btn" class="nav-icon-btn" aria-label="Toggle theme">
+            <svg class="theme-icon-sun nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+              <circle cx="12" cy="12" r="4"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="theme-icon-moon nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
               <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
             </svg>
           </button>
-          <button class="nav-cart-btn pw-nav-cart-btn" id="pw-cart-open-btn" aria-label="Open cart drawer">
-            CART <span class="nav-cart-badge">[ <span id="cart-counter-display">0</span> ]</span>
+          <!-- Cart trigger -->
+          <button class="nav-cart-btn-new" id="pw-cart-open-btn" aria-label="Open cart drawer">
+            <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span class="nav-cart-badge-count" id="cart-counter-display">0</span>
           </button>
+        </div>
+      </div>
+
+      <!-- Megamenu Dropdown Container -->
+      <div id="nav-megamenu-container" class="megamenu-container">
+        <!-- DRIVERS DROPDOWN -->
+        <div class="megamenu-panel" data-panel="drivers">
+          <div class="megamenu-grid-drivers">
+            <!-- Max Verstappen -->
+            <div class="megamenu-driver-col">
+              <span class="driver-name-header">MAX VERSTAPPEN</span>
+              <ul class="driver-links-list">
+                <li><a href="/products/max-verstappen-1-2-scale-helmet">1:2 Scale Replica Helmet</a></li>
+                <li><a href="/products/max-verstappen-1-18-scale-car">1:18 Scale Model Car</a></li>
+                <li><a href="/products/max-verstappen-collectible-figurine">Collectible Figurine</a></li>
+                <li><a href="/products/max-verstappen-signature-tshirt">Signature Graphic T-Shirt</a></li>
+                <li><a href="/products/max-verstappen-oracle-red-bull-cap">Signature Team Cap</a></li>
+              </ul>
+            </div>
+            <!-- Lewis Hamilton -->
+            <div class="megamenu-driver-col">
+              <span class="driver-name-header">LEWIS HAMILTON</span>
+              <ul class="driver-links-list">
+                <li><a href="/products/lewis-hamilton-1-2-scale-helmet">1:2 Scale Replica Helmet</a></li>
+                <li><a href="/products/lewis-hamilton-1-18-scale-car">1:18 Scale Model Car</a></li>
+                <li><a href="/products/lewis-hamilton-collectible-figurine">Collectible Figurine</a></li>
+                <li><a href="/products/lewis-hamilton-44-graphic-tshirt">Signature Graphic T-Shirt</a></li>
+                <li><a href="/products/lewis-hamilton-team-cap">Signature Team Cap</a></li>
+              </ul>
+            </div>
+            <!-- Lando Norris -->
+            <div class="megamenu-driver-col">
+              <span class="driver-name-header">LANDO NORRIS</span>
+              <ul class="driver-links-list">
+                <li><a href="/products/lando-norris-1-2-scale-helmet">1:2 Scale Replica Helmet</a></li>
+                <li><a href="/products/lando-norris-1-18-scale-car">1:18 Scale Model Car</a></li>
+                <li><a href="/products/lando-norris-collectible-figurine">Collectible Figurine</a></li>
+                <li><a href="/products/lando-norris-ln4-graphic-tshirt">Signature Graphic T-Shirt</a></li>
+                <li><a href="/products/lando-norris-mclaren-cap">Signature Team Cap</a></li>
+              </ul>
+            </div>
+            <!-- Charles Leclerc -->
+            <div class="megamenu-driver-col">
+              <span class="driver-name-header">CHARLES LECLERC</span>
+              <ul class="driver-links-list">
+                <li><a href="/products/charles-leclerc-1-2-scale-helmet">1:2 Scale Replica Helmet</a></li>
+                <li><a href="/products/charles-leclerc-1-18-scale-car">1:18 Scale Model Car</a></li>
+                <li><a href="/products/charles-leclerc-collectible-figurine">Collectible Figurine</a></li>
+                <li><a href="/products/charles-leclerc-16-graphic-tshirt">Signature Graphic T-Shirt</a></li>
+                <li><a href="/products/charles-leclerc-scuderia-ferrari-cap">Signature Team Cap</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEAMS DROPDOWN -->
+        <div class="megamenu-panel" data-panel="teams">
+          <div class="megamenu-grid-teams">
+            <!-- Ferrari -->
+            <a href="/collections/scuderia-ferrari" class="team-card">
+              <div class="team-car-img-wrap">
+                <img src="{{ 'ferrari.png' | asset_url }}" alt="Scuderia Ferrari" loading="lazy" />
+              </div>
+              <span class="team-card-name">SCUDERIA FERRARI</span>
+            </a>
+            <!-- Red Bull -->
+            <a href="/collections/red-bull-racing" class="team-card">
+              <div class="team-car-img-wrap">
+                <img src="{{ 'redbull.png' | asset_url }}" alt="Red Bull Racing" loading="lazy" />
+              </div>
+              <span class="team-card-name">RED BULL RACING</span>
+            </a>
+            <!-- McLaren -->
+            <a href="/collections/mclaren-f1-team" class="team-card">
+              <div class="team-car-img-wrap">
+                <img src="{{ 'mclaren.png' | asset_url }}" alt="McLaren F1 Team" loading="lazy" />
+              </div>
+              <span class="team-card-name">MCLAREN F1 TEAM</span>
+            </a>
+            <!-- Mercedes -->
+            <a href="/collections/mercedes-amg-f1-team" class="team-card">
+              <div class="team-car-img-wrap">
+                <img src="{{ 'mercedes.png' | asset_url }}" alt="Mercedes AMG F1 Team" loading="lazy" />
+              </div>
+              <span class="team-card-name">MERCEDES AMG F1 TEAM</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- F1 GIFTS DROPDOWN -->
+        <div class="megamenu-panel" data-panel="f1-gifts">
+          <div class="megamenu-grid-gifts">
+            <!-- Column 1: Gift Groups -->
+            <div class="megamenu-gift-col">
+              <span class="gift-header">RECIPIENT CATEGORY</span>
+              <ul class="gift-links-list">
+                <li><a href="/collections/desk-accessories">For the Desk</a></li>
+                <li><a href="/collections/2d-wall-art">For the Wall</a></li>
+                <li><a href="/products/pitwall-gift-card">Gift Cards & Vouchers</a></li>
+              </ul>
+            </div>
+            <!-- Column 2: Price Brackets -->
+            <div class="megamenu-gift-col">
+              <span class="gift-header">PRICE BRACKETS</span>
+              <ul class="gift-links-list">
+                <li><a href="/collections/all?price_max=5000">Gifts Under ₹5,000</a></li>
+                <li><a href="/collections/all?price_min=5000&price_max=10000">Gifts Under ₹10,000</a></li>
+                <li><a href="/collections/all?price_min=10000">Premium Collectibles</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORIES DROPDOWN -->
+        <div class="megamenu-panel" data-panel="categories">
+          <div class="megamenu-grid-categories">
+            <!-- Column 1: Art & Display -->
+            <div class="megamenu-cat-col">
+              <span class="cat-header">ART & DISPLAY</span>
+              <ul class="cat-links-list">
+                <li><a href="/collections/wled-light-boxes">WLED Light Boxes</a></li>
+                <li><a href="/collections/2d-wall-art">2D Wall Art</a></li>
+                <li><a href="/collections/layered-art">Layered Art</a></li>
+              </ul>
+            </div>
+            <!-- Column 2: Scale Models -->
+            <div class="megamenu-cat-col">
+              <span class="cat-header">SCALE MODELS</span>
+              <ul class="cat-links-list">
+                <li><a href="/collections/car-models">Car Models (1:64 / 1:24 / 1:18 / 1:8)</a></li>
+                <li><a href="/collections/driver-figurines">Driver Figurines</a></li>
+              </ul>
+            </div>
+            <!-- Column 3: Accessories -->
+            <div class="megamenu-cat-col">
+              <span class="cat-header">ACCESSORIES</span>
+              <ul class="cat-links-list">
+                <li><a href="/collections/desk-accessories">Desk Accessories</a></li>
+                <li><a href="/collections/keychains">Keychains</a></li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </header>
 
-    <!-- Global Takeover Menu Overlay -->
-    <div id="full-menu-overlay" class="menu-overlay">
-      <div class="menu-content">
-        <ul class="menu-links-list">
-          <li class="menu-link-item {% if template == 'index' %}is-active{% endif %}">
-            <svg class="menu-bullet-svg" viewBox="0 0 10 10" style="width: 10px; height: 10px; fill: var(--accent); margin-right: 16px;"><rect width="10" height="10"/></svg>
-            <a href="/" class="menu-link">HOME</a>
+    <!-- Global Mobile Menu Takeover Overlay -->
+    <div id="full-menu-overlay" class="menu-overlay-new">
+      <div class="mobile-menu-header">
+        <span class="mobile-menu-title">NAVIGATION</span>
+        <button id="menu-close-btn-mobile" class="mobile-menu-close-btn" aria-label="Close menu">CLOSE</button>
+      </div>
+      <div class="mobile-menu-content">
+        <ul class="mobile-menu-list">
+          <li class="mobile-menu-item">
+            <a href="/collections/new-arrivals" class="mobile-menu-link">NEW ARRIVALS</a>
           </li>
-          <li class="menu-link-item menu-link-item-collections {% if template contains 'collection' %}is-active{% endif %}">
-            <svg class="menu-bullet-svg" viewBox="0 0 10 10" style="width: 10px; height: 10px; fill: var(--accent); margin-right: 16px;"><rect width="10" height="10"/></svg>
-            <div class="menu-link-col-wrapper" style="display: flex; flex-direction: column; align-items: flex-start;">
-              <a href="/collections/all" class="menu-link">COLLECTIONS</a>
+          
+          <!-- DRIVERS Accordion -->
+          <li class="mobile-menu-item mobile-accordion">
+            <button class="mobile-accordion-trigger">DRIVERS <svg class="accordion-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="mobile-accordion-content">
+              <div class="mobile-driver-group">
+                <span class="mobile-driver-header">MAX VERSTAPPEN</span>
+                <ul class="mobile-sublinks">
+                  <li><a href="/products/max-verstappen-1-2-scale-helmet">1:2 Scale Replica Helmet</a></li>
+                  <li><a href="/products/max-verstappen-1-18-scale-car">1:18 Scale Model Car</a></li>
+                  <li><a href="/products/max-verstappen-collectible-figurine">Collectible Figurine</a></li>
+                  <li><a href="/products/max-verstappen-signature-tshirt">Signature Graphic T-Shirt</a></li>
+                  <li><a href="/products/max-verstappen-oracle-red-bull-cap">Signature Team Cap</a></li>
+                </ul>
+              </div>
+              <div class="mobile-driver-group">
+                <span class="mobile-driver-header">LEWIS HAMILTON</span>
+                <ul class="mobile-sublinks">
+                  <li><a href="/products/lewis-hamilton-1-2-scale-helmet">1:2 Scale Replica Helmet</a></li>
+                  <li><a href="/products/lewis-hamilton-1-18-scale-car">1:18 Scale Model Car</a></li>
+                  <li><a href="/products/lewis-hamilton-collectible-figurine">Collectible Figurine</a></li>
+                  <li><a href="/products/lewis-hamilton-44-graphic-tshirt">Signature Graphic T-Shirt</a></li>
+                  <li><a href="/products/lewis-hamilton-team-cap">Signature Team Cap</a></li>
+                </ul>
+              </div>
+              <div class="mobile-driver-group">
+                <span class="mobile-driver-header">LANDO NORRIS</span>
+                <ul class="mobile-sublinks">
+                  <li><a href="/products/lando-norris-1-2-scale-helmet">1:2 Scale Replica Helmet</a></li>
+                  <li><a href="/products/lando-norris-1-18-scale-car">1:18 Scale Model Car</a></li>
+                  <li><a href="/products/lando-norris-collectible-figurine">Collectible Figurine</a></li>
+                  <li><a href="/products/lando-norris-ln4-graphic-tshirt">Signature Graphic T-Shirt</a></li>
+                  <li><a href="/products/lando-norris-mclaren-cap">Signature Team Cap</a></li>
+                </ul>
+              </div>
+              <div class="mobile-driver-group">
+                <span class="mobile-driver-header">CHARLES LECLERC</span>
+                <ul class="mobile-sublinks">
+                  <li><a href="/products/charles-leclerc-1-2-scale-helmet">1:2 Scale Replica Helmet</a></li>
+                  <li><a href="/products/charles-leclerc-1-18-scale-car">1:18 Scale Model Car</a></li>
+                  <li><a href="/products/charles-leclerc-collectible-figurine">Collectible Figurine</a></li>
+                  <li><a href="/products/charles-leclerc-16-graphic-tshirt">Signature Graphic T-Shirt</a></li>
+                  <li><a href="/products/charles-leclerc-scuderia-ferrari-cap">Signature Team Cap</a></li>
+                </ul>
+              </div>
             </div>
           </li>
-          <li class="menu-link-item {% if template == 'page' and page.handle == 'about' %}is-active{% endif %}">
-            <svg class="menu-bullet-svg" viewBox="0 0 10 10" style="width: 10px; height: 10px; fill: var(--accent); margin-right: 16px;"><rect width="10" height="10"/></svg>
-            <a href="{{ pages['about'].url | default: '/pages/about' }}" class="menu-link">ABOUT</a>
+
+          <!-- TEAMS Accordion -->
+          <li class="mobile-menu-item mobile-accordion">
+            <button class="mobile-accordion-trigger">TEAMS <svg class="accordion-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="mobile-accordion-content">
+              <ul class="mobile-sublinks">
+                <li><a href="/collections/scuderia-ferrari">Scuderia Ferrari</a></li>
+                <li><a href="/collections/red-bull-racing">Red Bull Racing</a></li>
+                <li><a href="/collections/mclaren-f1-team">McLaren F1 Team</a></li>
+                <li><a href="/collections/mercedes-amg-f1-team">Mercedes AMG F1 Team</a></li>
+              </ul>
+            </div>
           </li>
-          <li class="menu-link-item">
-            <svg class="menu-bullet-svg" viewBox="0 0 10 10" style="width: 10px; height: 10px; fill: var(--accent); margin-right: 16px;"><rect width="10" height="10"/></svg>
-            <a href="{{ pages['contact'].url | default: '/pages/contact' }}" class="menu-link" onclick="document.getElementById('full-menu-overlay').classList.remove('is-active'); document.body.style.overflow = '';">CONTACT</a>
+
+          <!-- F1 GIFTS Accordion -->
+          <li class="mobile-menu-item mobile-accordion">
+            <button class="mobile-accordion-trigger">F1 GIFTS <svg class="accordion-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="mobile-accordion-content">
+              <ul class="mobile-sublinks">
+                <li><a href="/collections/desk-accessories">For the Desk</a></li>
+                <li><a href="/collections/2d-wall-art">For the Wall</a></li>
+                <li><a href="/products/pitwall-gift-card">Gift Cards & Vouchers</a></li>
+                <li><a href="/collections/all?price_max=5000">Gifts Under ₹5,000</a></li>
+                <li><a href="/collections/all?price_min=5000&price_max=10000">Gifts Under ₹10,000</a></li>
+                <li><a href="/collections/all?price_min=10000">Premium Collectibles</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- CATEGORIES Accordion -->
+          <li class="mobile-menu-item mobile-accordion">
+            <button class="mobile-accordion-trigger">CATEGORIES <svg class="accordion-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="mobile-accordion-content">
+              <ul class="mobile-sublinks">
+                <li><a href="/collections/wled-light-boxes">WLED Light Boxes</a></li>
+                <li><a href="/collections/2d-wall-art">2D Wall Art</a></li>
+                <li><a href="/collections/layered-art">Layered Art</a></li>
+                <li><a href="/collections/car-models">Car Models</a></li>
+                <li><a href="/collections/driver-figurines">Driver Figurines</a></li>
+                <li><a href="/collections/desk-accessories">Desk Accessories</a></li>
+                <li><a href="/collections/keychains">Keychains</a></li>
+              </ul>
+            </div>
           </li>
         </ul>
-        <div class="menu-submenu-col">
-          <span class="menu-contact-label">COLLECTIONS</span>
-          <ul class="menu-submenu-middle">
-            <li><a href="/collections/all?category=All" class="menu-submenu-middle-link">ALL</a></li>
-            <li><a href="/collections/all?category=WLED%20Light%20Boxes" class="menu-submenu-middle-link">WLED LIGHT BOXES</a></li>
-            <li><a href="/collections/all?category=Car%20Models" class="menu-submenu-middle-link">CAR MODELS</a></li>
-            <li><a href="/collections/all?category=2D%20Wall%20Art" class="menu-submenu-middle-link">2D WALL ART</a></li>
-            <li><a href="/collections/all?category=Keychains" class="menu-submenu-middle-link">KEYCHAINS</a></li>
-            <li><a href="/collections/all?category=Desk%20Accessories" class="menu-submenu-middle-link">DESK ACCESSORIES</a></li>
-            <li><a href="/collections/all?category=Layered%20Art" class="menu-submenu-middle-link">LAYERED ART</a></li>
-            <li><a href="/collections/all?category=Driver%20Figurines" class="menu-submenu-middle-link">DRIVER FIGURINES</a></li>
-          </ul>
-        </div>
-        <div class="menu-images-col">
-          <div class="menu-image-panel">
-            <div class="menu-img-placeholder"></div>
-            <span class="menu-img-caption">ABOUT THE BRAND</span>
-          </div>
-          <div class="menu-image-panel">
-            <div class="menu-img-placeholder" style="background-color: var(--surface-2);"></div>
-            <span class="menu-img-caption">LATEST DROP</span>
-          </div>
-        </div>
       </div>
       <!-- Bottom wordmark logo -->
-      <div class="menu-bottom-bar">
-        <span class="menu-wordmark-text">PITWALL</span>
+      <div class="mobile-menu-footer">
+        <span class="mobile-menu-wordmark">PITWALL</span>
       </div>
     </div>
 
