@@ -104,13 +104,36 @@
               <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
             </svg>
           </button>
-          <!-- Cart trigger -->
-          <button class="nav-cart-btn-new" id="pw-cart-open-btn" aria-label="Open cart drawer">
-            <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>
-            </svg>
-            <span class="nav-cart-badge-count" id="cart-counter-display">0</span>
-          </button>
+          <!-- Cart trigger wrapper with hover dropdown -->
+          <div class="nav-cart-wrapper-new">
+            <button class="nav-cart-btn-new" id="pw-cart-open-btn" aria-label="Open cart drawer">
+              <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              <span class="nav-cart-badge-count" id="cart-counter-display">0</span>
+            </button>
+
+            <!-- Cart Dropdown (Desktop only) -->
+            <div id="nav-cart-dropdown" class="nav-cart-dropdown">
+              <div id="pw-dropdown-cart-items" class="dropdown-cart-items">
+                <!-- Dynamically populated via AJAX refreshCart() -->
+              </div>
+              <div id="pw-dropdown-cart-footer" class="dropdown-cart-footer">
+                <div class="dropdown-cart-subtotal">
+                  <span>SUBTOTAL</span>
+                  <span id="pw-dropdown-subtotal-value">₹0.00</span>
+                </div>
+                <div class="dropdown-cart-actions">
+                  <a href="/cart" class="dropdown-cart-btn-link dropdown-cart-btn-view">VIEW CART</a>
+                  <a href="/checkout" class="dropdown-cart-btn-link dropdown-cart-btn-checkout">CHECKOUT</a>
+                </div>
+              </div>
+              <div id="pw-dropdown-cart-empty" class="dropdown-cart-empty">
+                <p>Your cart is empty.</p>
+                <a href="/collections/all" class="dropdown-cart-browse">BROWSE COLLECTIONS →</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -496,21 +519,36 @@
             var count = cart.item_count || 0;
             counter.textContent = count;
 
+            // Update Drawer Elements
             var itemsEl = document.getElementById('pw-cart-items');
             var footerEl = document.getElementById('pw-cart-footer');
             var emptyEl = document.getElementById('pw-cart-empty');
             var subtotalEl = document.getElementById('pw-cart-subtotal-value');
 
-            if (count === 0) {
-              itemsEl.innerHTML = '';
-              footerEl.style.display = 'none';
-              emptyEl.style.display = 'flex';
-            } else {
-              emptyEl.style.display = 'none';
-              footerEl.style.display = 'block';
-              subtotalEl.textContent = formatMoney(cart.total_price);
+            // Update Dropdown Elements
+            var dpItemsEl = document.getElementById('pw-dropdown-cart-items');
+            var dpFooterEl = document.getElementById('pw-dropdown-cart-footer');
+            var dpEmptyEl = document.getElementById('pw-dropdown-cart-empty');
+            var dpSubtotalEl = document.getElementById('pw-dropdown-subtotal-value');
 
-              itemsEl.innerHTML = cart.items.map(function(item) {
+            if (count === 0) {
+              if (itemsEl) itemsEl.innerHTML = '';
+              if (footerEl) footerEl.style.display = 'none';
+              if (emptyEl) emptyEl.style.display = 'flex';
+
+              if (dpItemsEl) dpItemsEl.innerHTML = '';
+              if (dpFooterEl) dpFooterEl.style.display = 'none';
+              if (dpEmptyEl) dpEmptyEl.style.display = 'flex';
+            } else {
+              if (emptyEl) emptyEl.style.display = 'none';
+              if (footerEl) footerEl.style.display = 'block';
+              if (subtotalEl) subtotalEl.textContent = formatMoney(cart.total_price);
+
+              if (dpEmptyEl) dpEmptyEl.style.display = 'none';
+              if (dpFooterEl) dpFooterEl.style.display = 'block';
+              if (dpSubtotalEl) dpSubtotalEl.textContent = formatMoney(cart.total_price);
+
+              var itemHtml = cart.items.map(function(item) {
                 return '<div class="pw-cart-item">' +
                   '<div class="pw-cart-item-img-wrap">' +
                     (item.image ? '<img src="' + item.image + '" alt="' + item.title + '" class="pw-cart-item-img" />' : '<div class="pw-cart-item-img-placeholder"></div>') +
@@ -530,6 +568,9 @@
                   '</div>' +
                 '</div>';
               }).join('');
+
+              if (itemsEl) itemsEl.innerHTML = itemHtml;
+              if (dpItemsEl) dpItemsEl.innerHTML = itemHtml;
             }
           });
       }
@@ -538,39 +579,44 @@
       if (closeBtn) closeBtn.addEventListener('click', closeCart);
       if (backdrop) backdrop.addEventListener('click', closeCart);
 
-      var itemsContainer = document.getElementById('pw-cart-items');
-      if (itemsContainer) {
-        itemsContainer.addEventListener('click', function(e) {
-          var removeBtn = e.target.closest('.pw-cart-item-remove-btn');
-          if (removeBtn) {
-            var variantId = removeBtn.getAttribute('data-variant-id');
-            if (variantId) {
-              removeBtn.style.opacity = '0.35';
-              removeBtn.disabled = true;
-              fetch('/cart/change.js', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                  id: variantId,
-                  quantity: 0
+      function bindRemoveEvent(containerId) {
+        var container = document.getElementById(containerId);
+        if (container) {
+          container.addEventListener('click', function(e) {
+            var removeBtn = e.target.closest('.pw-cart-item-remove-btn');
+            if (removeBtn) {
+              var variantId = removeBtn.getAttribute('data-variant-id');
+              if (variantId) {
+                removeBtn.style.opacity = '0.35';
+                removeBtn.disabled = true;
+                fetch('/cart/change.js', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    id: variantId,
+                    quantity: 0
+                  })
                 })
-              })
-              .then(function(res) { return res.json(); })
-              .then(function(cart) {
-                refreshCart();
-                document.dispatchEvent(new CustomEvent('cart:refresh'));
-              })
-              .catch(function(err) {
-                console.error('Failed to remove item from cart', err);
-                refreshCart();
-              });
+                .then(function(res) { return res.json(); })
+                .then(function(cart) {
+                  refreshCart();
+                  document.dispatchEvent(new CustomEvent('cart:refresh'));
+                })
+                .catch(function(err) {
+                  console.error('Failed to remove item from cart', err);
+                  refreshCart();
+                });
+              }
             }
-          }
-        });
+          });
+        }
       }
+
+      bindRemoveEvent('pw-cart-items');
+      bindRemoveEvent('pw-dropdown-cart-items');
 
       // Refresh count on page load
       fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
