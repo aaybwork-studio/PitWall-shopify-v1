@@ -73,6 +73,30 @@ function HeroTicker({ offset, itemRef }: TickerProps) {
   );
 }
 
+// ── About Us Marquee Ticker ──────────────────────────────────────────────────
+function AboutUsMarqueeTicker() {
+  const repeats = Array(6).fill("PITWALL ENGINEERING / ABOUT US / ");
+  return (
+    <div
+      className="animate-marquee-container ticker-bar w-full py-3"
+      style={{
+        backgroundColor: 'var(--pw-gold, #E8B93B)',
+        borderTop: '1px solid var(--pw-border, rgba(12,12,12,0.12))',
+        borderBottom: '1px solid var(--pw-border, rgba(12,12,12,0.12))',
+      }}
+    >
+      <div className="animate-marquee-content flex whitespace-nowrap font-mono text-xs uppercase tracking-widest text-[#0C0C0C] font-bold">
+        <div className="flex">
+          {repeats.map((t, i) => <span key={i} className="inline-block px-4">{t}</span>)}
+        </div>
+        <div className="flex">
+          {repeats.map((t, i) => <span key={i} className="inline-block px-4">{t}</span>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── F1 Car Silhouette ────────────────────────────────────────────────────────
 export function F1CarSilhouette({ color = '#EDE8E0' }: { color?: string }) {
   return (
@@ -217,7 +241,7 @@ export function HomepageScrollytelling({
   // stat1Value/stat1Label/stat2Value/stat2Label/stat3Value/stat3Label remain valid
   // schema-driven props (Plan 01's prior phase) but are no longer rendered now that
   // the Manifesto section has been redesigned into a 3-panel image reveal (Phase 02.5).
-  void stat1Value; void stat1Label; void stat2Value; void stat2Label; void stat3Value; void stat3Label;
+  void stat1Value; void stat1Label; void stat2Value; void stat2Label; void stat3Value; void stat3Label; void aboutHeading;
   // ── Products ────────────────────────────────────────────────────────────────
   const products: Product[] = React.useMemo(() => {
     let parsed: Product[] = [];
@@ -663,15 +687,10 @@ export function HomepageScrollytelling({
   const carTransform = useMotionTemplate`translate3d(${carXvw}vw, ${carBobVh}vh, 0) rotate(${carLeanDeg}deg)`;
 
   // Parallax depth layers (background drifts slower, road dashes faster → speed)
-  const wordmarkX = useTransform(driveProgress, [0, 1], [10, -22]);
-  const wordmarkTransform = useMotionTemplate`translate3d(calc(-50% + ${wordmarkX}vw), -50%, 0)`;
-  const telemetryX = useTransform(driveProgress, [0, 1], [6, -10]);
-  const telemetryTransform = useMotionTemplate`translate3d(${telemetryX}vw, 0, 0)`;
   const roadDashX = useTransform(driveProgress, [0, 1], [0, -140]);
   const roadDashTransform = useMotionTemplate`translate3d(${roadDashX}vw, 0, 0)`;
 
   // Progress-driven foreground reveals
-  const introOpacity = useTransform(driveProgress, [0, 0.14], [1, 0]);
   const storyOpacity = useTransform(driveProgress, [0.5, 0.82], [0, 1]);
   const storyX = useTransform(driveProgress, [0.5, 0.85], [48, 0]);
   const storyTransform = useMotionTemplate`translate3d(${storyX}px, -50%, 0)`;
@@ -766,8 +785,8 @@ export function HomepageScrollytelling({
           />
         </div>
         {/* ── GROUP 3: About Us — Mobile stacked ──────────────────────────────────── */}
+        <AboutUsMarqueeTicker />
         <section className="min-h-screen w-full flex flex-col justify-center items-center px-6 py-16 border-b border-[var(--pw-border)] gap-8 relative overflow-hidden" style={{ backgroundColor: WM.bg }}>
-          <div className="absolute inset-0 tech-grid-bg pointer-events-none" />
           
           <div className="relative z-10 w-full max-w-md border border-[var(--pw-border)] p-8 relative overflow-hidden backdrop-blur-md bg-black/5 flex flex-col items-center gap-6">
             <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[var(--pw-gold)]" />
@@ -775,12 +794,8 @@ export function HomepageScrollytelling({
             <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[var(--pw-gold)]" />
             <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[var(--pw-gold)]" />
 
-            <span className="font-mono text-xs uppercase tracking-widest self-start" style={{ color: WM.gold }}>// ABOUT US</span>
-            
-            {/* Static car with subtle mobile telemetry */}
+            {/* Static car with no telemetry */}
             <div className="relative my-4" style={{ width: '80vw', maxWidth: '360px', height: 'auto' }}>
-              <div className="absolute -top-4 left-0 font-mono text-[7px] opacity-40">SYS: ACTIVE</div>
-              <div className="absolute -top-4 right-0 font-mono text-[7px] opacity-40">REF: PW-01</div>
               <F1CarSilhouette color={WM.text} />
             </div>
 
@@ -1072,57 +1087,11 @@ export function HomepageScrollytelling({
         className="group3-stage z-10"
         style={{ position: 'relative', height: '100vh', overflow: 'hidden', backgroundColor: WM.bg }}
       >
-        {/* Racing-yellow accent bar — top edge separation */}
-        <div className="absolute top-0 left-0 w-full z-20" style={{ height: '3px', backgroundColor: WM.gold }} />
+        {/* Ticker element section divider */}
+        <AboutUsMarqueeTicker />
 
         {/* Ambient depth gradient */}
         <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
-
-        {/* Track-map SVG — sits behind the telemetry lines for depth */}
-        <svg className="absolute inset-0 w-full h-full z-0 pointer-events-none" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" opacity="0.06" aria-hidden="true">
-          <path
-            d="M180,860 C120,700 260,560 420,560 C540,560 560,440 480,360 C400,280 460,160 600,160 L1280,160 C1400,160 1440,260 1380,340 C1320,420 1380,520 1480,520 L1700,520 C1800,520 1820,640 1740,700 L1500,880 C1440,930 1340,930 1280,880 L900,640 C840,600 760,600 700,640 L380,880 C320,920 220,920 180,860 Z"
-            fill="none" stroke={WM.text} strokeWidth="3"
-          />
-        </svg>
-
-        {/* Tech Grid Background Overlay */}
-        <div className="absolute inset-0 tech-grid-bg z-0 pointer-events-none" />
-
-        {/* Extra telemetry readouts — ambient decorative data */}
-        <div className="absolute top-8 left-8 z-10 font-mono text-[9px] tracking-widest uppercase opacity-35 select-none" style={{ color: WM.text }}>
-          SPEED: 312 KM/H
-        </div>
-        <div className="absolute top-8 right-8 z-10 font-mono text-[9px] tracking-widest uppercase opacity-35 select-none text-right" style={{ color: WM.text }}>
-          LAP: 47 / 58
-        </div>
-        <div className="absolute bottom-8 left-8 z-10 font-mono text-[9px] tracking-widest uppercase opacity-35 select-none" style={{ color: WM.text }}>
-          SECTOR 1: 28.402
-        </div>
-        <div className="absolute bottom-8 right-8 z-10 font-mono text-[9px] tracking-widest uppercase opacity-35 select-none text-right" style={{ color: WM.text }}>
-          SECTOR 2: 31.117
-        </div>
-
-        {/* Parallax giant wordmark — one continuous backdrop */}
-        <motion.span
-          className="g3-wordmark font-display-strict select-none"
-          style={{ transform: wordmarkTransform, color: WM.text }}
-        >
-          {aboutHeading}
-        </motion.span>
-
-        {/* Parallax telemetry waveform — continuous */}
-        <motion.svg
-          className="g3-telemetry" viewBox="0 0 1920 1080" preserveAspectRatio="none"
-          style={{ transform: telemetryTransform }}
-        >
-          <polyline stroke={WM.gold} strokeWidth="1.5" fill="none" opacity="0.30"
-            points="0,560 240,500 420,610 640,470 880,580 1120,520 1360,540 1620,480 1920,540" />
-          <polyline stroke={WM.text} strokeWidth="1" fill="none" opacity="0.10"
-            points="0,620 240,560 480,640 720,520 960,600 1200,560 1440,600 1680,540 1920,600" />
-          <line x1="0" y1="400" x2="1920" y2="400" stroke={WM.text} strokeWidth="0.5" opacity="0.08" />
-          <line x1="0" y1="700" x2="1920" y2="700" stroke={WM.text} strokeWidth="0.5" opacity="0.08" />
-        </motion.svg>
 
         {/* Continuous road + moving speed dashes */}
         <div className="g3-road">
@@ -1142,12 +1111,6 @@ export function HomepageScrollytelling({
           <div className="horizontal-slide" />
           <div className="horizontal-slide" />
         </div>
-
-        {/* Entry label — fades out as the journey begins */}
-        <motion.div className="g3-fg-label" style={{ opacity: introOpacity, color: WM.gold }}>
-          <span className="block font-mono text-[10px] uppercase tracking-[0.3em] opacity-70">// PITWALL</span>
-          <span className="block font-mono text-[10px] uppercase tracking-[0.3em] opacity-70">ABOUT US / 01</span>
-        </motion.div>
 
         {/* Founding story + CTA — fades/slides in as the car arrives (wrapped in tech bordered panel) */}
         <motion.div 
@@ -1170,23 +1133,9 @@ export function HomepageScrollytelling({
           </a>
         </motion.div>
 
-        {/* The single car — travels continuously across the whole scene, adorned with moving telemetry tags */}
+        {/* The single car — travels continuously across the whole scene */}
         <motion.div className="g3-car relative" style={{ transform: carTransform }}>
-          <div className="absolute -top-8 left-0 font-mono text-[9px] tracking-wider uppercase opacity-40 select-none whitespace-nowrap">
-            SYS.STATUS: ACTIVE [OK]
-          </div>
-          <div className="absolute -top-8 right-0 font-mono text-[9px] tracking-wider uppercase opacity-40 select-none whitespace-nowrap">
-            COORD: X_1042 // Y_-480
-          </div>
-          
           <F1CarSilhouette color={WM.text} />
-          
-          <div className="absolute -bottom-8 left-0 font-mono text-[9px] tracking-wider uppercase opacity-40 select-none whitespace-nowrap">
-            DOWNFORCE: 16.2 KN
-          </div>
-          <div className="absolute -bottom-8 right-0 font-mono text-[9px] tracking-wider uppercase opacity-40 select-none whitespace-nowrap">
-            RPM: 12500 // GEAR: 7
-          </div>
         </motion.div>
 
         {/* Scroll hint */}
