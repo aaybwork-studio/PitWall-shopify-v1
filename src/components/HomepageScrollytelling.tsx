@@ -74,7 +74,10 @@ function HeroTicker({ offset, itemRef }: TickerProps) {
 }
 
 // ── About Us Marquee Ticker ──────────────────────────────────────────────────
-function AboutUsMarqueeTicker() {
+interface AboutUsMarqueeTickerProps {
+  style?: React.CSSProperties;
+}
+function AboutUsMarqueeTicker({ style = {} }: AboutUsMarqueeTickerProps) {
   const repeats = Array(6).fill("PITWALL ENGINEERING / ABOUT US / ");
   return (
     <div
@@ -83,6 +86,7 @@ function AboutUsMarqueeTicker() {
         backgroundColor: 'var(--pw-gold, #E8B93B)',
         borderTop: '1px solid var(--pw-border, rgba(12,12,12,0.12))',
         borderBottom: '1px solid var(--pw-border, rgba(12,12,12,0.12))',
+        ...style
       }}
     >
       <div className="animate-marquee-content flex whitespace-nowrap font-mono text-xs uppercase tracking-widest text-[#0C0C0C] font-bold">
@@ -785,7 +789,7 @@ export function HomepageScrollytelling({
           />
         </div>
         {/* ── GROUP 3: About Us — Mobile stacked ──────────────────────────────────── */}
-        <AboutUsMarqueeTicker />
+        <AboutUsMarqueeTicker style={{ position: 'relative', top: 'auto', bottom: 'auto' }} />
         <section className="min-h-screen w-full flex flex-col justify-center items-center px-6 py-16 border-b border-[var(--pw-border)] gap-8 relative overflow-hidden" style={{ backgroundColor: WM.bg }}>
           
           <div className="relative z-10 w-full max-w-md border border-[var(--pw-border)] p-8 relative overflow-hidden backdrop-blur-md bg-black/5 flex flex-col items-center gap-6">
@@ -1088,7 +1092,7 @@ export function HomepageScrollytelling({
         style={{ position: 'relative', height: '100vh', overflow: 'hidden', backgroundColor: WM.bg }}
       >
         {/* Ticker element section divider */}
-        <AboutUsMarqueeTicker />
+        <AboutUsMarqueeTicker style={{ top: 0, bottom: 'auto' }} />
 
         {/* Ambient depth gradient */}
         <div className="absolute inset-0 z-0"><div className="ambient-gradient-bg" /></div>
