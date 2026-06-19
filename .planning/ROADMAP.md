@@ -12,9 +12,9 @@
 - [x] **Phase 1: About Page** — Deliver a complete, shippable `/pages/about` page in Pitwall brand identity, wired to the existing ABOUT nav link, including all shared foundation constraints (tokens, responsiveness, grain overlay)
 - [x] **Phase 2: All Products Page** — Deliver a complete, shippable `/collections/all` page in Pitwall brand identity, wired to the existing SHOP nav links, with a placeholder product grid
 - [x] **Phase 02.1: Redesign Hero Page (INSERTED)** — Redesign the homepage (hero page) with a 4-section snapping layout, rotating collections grid, and cinematic video player separators
-- [ ] **Phase 02.2: Homepage Interaction Overhaul (INSERTED)** — Deliver an advanced scrollytelling experience on the homepage featuring scroll-locking, mirrored featured products, continuous video backgrounds, interactive ticker, and custom columns collections grids
+- [x] **Phase 02.2: Homepage Interaction Overhaul (INSERTED)** — Deliver an advanced scrollytelling experience on the homepage featuring scroll-locking, mirrored featured products, continuous video backgrounds, interactive ticker, and custom columns collections grids
 - [x] **Phase 02.3: About Us Car Scrollytelling (INSERTED)** — Add a Group 3 horizontal scrollytelling section with an animated F1 car traveling across 3 panels, followed by a vertical About Us content section, inserted between Group 2 and Footer (completed 2026-06-07)
-- [ ] **Phase 02.4: Redesign Collections Page (INSERTED)** — Redesign the collections page with a top video hero, difference-blended title overlay, yellow filter/sort bar, and a masonry dynamic product grid with landing page style cards
+- [x] **Phase 02.4: Redesign Collections Page (INSERTED)** — Redesign the collections page with a top video hero, difference-blended title overlay, yellow filter/sort bar, and a masonry dynamic product grid with landing page style cards
 - [x] **Phase 02.5: Redesign Manifesto Section (INSERTED)** — Replace the text-only Manifesto section with a 3-equal-panel image reveal, each panel difference-blended with a tagline, animated in via smooth scroll-triggered reveals, no hero video background (completed 2026-06-18)
 - [ ] **Phase 3: Helmets PDP & Dynamic Routing** — Deliver a complete, shippable helmets product page with autocalibrated WebGL helmet models, zero-lag browser URL state switches via HTML5 History API, and separate catalog listings in `/collections/all`
 
@@ -148,7 +148,7 @@ Plans:
 | 02.1. Redesign Hero Page | 2/2 | Completed | 2026-06-06 |
 | 02.2. Homepage Interaction Overhaul | - | Completed | 2026-06-07 |
 | 02.3. About Us Car Scrollytelling | 6/6 | Complete    | 2026-06-07 |
-| 02.4. Redesign Collections Page | 0/? | Not started | - |
+| 02.4. Redesign Collections Page | - | Completed | 2026-06-18 |
 | 02.5. Redesign Manifesto Section | 2/2 | Complete    | 2026-06-18 |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
 
