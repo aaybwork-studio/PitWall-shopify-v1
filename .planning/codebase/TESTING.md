@@ -1,6 +1,6 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-05-30
+**Analysis Date:** 2026-06-19
 
 ## Summary
 
@@ -41,8 +41,8 @@ No `jest.config.*`, `vitest.config.*`, or equivalent test configuration exists.
 ## Build Scripts (`package.json`)
 
 ```bash
-npm run dev       # vite — local dev server
-npm run build     # tsc && vite build — type-check then bundle
+npm run dev       # vite build --watch — local dev watcher
+npm run build     # tsc && vite build — type-check then bundle React & Tailwind CSS
 npm run preview   # vite preview — preview production build
 ```
 
@@ -61,4 +61,4 @@ If testing infrastructure is added, the natural fit for this stack would be:
 
 ---
 
-*Testing analysis: 2026-05-30*
+*Testing analysis: 2026-06-19*

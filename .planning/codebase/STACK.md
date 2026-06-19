@@ -1,6 +1,6 @@
 # Technology Stack
 
-**Analysis Date:** 2026-05-30
+**Analysis Date:** 2026-06-19
 
 ## Languages
 
@@ -11,7 +11,7 @@
 **Secondary:**
 - CSS / PostCSS - `src/index.css`, `assets/main.css`, `assets/pitwall-style.css.liquid`
 - JavaScript (compiled) - `assets/pitwall-interactive.js` (Vite build output)
-- JSON - Shopify section schemas, `config/settings_schema.json`, `locales/en.default.json`, `templates/*.json`
+- JSON - Shopify section schemas, `config/settings_schema.json`, `locales/*.json`, `templates/*.json`
 
 ## Runtime
 
@@ -27,13 +27,13 @@
 
 **Core:**
 - React 18.3.1 - UI components compiled to islands mounted into Liquid DOM nodes
-- Three.js 0.184.0 - WebGL 3D rendering for F1 car model viewer
+- Three.js 0.184.0 - WebGL 3D rendering for F1 car and helmet model viewers
 
 **Animation:**
 - motion 12.40.0 - Animation library (Framer Motion successor) used in React components
 
 **Icons:**
-- lucide-react 0.378.0 - Icon components (VolumeX, Volume2 in mute button)
+- lucide-react 0.378.0 - Icon components (VolumeX, Volume2, ShoppingBag, Trash, etc.)
 
 **Build/Dev:**
 - Vite 5.2.11 - Bundler and dev server; config at `vite.config.ts`
@@ -48,9 +48,9 @@
 ## Key Dependencies
 
 **Critical:**
-- `three` 0.184.0 - Core 3D engine; `GLTFLoader` loads `.glb` car models from `assets/`
+- `three` 0.184.0 - Core 3D engine; `GLTFLoader` loads `.glb` car and helmet models from `assets/`
 - `react` + `react-dom` 18.3.1 - Component runtime; mounted via `ReactDOM.createRoot` on DOM-ready
-- `motion` 12.40.0 - Scroll-driven and entrance animations in product scrollytelling
+- `motion` 12.40.0 - Scroll-driven and entrance animations in homepage and product scrollytelling
 
 **Infrastructure:**
 - `@types/three` 0.184.1 - TypeScript definitions for Three.js
@@ -69,7 +69,7 @@
 **Vite (`vite.config.ts`):**
 - Single entry: `src/main.tsx`
 - Output directory: `assets/` (Shopify theme assets folder)
-- `emptyOutDir: false` — preserves manually committed assets (fonts, videos, CSS)
+- `emptyOutDir: false` — preserves manually committed assets (fonts, videos, CSS, GLB models)
 - Fixed output filename: `pitwall-interactive.js` (no content hash)
 - Asset filenames: `[name].[ext]` (no hashing)
 - Path alias `@` → `./src`
@@ -77,7 +77,7 @@
 **Tailwind (`tailwind.config.js`):**
 - Content scan: `src/**/*.{js,ts,jsx,tsx}`, `sections/**/*.liquid`, `layout/**/*.liquid`, `templates/**/*.json`
 - Custom color tokens: `background`, `foreground`, `brand.red` (Racing Yellow `#F6C917`), `brand.black`, `brand.white`, `surface`
-- Custom font families: `display` (Syne), `body` (Barlow), `mono` (IBM Plex Mono) — resolved via CSS custom properties `var(--font-display)` etc.
+- Custom font families: `display` (Syne), `body` (Barlow/Inter), `mono` (IBM Plex Mono) — resolved via CSS custom properties `var(--font-display)` etc.
 
 **PostCSS (`postcss.config.js`):**
 - Plugins: `tailwindcss`, `autoprefixer`
@@ -104,7 +104,7 @@ Shopify theme layout/theme.liquid loads:
 
 **Build commands:**
 ```bash
-npm run dev      # vite dev server
+npm run dev      # vite dev server (watches for changes)
 npm run build    # tsc && vite build → outputs to assets/
 npm run preview  # vite preview
 ```
@@ -113,12 +113,11 @@ npm run preview  # vite preview
 
 **Development:**
 - Node.js with npm
-- Shopify CLI for theme push/serve (not in package.json — assumed global install)
+- Shopify CLI for theme push/serve (assumed global install)
 
 **Production:**
-- Shopify Online Store platform
-- Assets served from Shopify CDN
+- Shopify Online Store platform (assets served from Shopify CDN)
 
 ---
 
-*Stack analysis: 2026-05-30*
+*Stack analysis: 2026-06-19*
