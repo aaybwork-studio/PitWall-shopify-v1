@@ -226,127 +226,118 @@ function bootstrap() {
     }
   }
 
-  // 4. Bind Brutalist Navigation Interactions
-  const menuTrigger = document.getElementById('menu-trigger-btn');
-  const menuOverlay = document.getElementById('full-menu-overlay');
-  const menuContent = menuOverlay?.querySelector('.menu-content') ?? null;
-  let isMenuOpen = false;
-  let closeTimeout: ReturnType<typeof setTimeout> | null = null;
+  // 4. Bind Redesigned Navigation Interactions
+  const header = document.querySelector('.nav-header');
+  const desktopItems = document.querySelectorAll('.nav-menu-item');
+  const megamenuContainer = document.getElementById('nav-megamenu-container');
+  const megamenuPanels = document.querySelectorAll('.megamenu-panel');
 
-  function openMenu() {
-    if (closeTimeout) { clearTimeout(closeTimeout); closeTimeout = null; }
-    isMenuOpen = true;
-    menuOverlay?.classList.add('is-active');
-    if (menuTrigger) menuTrigger.innerText = 'CLOSE';
-    if (menuTrigger) menuTrigger.innerText = 'CLOSE';
-  }
-  function closeMenu() {
-    isMenuOpen = false;
-    menuOverlay?.classList.remove('is-active');
-    if (menuTrigger) menuTrigger.innerText = 'MENU';
-    const collectionsItem = menuOverlay?.querySelector('.menu-link-item-collections');
-    if (collectionsItem) collectionsItem.classList.remove('is-expanded');
-  }
-  function delayClose() {
-    if (closeTimeout) clearTimeout(closeTimeout);
-    closeTimeout = setTimeout(closeMenu, 150);
-  }
-  function keepOpen() {
-    if (closeTimeout) { clearTimeout(closeTimeout); closeTimeout = null; }
-  }
+  let activeDropdown: string | null = null;
+  let menuCloseTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  if (menuTrigger && menuOverlay && menuContent) {
-    menuTrigger.addEventListener('mouseenter', openMenu);
-    menuTrigger.addEventListener('mouseleave', delayClose);
-    menuContent.addEventListener('mouseenter', keepOpen);
-    menuContent.addEventListener('mouseleave', delayClose);
-    menuTrigger.addEventListener('click', (e) => {
-      e.preventDefault();
-      isMenuOpen ? closeMenu() : openMenu();
-    });
-
-    const collectionsItem = menuOverlay.querySelector('.menu-link-item-collections');
-    const collectionsLink = collectionsItem?.querySelector('.menu-link');
-    const submenuCol = menuOverlay.querySelector('.menu-submenu-col');
-
-    let submenuTimeout: ReturnType<typeof setTimeout> | null = null;
-
-    const showSubmenu = () => {
-      if (submenuTimeout) {
-        clearTimeout(submenuTimeout);
-        submenuTimeout = null;
-      }
-      menuOverlay.classList.add('show-collections-submenu');
-    };
-
-    const hideSubmenu = () => {
-      if (submenuTimeout) clearTimeout(submenuTimeout);
-      submenuTimeout = setTimeout(() => {
-        menuOverlay.classList.remove('show-collections-submenu');
-      }, 300); // 300ms window to cross visual column gaps
-    };
-
-    if (collectionsItem) {
-      collectionsItem.addEventListener('mouseenter', showSubmenu);
-      collectionsItem.addEventListener('mouseleave', hideSubmenu);
+  function showDropdown(dropdownName: string) {
+    if (menuCloseTimeout) {
+      clearTimeout(menuCloseTimeout);
+      menuCloseTimeout = null;
     }
     
-    if (submenuCol) {
-      submenuCol.addEventListener('mouseenter', showSubmenu);
-      submenuCol.addEventListener('mouseleave', hideSubmenu);
-    }
-
-    if (collectionsLink && collectionsItem) {
-      collectionsLink.addEventListener('click', () => {
-        // Since we hover to show on desktop, click can navigate directly to collections page
-        closeMenu();
-      });
-    }
-
-    // Sync category sub-menu links: highlight active and intercept clicks for dynamic navigation
-    const updateMenuCategoryHighlight = () => {
-      try {
-        const params = new URLSearchParams(window.location.search);
-        const catParam = params.get('category') || 'All';
-        const submenuLinks = menuOverlay.querySelectorAll('.menu-submenu-middle-link');
-        submenuLinks.forEach(link => {
-          const href = link.getAttribute('href') || '';
-          const linkParams = new URLSearchParams(href.split('?')[1] || '');
-          const linkCat = linkParams.get('category') || 'All';
-          if (linkCat.toLowerCase() === catParam.toLowerCase()) {
-            link.classList.add('is-active');
-          } else {
-            link.classList.remove('is-active');
-          }
-        });
-      } catch (err) {
-        Logger.error('Failed to update menu category highlight', err);
+    // Deactivate old active panel
+    megamenuPanels.forEach(panel => {
+      if (panel.getAttribute('data-panel') === dropdownName) {
+        panel.classList.add('is-active');
+      } else {
+        panel.classList.remove('is-active');
       }
-    };
+    });
 
-    // Initial highlight sync
-    updateMenuCategoryHighlight();
-    window.addEventListener('popstate', updateMenuCategoryHighlight);
+    activeDropdown = dropdownName;
+    megamenuContainer?.classList.add('is-visible');
+    header?.classList.add('nav-header-expanded');
+  }
 
-    // Bind sub-menu link clicks
-    const submenuLinks = menuOverlay.querySelectorAll('.menu-submenu-middle-link');
-    submenuLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        try {
-          const href = link.getAttribute('href') || '';
-          const isCollectionsPage = document.getElementById('collection-grid-root') !== null;
-          if (isCollectionsPage) {
-            e.preventDefault();
-            // Client-side transition (triggers popstate inside React)
-            window.history.pushState(null, '', href);
-            window.dispatchEvent(new Event('popstate'));
-            closeMenu();
+  function hideDropdown() {
+    if (menuCloseTimeout) clearTimeout(menuCloseTimeout);
+    menuCloseTimeout = setTimeout(() => {
+      megamenuContainer?.classList.remove('is-visible');
+      header?.classList.remove('nav-header-expanded');
+      megamenuPanels.forEach(panel => panel.classList.remove('is-active'));
+      activeDropdown = null;
+    }, 200);
+  }
+
+  // Bind desktop hovers
+  desktopItems.forEach(item => {
+    const dropdownName = item.getAttribute('data-dropdown');
+    if (!dropdownName || dropdownName === 'new-arrivals') {
+      // New arrivals is a direct link, should close dropdowns if hovered
+      item.addEventListener('mouseenter', hideDropdown);
+      return;
+    }
+
+    item.addEventListener('mouseenter', () => {
+      showDropdown(dropdownName);
+    });
+
+    item.addEventListener('mouseleave', hideDropdown);
+  });
+
+  if (megamenuContainer) {
+    megamenuContainer.addEventListener('mouseenter', () => {
+      if (activeDropdown) {
+        showDropdown(activeDropdown);
+      }
+    });
+    megamenuContainer.addEventListener('mouseleave', hideDropdown);
+  }
+
+  // Bind Mobile Takeover Menu
+  const mobileTrigger = document.getElementById('menu-trigger-btn-mobile');
+  const mobileClose = document.getElementById('menu-close-btn-mobile');
+  const mobileOverlay = document.getElementById('full-menu-overlay');
+
+  function openMobileMenu() {
+    mobileOverlay?.classList.add('is-active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileMenu() {
+    mobileOverlay?.classList.remove('is-active');
+    document.body.style.overflow = '';
+  }
+
+  if (mobileTrigger) {
+    mobileTrigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      openMobileMenu();
+    });
+  }
+
+  if (mobileClose) {
+    mobileClose.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMobileMenu();
+    });
+  }
+
+  // Accordion bindings inside mobile overlay
+  if (mobileOverlay) {
+    const accordionTriggers = mobileOverlay.querySelectorAll('.mobile-accordion-trigger');
+    accordionTriggers.forEach(trigger => {
+      trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        const item = trigger.closest('.mobile-menu-item');
+        if (item) {
+          const isOpen = item.classList.contains('is-open');
+          // Close other accordions first
+          mobileOverlay.querySelectorAll('.mobile-menu-item.mobile-accordion').forEach(other => {
+            if (other !== item) other.classList.remove('is-open');
+          });
+          
+          if (isOpen) {
+            item.classList.remove('is-open');
           } else {
-            // Not on collections page: close menu and allow full navigation
-            closeMenu();
+            item.classList.add('is-open');
           }
-        } catch (err) {
-          Logger.error('Failed handling submenu link click', err);
         }
       });
     });
