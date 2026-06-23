@@ -383,11 +383,14 @@ function bootstrap() {
       // Navbar auto-hide on scroll down, show on scroll up
       if (currentScrollY <= 100) {
         nav.classList.remove('nav-hidden');
+        nav.classList.add('nav-visible');
       } else if (Math.abs(currentScrollY - lastScrollY) > 5) {
         if (currentScrollY > lastScrollY) {
           nav.classList.add('nav-hidden');
+          nav.classList.remove('nav-visible');
         } else {
           nav.classList.remove('nav-hidden');
+          nav.classList.add('nav-visible');
         }
       }
       lastScrollY = currentScrollY;
