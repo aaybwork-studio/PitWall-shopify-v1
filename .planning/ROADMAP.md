@@ -136,6 +136,17 @@ Plans:
   5. Pre-order parameters (like for the helmets or MCL39 models) are rendered as clean inline monospace annotations `[ PRE-ORDER ]` next to the price tag in high-contrast Racing Yellow.
 **Plans**: TBD
 **UI hint**: yes
+
+### Phase 04: Redesign Collections Page (Horizontal Scroll)
+**Goal**: Redesign the collections page to group products into horizontal scrolling rows, with alternating Category Cards, custom card sizes, hover navigation, and customizable page title.
+**Mode**: standard
+**Success Criteria**:
+  1. Products are grouped into horizontal scrolling rows by category.
+  2. Each row has a Category Card containing the category name and a simple description.
+  3. Category Cards alternate positions dynamically in each row.
+  4. Cards are fixed to 320px x 380px.
+  5. Hovering over a row shows left/right navigation arrows that scroll when clicked.
+  6. The header title defaults to "Our Products" and is customizable.
  
 ---
  
@@ -151,6 +162,7 @@ Plans:
 | 02.4. Redesign Collections Page | - | Completed | 2026-06-18 |
 | 02.5. Redesign Manifesto Section | 2/2 | Complete    | 2026-06-18 |
 | 3. Helmets PDP & Dynamic Routing | 0/? | Not started | - |
+| 4. Redesign Collections (Horizontal Scroll) | 1/1 | Complete | 2026-06-23 |
 
 ---
 
