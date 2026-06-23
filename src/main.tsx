@@ -130,6 +130,9 @@ function bootstrap() {
     const productHandle = pdpRoot.getAttribute('data-product-handle') || '';
     const productPrice = pdpRoot.getAttribute('data-product-price') || '';
     const variantsJson = pdpRoot.getAttribute('data-product-variants-json') || '[]';
+    const productType = pdpRoot.getAttribute('data-product-type') || '';
+    const productImage = pdpRoot.getAttribute('data-product-image') || '';
+    const productDescription = pdpRoot.getAttribute('data-product-description') || '';
     const mclarenUrl = pdpRoot.getAttribute('data-mclaren-url') || '';
     const redbullUrl = pdpRoot.getAttribute('data-redbull-url') || '';
     const ferrariUrl = pdpRoot.getAttribute('data-ferrari-url') || '';
@@ -146,6 +149,9 @@ function bootstrap() {
           productHandle={productHandle}
           productPrice={productPrice}
           variantsJson={variantsJson}
+          productType={productType}
+          productImage={productImage}
+          productDescription={productDescription}
           mclarenUrl={mclarenUrl}
           redbullUrl={redbullUrl}
           ferrariUrl={ferrariUrl}
