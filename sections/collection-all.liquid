@@ -2,6 +2,7 @@
   id="collection-grid-root" 
   class="w-full bg-[#EDEBE5] text-[#0C0C0C] dark:bg-[#0C0C0C] dark:text-[#EDEBE5]"
   data-video-url="{{ 'F1_car_idling_on_background_202606011707.mp4' | asset_url }}"
+  data-title="{{ section.settings.title | default: 'Our Products' }}"
 ></div>
 
 <script id="collection-products-data" type="application/json">
@@ -25,7 +26,14 @@
 {% schema %}
 {
   "name": "Collection Grid",
-  "settings": [],
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Page Title",
+      "default": "Our Products"
+    }
+  ],
   "presets": [
     {
       "name": "Collection Grid"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Logger } from '../utils/logger';
 
 export interface Product {
@@ -14,9 +14,7 @@ export interface Product {
 interface CollectionCardProps {
   product: Product;
   style?: React.CSSProperties;
-  /** Accepted for backwards-compat with HomepageScrollytelling usage */
   className?: string;
-  /** Accepted for backwards-compat — not used in this layout engine */
   isTall?: boolean;
   ctaLabel?: 'CALIBRATE' | 'VIEW';
 }
@@ -74,145 +72,6 @@ export function CollectionCard({ product, style, className }: CollectionCardProp
   );
 }
 
-// ─── Layout Block Renderer ────────────────────────────────────────────────────
-// Four repeating block patterns that match the reference wireframe:
-//   A: [S][S][S]       — 3 equal small    (3 products)
-//   B: [WIDE  ][M]     — wide + medium     (2 products)
-//   C: [T ][WIDE  ]    — tall | wide top   (4 products)
-//      [T ][S ][S ]      tall | 2 small btm
-//   D: [S ][LARGE   ]  — 2 small stacked | large right (3 products)
-//      [S ][LARGE   ]
-
-const CELL = 280; // base cell height in px
-const GAP  = 2;   // gap between cards in px
-
-interface BlockProps {
-  products: Product[];
-}
-
-function BlockAAA({ products }: BlockProps) {
-  // 3 equal-size cards in a row
-  return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: GAP,
-        height: CELL,
-      }}
-    >
-      {products.slice(0, 3).map((p, i) => (
-        <CollectionCard key={`${p.url}-${i}`} product={p} />
-      ))}
-    </div>
-  );
-}
-
-function BlockBA({ products }: BlockProps) {
-  // Wide (2/3) + Medium (1/3)
-  return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: GAP,
-        height: CELL,
-      }}
-    >
-      <div style={{ gridColumn: 'span 2' }}>
-        <CollectionCard product={products[0]} />
-      </div>
-      <div style={{ gridColumn: 'span 1' }}>
-        <CollectionCard product={products[1]} />
-      </div>
-    </div>
-  );
-}
-
-function BlockTAA({ products }: BlockProps) {
-  // Left: tall card spanning 2 rows
-  // Right top: wide card (2/3)
-  // Right bottom: 2 small cards
-  const totalH = CELL * 2 + GAP;
-  return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gridTemplateRows: `${CELL}px ${CELL}px`,
-        gap: GAP,
-        height: totalH,
-      }}
-    >
-      {/* Tall left */}
-      <div style={{ gridColumn: '1 / 2', gridRow: '1 / 3' }}>
-        <CollectionCard product={products[0]} />
-      </div>
-      {/* Wide right top */}
-      <div style={{ gridColumn: '2 / 4', gridRow: '1 / 2' }}>
-        <CollectionCard product={products[1]} />
-      </div>
-      {/* Small right bottom × 2 */}
-      <div style={{ gridColumn: '2 / 3', gridRow: '2 / 3' }}>
-        <CollectionCard product={products[2]} />
-      </div>
-      <div style={{ gridColumn: '3 / 4', gridRow: '2 / 3' }}>
-        <CollectionCard product={products[3]} />
-      </div>
-    </div>
-  );
-}
-
-function BlockAAL({ products }: BlockProps) {
-  // Left: 2 small cards stacked
-  // Right: 1 large card (2/3 wide, 2 rows tall)
-  const totalH = CELL * 2 + GAP;
-  return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gridTemplateRows: `${CELL}px ${CELL}px`,
-        gap: GAP,
-        height: totalH,
-      }}
-    >
-      {/* Small left top */}
-      <div style={{ gridColumn: '1 / 2', gridRow: '1 / 2' }}>
-        <CollectionCard product={products[0]} />
-      </div>
-      {/* Small left bottom */}
-      <div style={{ gridColumn: '1 / 2', gridRow: '2 / 3' }}>
-        <CollectionCard product={products[1]} />
-      </div>
-      {/* Large right spanning 2 rows */}
-      <div style={{ gridColumn: '2 / 4', gridRow: '1 / 3' }}>
-        <CollectionCard product={products[2]} />
-      </div>
-    </div>
-  );
-}
-
-// Cycle order: AAA (3) → BA (2) → TAA (4) → AAL (3)
-// Total per cycle: 12 products
-const BLOCK_SEQUENCE = [
-  { type: 'AAA', count: 3 },
-  { type: 'BA',  count: 2 },
-  { type: 'TAA', count: 4 },
-  { type: 'AAL', count: 3 },
-] as const;
-
-function LayoutBlock({ type, products }: { type: string; products: Product[] }) {
-  if (products.length === 0) return null;
-  switch (type) {
-    case 'AAA': return <BlockAAA products={products} />;
-    case 'BA':  return <BlockBA  products={products} />;
-    case 'TAA': return <BlockTAA products={products} />;
-    case 'AAL': return <BlockAAL products={products} />;
-    default:    return null;
-  }
-}
-
 // ─── Product Data ─────────────────────────────────────────────────────────────
 const F1_PRODUCTS: Product[] = [
   // WLED Light Boxes
@@ -256,6 +115,16 @@ const F1_PRODUCTS: Product[] = [
 const CATEGORIES = ['All', 'WLED Light Boxes', 'Car Models', '2D Wall Art', 'Keychains', 'Desk Accessories', 'Layered Art', 'Driver Figurines'];
 const SORTS       = ['Default', 'Price: Low to High', 'Price: High to Low', 'Alphabetical'];
 
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  'WLED Light Boxes': 'High-intensity backlit team emblems. Engineered for the pitwall.',
+  'Car Models': 'Precision-detailed scale replicas. Formula 1 design heritage.',
+  '2D Wall Art': 'Steel circuit maps and silhouettes. Minimalist metalwork.',
+  'Keychains': 'Carbon weave and leather racing keychains. Built for speed.',
+  'Desk Accessories': 'Monobloc caliper stands and track maps. Optimised for focus.',
+  'Layered Art': 'Multi-depth plywood circuit artwork. Structured design.',
+  'Driver Figurines': 'Hand-painted champion driver collectibles. Polyresin replicas.',
+};
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -270,33 +139,195 @@ function getCleanPrice(p: string): number {
   return parseFloat(p.replace(/[^0-9.]/g, '')) || 0;
 }
 
-/**
- * Chunk `products` into layout blocks following the repeating sequence:
- * AAA(3) → BA(2) → TAA(4) → AAL(3) → repeat
- */
-function chunkIntoBlocks(products: Product[]) {
-  const blocks: { type: string; products: Product[] }[] = [];
-  let idx = 0;
-  let seqIdx = 0;
-  while (idx < products.length) {
-    const { type, count } = BLOCK_SEQUENCE[seqIdx % BLOCK_SEQUENCE.length];
-    const slice = products.slice(idx, idx + count);
-    if (slice.length === 0) break;
-    // Only render if we have at least 1 product for the block
-    blocks.push({ type, products: slice });
-    idx += count;
-    seqIdx++;
-  }
-  return blocks;
+// ─── Category Card Component ──────────────────────────────────────────────────
+interface CategoryCardProps {
+  category: string;
+  description: string;
+  onClick: () => void;
+}
+
+export function CategoryCard({ category, description, onClick }: CategoryCardProps) {
+  return (
+    <div
+      onClick={onClick}
+      className="flex-shrink-0 w-[320px] h-[380px] p-6 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex flex-col justify-between cursor-pointer hover:bg-[#F6C917] hover:text-[#0C0C0C] hover:border-[#F6C917] dark:hover:bg-[#F6C917] dark:hover:text-[#0C0C0C] dark:hover:border-[#F6C917] transition-all duration-300"
+    >
+      <div className="flex flex-col gap-1">
+        <span className="font-mono text-[9px] uppercase tracking-widest text-[#F6C917] hover:text-[#0C0C0C] font-bold">
+          → VIEW ALL
+        </span>
+      </div>
+      <h3 className="font-display-strict text-3xl uppercase tracking-tighter leading-none my-auto">
+        {category}
+      </h3>
+      <p className="font-mono text-[10px] leading-relaxed opacity-60 uppercase tracking-wide">
+        {description}
+      </p>
+    </div>
+  );
+}
+
+// ─── Scrolling Category Row Component ──────────────────────────────────────────
+interface CollectionRowProps {
+  category: string;
+  products: Product[];
+  rowIdx: number;
+  onCategoryClick: (cat: string) => void;
+}
+
+export function CollectionRow({ category, products, rowIdx, onCategoryClick }: CollectionRowProps) {
+  const scrollContainer = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    if (scrollContainer.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainer.current;
+      setCanScrollLeft(scrollLeft > 5);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
+    }
+  }, []);
+
+  useEffect(() => {
+    const el = scrollContainer.current;
+    if (el) {
+      el.addEventListener('scroll', checkScroll, { passive: true });
+      checkScroll();
+      window.addEventListener('resize', checkScroll);
+    }
+    return () => {
+      if (el) el.removeEventListener('scroll', checkScroll);
+      window.removeEventListener('resize', checkScroll);
+    };
+  }, [checkScroll]);
+
+  useEffect(() => {
+    checkScroll();
+  }, [products, checkScroll]);
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (scrollContainer.current) {
+      const cardWidth = 320;
+      const gap = 16; // gap-4 (16px)
+      const scrollAmount = (cardWidth + gap) * 2;
+      scrollContainer.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  // Alternating index pattern: Row 1 -> 1, Row 2 -> 3, Row 3 -> 0, Row 4 -> 2, repeat
+  const categoryCardIndexPattern = useMemo(() => {
+    const pattern = [1, 3, 0, 2];
+    return pattern[rowIdx % 4];
+  }, [rowIdx]);
+
+  // Cap Category Card index at product list length
+  const categoryCardIndex = useMemo(() => {
+    return Math.min(categoryCardIndexPattern, products.length);
+  }, [categoryCardIndexPattern, products.length]);
+
+  const cardsList = useMemo(() => {
+    const list: ({ type: 'category' } | { type: 'product'; product: Product })[] = products.map(p => ({
+      type: 'product',
+      product: p,
+    }));
+    list.splice(categoryCardIndex, 0, { type: 'category' });
+    return list;
+  }, [products, categoryCardIndex]);
+
+  const description = CATEGORY_DESCRIPTIONS[category] || 'Racing apparel and gear. Designed for performance.';
+
+  return (
+    <div 
+      className="relative w-full py-8 border-b border-[#0C0C0C]/10 dark:border-white/10"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Category Header */}
+      <div className="px-5 md:px-[100px] mb-4 flex justify-between items-end">
+        <span className="font-mono text-xs uppercase tracking-widest text-[#0C0C0C]/40 dark:text-[#EDEBE5]/40 font-bold">
+          {category}
+        </span>
+        <button 
+          onClick={() => onCategoryClick(category)}
+          className="font-mono text-[10px] uppercase tracking-widest text-[#F6C917] hover:underline font-bold bg-transparent border-none cursor-pointer p-0"
+        >
+          VIEW ALL ↗
+        </button>
+      </div>
+
+      {/* Row Scrolling Viewport */}
+      <div className="relative w-full">
+        {/* Left Arrow Button */}
+        {canScrollLeft && (
+          <button
+            onClick={() => handleScroll('left')}
+            className={`absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex items-center justify-center font-mono text-lg font-bold text-[#0C0C0C] dark:text-[#EDEBE5] hover:bg-[#F6C917] hover:text-[#0C0C0C] hover:border-[#F6C917] transition-all duration-200 shadow-md ${
+              isHovered ? 'opacity-100' : 'opacity-0 md:opacity-0'
+            }`}
+            style={{ transition: 'opacity 200ms ease, background 200ms, color 200ms' }}
+          >
+            ←
+          </button>
+        )}
+
+        {/* Right Arrow Button */}
+        {canScrollRight && (
+          <button
+            onClick={() => handleScroll('right')}
+            className={`absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex items-center justify-center font-mono text-lg font-bold text-[#0C0C0C] dark:text-[#EDEBE5] hover:bg-[#F6C917] hover:text-[#0C0C0C] hover:border-[#F6C917] transition-all duration-200 shadow-md ${
+              isHovered ? 'opacity-100' : 'opacity-0 md:opacity-0'
+            }`}
+            style={{ transition: 'opacity 200ms ease, background 200ms, color 200ms' }}
+          >
+            →
+          </button>
+        )}
+
+        {/* Scrollable Container */}
+        <div
+          ref={scrollContainer}
+          className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-none px-5 md:px-[100px] py-2"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          {cardsList.map((card, idx) => {
+            if (card.type === 'category') {
+              return (
+                <CategoryCard
+                  key={`cat-card-${category}`}
+                  category={category}
+                  description={description}
+                  onClick={() => onCategoryClick(category)}
+                />
+              );
+            } else {
+              return (
+                <div 
+                  key={`prod-card-${card.product.url}-${idx}`} 
+                  className="flex-shrink-0 w-[320px] h-[380px]"
+                >
+                  <CollectionCard product={card.product} className="w-full h-full" />
+                </div>
+              );
+            }
+          })}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 interface CollectionGridProps {
   products?: Product[];
   videoUrl?: string;
+  title?: string;
 }
 
-export function CollectionGrid({ products = [], videoUrl }: CollectionGridProps) {
+export function CollectionGrid({ products = [], title = 'Our Products' }: CollectionGridProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -321,8 +352,7 @@ export function CollectionGrid({ products = [], videoUrl }: CollectionGridProps)
     return 'Default';
   });
 
-  const [categoryOpen, setCategoryOpen]         = useState<boolean>(false);
-  const [sortOpen, setSortOpen]                 = useState<boolean>(false);
+  const [sortOpen, setSortOpen] = useState<boolean>(false);
 
   // ── Sync URL Params on PopState ──
   useEffect(() => {
@@ -356,7 +386,6 @@ export function CollectionGrid({ products = [], videoUrl }: CollectionGridProps)
 
   const handleCategorySelect = (cat: string) => {
     setSelectedCategory(cat);
-    setCategoryOpen(false);
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (cat === 'All') {
@@ -386,7 +415,7 @@ export function CollectionGrid({ products = [], videoUrl }: CollectionGridProps)
     }
   };
 
-  // ── Ensure page can scroll (remove any stale homepage scroll locks) ──
+  // ── Ensure page can scroll (remove homepage scroll locks) ──
   useEffect(() => {
     try {
       document.documentElement.classList.remove('homepage-scrollytelling-active');
@@ -401,27 +430,43 @@ export function CollectionGrid({ products = [], videoUrl }: CollectionGridProps)
     }
   }, []);
 
-  // ── Close dropdowns when clicking outside ────────────────────────────
+  // ── Close sort dropdown when clicking outside ────────────────────────
   useEffect(() => {
-    const close = () => { setCategoryOpen(false); setSortOpen(false); };
+    const close = () => { setSortOpen(false); };
     document.addEventListener('click', close);
     return () => document.removeEventListener('click', close);
   }, []);
 
-  // ── Derive display products ───────────────────────────────────────────
-  const displayBlocks = useMemo(() => {
+  // ── Group and filter categories/products dynamically ────────────────
+  const categoriesWithProducts = useMemo(() => {
     const dataSource = products && products.length > 0 ? products : F1_PRODUCTS;
-    let filtered = selectedCategory === 'All'
-      ? dataSource
-      : dataSource.filter(p => p.category?.toLowerCase() === selectedCategory.toLowerCase());
 
-    let sorted = [...filtered];
-    if      (selectedSort === 'Price: Low to High')  sorted.sort((a, b) => getCleanPrice(a.price) - getCleanPrice(b.price));
-    else if (selectedSort === 'Price: High to Low')  sorted.sort((a, b) => getCleanPrice(b.price) - getCleanPrice(a.price));
-    else if (selectedSort === 'Alphabetical')        sorted.sort((a, b) => a.title.localeCompare(b.title));
-    else                                             sorted = shuffle(sorted); // Default: random order
+    const activeCategories = selectedCategory === 'All'
+      ? CATEGORIES.filter(cat => cat !== 'All')
+      : [selectedCategory];
 
-    return chunkIntoBlocks(sorted);
+    return activeCategories.map(cat => {
+      let catProds = dataSource.filter(
+        p => p.category?.toLowerCase() === cat.toLowerCase()
+      );
+
+      // Sort products within each row
+      if (selectedSort === 'Price: Low to High') {
+        catProds.sort((a, b) => getCleanPrice(a.price) - getCleanPrice(b.price));
+      } else if (selectedSort === 'Price: High to Low') {
+        catProds.sort((a, b) => getCleanPrice(b.price) - getCleanPrice(a.price));
+      } else if (selectedSort === 'Alphabetical') {
+        catProds.sort((a, b) => a.title.localeCompare(b.title));
+      } else {
+        // Default (random order)
+        catProds = shuffle(catProds);
+      }
+
+      return {
+        category: cat,
+        products: catProds,
+      };
+    }).filter(group => group.products.length > 0);
   }, [products, selectedCategory, selectedSort]);
 
   const stopPropagation = useCallback((e: React.MouseEvent) => e.stopPropagation(), []);
@@ -435,81 +480,22 @@ export function CollectionGrid({ products = [], videoUrl }: CollectionGridProps)
         color: 'var(--fg, #0C0C0C)',
       }}
     >
-      {/* ── 1/3 Video Banner ─────────────────────────────────────────── */}
-      <div
-        style={{
-          height: '33vh',
-          minHeight: 240,
-          width: '100%',
-          position: 'relative',
-          overflow: 'hidden',
-          backgroundColor: '#0C0C0C',
-          borderBottom: '1px solid #0C0C0C',
-          isolation: 'isolate',
-        }}
-      >
-        {videoUrl ? (
-          <video
-            src={videoUrl}
-            autoPlay
-            loop
-            muted
-            playsInline
-            style={{
-              position: 'absolute', inset: 0,
-              width: '100%', height: '100%',
-              objectFit: 'cover',
-              opacity: 0.65,
-              pointerEvents: 'none',
-            }}
-          />
-        ) : (
-          <div style={{ position: 'absolute', inset: 0, background: '#111', opacity: 0.5 }} />
-        )}
-
-        {/* Overlay text with difference blend — sits above the video */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: '50px',
-            display: 'flex',
-            justifyContent: 'center',
-            pointerEvents: 'none',
-            userSelect: 'none',
-            zIndex: 10,
-            mixBlendMode: 'difference',
-          }}
-        >
-          <h1
-            style={{
-              fontFamily: 'var(--font-display, "Syne", sans-serif)',
-              fontWeight: 800,
-              fontSize: 'clamp(22px, 3.5vw, 48px)',
-              letterSpacing: '-0.03em',
-              lineHeight: 0.9,
-              textAlign: 'center',
-              color: '#ffffff',
-              mixBlendMode: 'difference',
-              margin: 0,
-              padding: '0 1rem',
-            }}
-          >
-            The Collection
-          </h1>
-        </div>
+      {/* ── Page Header Area (Replaces Video Hero Banner) ────────────────── */}
+      <div className="px-5 md:px-[100px] pt-24 pb-8 flex flex-col bg-[#EDEBE5] dark:bg-[#0C0C0C]">
+        <h1 className="font-display-strict text-5xl md:text-7xl uppercase tracking-tighter text-[#0C0C0C] dark:text-[#EDEBE5] leading-none m-0">
+          {title}
+        </h1>
       </div>
 
-      {/* ── Yellow Filter / Sort Bar ──────────────────────────────────── */}
+      {/* ── Sticky Filter / Sort Bar ───────────────────────────────────── */}
       <div
         className="px-5 md:px-[100px]"
         style={{
           backgroundColor: '#F6C917',
           color: '#0C0C0C',
           borderBottom: '1px solid #0C0C0C',
-          paddingTop: '10px',
-          paddingBottom: '10px',
+          paddingTop: '6px',
+          paddingBottom: '6px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -520,95 +506,28 @@ export function CollectionGrid({ products = [], videoUrl }: CollectionGridProps)
         }}
         onClick={stopPropagation}
       >
-        {/* Category Dropdown (left) */}
-        <div style={{ position: 'relative' }}>
-          <button
-            id="collection-category-btn"
-            onClick={(e) => { e.stopPropagation(); setCategoryOpen(o => !o); setSortOpen(false); }}
-            style={{
-              fontFamily: 'var(--font-mono, "IBM Plex Mono", monospace)',
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-              color: '#0C0C0C',
-              padding: '4px 0',
-            }}
-          >
-            CATEGORY:{' '}
-            <span style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>
-              {selectedCategory.toUpperCase()}
-            </span>{' '}
-            <span style={{ fontSize: 8 }}>▾</span>
-          </button>
-
-          {categoryOpen && (
-            <div
-              style={{
-                position: 'absolute',
-                top: 'calc(100% + 8px)',
-                left: 0,
-                minWidth: 200,
-                backgroundColor: 'rgba(12, 12, 12, 0.9)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-                border: '1px solid rgba(237, 235, 229, 0.15)',
-                boxShadow: 'none',
-                zIndex: 50,
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-              onClick={stopPropagation}
+        {/* Category Tabs (Left) */}
+        <div className="flex gap-6 overflow-x-auto whitespace-nowrap scrollbar-none py-2 max-w-[70%] md:max-w-[80%]">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat}
+              onClick={() => handleCategorySelect(cat)}
+              className={`font-mono text-[10px] font-bold uppercase tracking-wider bg-transparent cursor-pointer transition-colors duration-150 p-0 border-b-2 pb-0.5 ${
+                selectedCategory === cat 
+                  ? 'text-[#0C0C0C] border-[#0C0C0C]' 
+                  : 'text-[#0C0C0C]/60 border-transparent hover:text-[#0C0C0C]'
+              }`}
             >
-              {CATEGORIES.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => handleCategorySelect(cat)}
-                  style={{
-                    fontFamily: 'var(--font-mono, "IBM Plex Mono", monospace)',
-                    fontSize: 9,
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    background: selectedCategory === cat ? '#F6C917' : 'transparent',
-                    color:      selectedCategory === cat ? '#0C0C0C' : '#EDEBE5',
-                    border: 'none',
-                    padding: '8px 14px',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    transition: 'background 120ms',
-                  }}
-                  onMouseEnter={e => {
-                    if (selectedCategory !== cat) {
-                      (e.currentTarget as HTMLButtonElement).style.background = '#F6C917';
-                      (e.currentTarget as HTMLButtonElement).style.color = '#0C0C0C';
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    if (selectedCategory !== cat) {
-                      (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-                      (e.currentTarget as HTMLButtonElement).style.color = '#EDEBE5';
-                    }
-                  }}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          )}
+              {cat === 'All' ? 'All Products' : cat}
+            </button>
+          ))}
         </div>
 
-        {/* Sort Dropdown (right) */}
+        {/* Sort Dropdown (Right) */}
         <div style={{ position: 'relative' }}>
           <button
             id="collection-sort-btn"
-            onClick={(e) => { e.stopPropagation(); setSortOpen(o => !o); setCategoryOpen(false); }}
+            onClick={(e) => { e.stopPropagation(); setSortOpen(o => !o); }}
             style={{
               fontFamily: 'var(--font-mono, "IBM Plex Mono", monospace)',
               fontSize: 10,
@@ -689,17 +608,9 @@ export function CollectionGrid({ products = [], videoUrl }: CollectionGridProps)
         </div>
       </div>
 
-      {/* ── Product Grid ──────────────────────────────────────────────── */}
-      <div
-        style={{
-          width: '100%',
-          maxWidth: 1440,
-          margin: '0 auto',
-          padding: `${GAP}px ${GAP}px 80px`,
-          boxSizing: 'border-box',
-        }}
-      >
-        {displayBlocks.length === 0 ? (
+      {/* ── Category Scrolling Rows ───────────────────────────────────── */}
+      <div className="w-full py-8 flex flex-col bg-[#EDEBE5] dark:bg-[#0C0C0C] box-sizing-border">
+        {categoriesWithProducts.length === 0 ? (
           <div
             style={{
               padding: '80px 0',
@@ -711,13 +622,22 @@ export function CollectionGrid({ products = [], videoUrl }: CollectionGridProps)
               opacity: 0.4,
             }}
           >
-            No products found in this category.
+            No products found matching your selection.
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: GAP }}>
-            {displayBlocks.map((block, bi) => (
-              <LayoutBlock key={bi} type={block.type} products={block.products} />
-            ))}
+          <div className="flex flex-col">
+            {categoriesWithProducts.map((group, idx) => {
+              const catIndex = CATEGORIES.indexOf(group.category) - 1;
+              return (
+                <CollectionRow
+                  key={group.category}
+                  category={group.category}
+                  products={group.products}
+                  rowIdx={catIndex >= 0 ? catIndex : idx}
+                  onCategoryClick={handleCategorySelect}
+                />
+              );
+            })}
           </div>
         )}
       </div>

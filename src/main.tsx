@@ -208,6 +208,7 @@ function bootstrap() {
     const collectionRoot = document.getElementById('collection-grid-root');
     if (collectionRoot) {
       const videoUrl = collectionRoot.getAttribute('data-video-url') || '';
+      const title = collectionRoot.getAttribute('data-title') || 'Our Products';
       let products = [];
       const productsScript = document.getElementById('collection-products-data');
       if (productsScript) {
@@ -220,7 +221,7 @@ function bootstrap() {
       const root = ReactDOM.createRoot(collectionRoot);
       root.render(
         <React.StrictMode>
-          <CollectionGrid products={products} videoUrl={videoUrl} />
+          <CollectionGrid products={products} videoUrl={videoUrl} title={title} />
         </React.StrictMode>
       );
     }
