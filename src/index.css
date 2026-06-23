@@ -1797,17 +1797,21 @@ html.dark-mode .menu-wordmark-text {
   font-family: var(--font-mono, monospace);
   font-size: 11px;
   font-weight: 700;
-  color: var(--bg, #EDEBE5);
+  color: #EDEBE5;
 }
 
 .nav-light-bg .dropdown-cart-subtotal {
-  color: var(--fg, #0C0C0C);
+  color: #0C0C0C;
 }
 
 #pw-dropdown-subtotal-value {
   color: var(--accent, #F6C917);
   font-size: 13px;
   font-weight: 700;
+}
+
+.nav-light-bg #pw-dropdown-subtotal-value {
+  color: #0C0C0C;
 }
 
 .dropdown-cart-actions {
@@ -1834,7 +1838,7 @@ html.dark-mode .menu-wordmark-text {
 
 .dropdown-cart-btn-view {
   border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--bg, #EDEBE5);
+  color: #EDEBE5;
 }
 .dropdown-cart-btn-view:hover {
   border-color: rgba(255, 255, 255, 0.4);
@@ -1842,12 +1846,12 @@ html.dark-mode .menu-wordmark-text {
 }
 
 .nav-light-bg .dropdown-cart-btn-view {
-  border-color: rgba(0, 0, 0, 0.15);
-  color: var(--fg, #0C0C0C);
+  border-color: rgba(12, 12, 12, 0.25);
+  color: #0C0C0C;
 }
 .nav-light-bg .dropdown-cart-btn-view:hover {
-  border-color: rgba(0, 0, 0, 0.35);
-  background-color: rgba(0, 0, 0, 0.02);
+  border-color: rgba(12, 12, 12, 0.45);
+  background-color: rgba(12, 12, 12, 0.04);
 }
 
 .dropdown-cart-btn-checkout {
@@ -1857,6 +1861,30 @@ html.dark-mode .menu-wordmark-text {
 }
 .dropdown-cart-btn-checkout:hover {
   opacity: 0.9;
+}
+
+/* Cart item overrides inside the dropdown on light header background */
+.nav-light-bg .dropdown-cart-items .pw-cart-item {
+  border-bottom-color: rgba(12, 12, 12, 0.08);
+}
+.nav-light-bg .dropdown-cart-items .pw-cart-item-title {
+  color: #0C0C0C;
+}
+.nav-light-bg .dropdown-cart-items .pw-cart-item-title:hover {
+  color: var(--accent, #F6C917);
+}
+.nav-light-bg .dropdown-cart-items .pw-cart-item-remove-btn {
+  color: rgba(12, 12, 12, 0.45);
+}
+.nav-light-bg .dropdown-cart-items .pw-cart-item-remove-btn:hover {
+  color: #FF3B30 !important;
+}
+.nav-light-bg .dropdown-cart-items .pw-cart-item-variant,
+.nav-light-bg .dropdown-cart-items .pw-cart-item-qty {
+  color: rgba(12, 12, 12, 0.55);
+}
+.nav-light-bg .dropdown-cart-items .pw-cart-item-price {
+  color: #0C0C0C;
 }
 
 .dropdown-cart-empty {
@@ -1888,6 +1916,16 @@ html.dark-mode .menu-wordmark-text {
 }
 .dropdown-cart-browse:hover {
   text-decoration: underline;
+}
+
+.nav-light-bg .dropdown-cart-browse {
+  color: #0C0C0C;
+  border-bottom: 1px solid #0C0C0C;
+}
+.nav-light-bg .dropdown-cart-browse:hover {
+  color: var(--accent, #F6C917);
+  border-bottom-color: var(--accent, #F6C917);
+  text-decoration: none;
 }
 
 @media (max-width: 1023px) {
