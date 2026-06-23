@@ -257,12 +257,6 @@ export function CollectionRow({ category, products, rowIdx, onCategoryClick }: C
         <span className="font-mono text-xs uppercase tracking-widest text-[#0C0C0C]/40 dark:text-[#EDEBE5]/40 font-bold">
           {category}
         </span>
-        <button 
-          onClick={() => onCategoryClick(category)}
-          className="font-mono text-[10px] uppercase tracking-widest text-[#F6C917] hover:underline font-bold bg-transparent border-none cursor-pointer p-0"
-        >
-          VIEW ALL ↗
-        </button>
       </div>
 
       {/* Row Scrolling Viewport */}
