@@ -148,9 +148,9 @@ interface CategoryCardProps {
 
 export function CategoryCard({ category, description, onClick }: CategoryCardProps) {
   const fontSize = useMemo(() => {
-    if (category.length > 12) return 'text-[22px]';
-    if (category.length > 8) return 'text-[26px]';
-    return 'text-[32px]';
+    if (category.length > 12) return 'text-[20px]';
+    if (category.length > 8) return 'text-[24px]';
+    return 'text-[30px]';
   }, [category]);
 
   return (
@@ -163,7 +163,7 @@ export function CategoryCard({ category, description, onClick }: CategoryCardPro
           → VIEW ALL
         </span>
       </div>
-      <h3 className={`font-display-strict uppercase tracking-tighter leading-none my-auto break-words ${fontSize}`}>
+      <h3 className={`font-display-strict uppercase tracking-tighter leading-none my-auto break-normal ${fontSize}`}>
         {category}
       </h3>
       <p className="font-mono text-[10px] leading-relaxed opacity-60 uppercase tracking-wide">
