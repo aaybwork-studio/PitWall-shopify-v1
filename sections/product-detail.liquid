@@ -4,6 +4,9 @@
   data-product-handle="{{ product.handle | escape }}"
   data-product-price="{{ product.price | money }}"
   data-product-variants-json='{{ product.variants | json }}'
+  data-product-type="{{ product.type | escape }}"
+  data-product-image="{{ product.featured_image | image_url: width: 1000 }}"
+  data-product-description="{{ product.description | strip_html | escape }}"
   data-mclaren-url="{{ 'mclaren.glb' | file_url }}"
   data-redbull-url="{{ 'redbull.glb' | file_url }}"
   data-ferrari-url="{{ 'ferrari.glb' | file_url }}"
