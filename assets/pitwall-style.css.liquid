@@ -1,6 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@700;800&family=Space+Grotesk:wght@400;700&display=swap');
 
 @font-face {
+  font-family: 'BTSE PS2';
+  src: url('btseps2.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Petit Formal Script';
   src: url('PetitFormalScript-Regular.ttf') format('truetype');
   font-weight: normal;
@@ -21,7 +29,7 @@
   --font-display: 'Syne', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
-  --font-branding: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-branding: 'BTSE PS2', 'btseps2', sans-serif;
   --font-secondary: 'Bulgary Rose', 'Petit Formal Script', cursive;
 
   /* Homepage Scrollytelling Custom Variables */
@@ -494,7 +502,7 @@ html, body {
 }
 
 .hero-title {
-  font-family: var(--font-branding); /* 'Helvetica Neue', Arial, sans-serif */
+  font-family: var(--font-branding); /* 'btseps2', sans-serif (PS2 Font) */
   font-size: clamp(32px, 6vw, 96px);
   line-height: 0.85;
   color: var(--bg);
@@ -503,8 +511,7 @@ html, body {
   position: absolute;
   right: -20px;
   bottom: -48px; /* Positioned at the bottom-right corner of the tagline text */
-  font-weight: 900;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
