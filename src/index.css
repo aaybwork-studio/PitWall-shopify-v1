@@ -2025,31 +2025,129 @@ html.dark-mode .product-img-bg {
   transition: opacity 0.45s ease;
 }
 
+.pw-intro-video {
+  width: min(86vw, 760px);
+  max-height: 60vh;
+  object-fit: cover;
+  border-radius: 4px;
+  background-color: #000000;
+}
+
 .pw-intro-rig {
   display: flex;
-  gap: clamp(8px, 2vw, 18px);
-  padding: clamp(10px, 2vw, 18px) clamp(14px, 3vw, 28px);
-  background-color: #161616;
-  border-radius: 4px;
+  justify-content: center;
+  perspective: 900px;
+  width: 100%;
+  padding: 0 16px;
 }
+
+.pw-intro-rig-housing {
+  position: relative;
+  display: flex;
+  gap: clamp(18px, 3.6vw, 34px);
+  padding: clamp(14px, 2.4vw, 22px) clamp(28px, 6vw, 56px);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 14%),
+    linear-gradient(165deg, #2a2a2c 0%, #151516 45%, #0a0a0b 100%);
+  border-radius: 6px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 -10px 18px rgba(0, 0, 0, 0.55) inset,
+    0 18px 40px rgba(0, 0, 0, 0.35);
+  transform: rotateX(4deg);
+  transform-style: preserve-3d;
+}
+
+.pw-intro-columns {
+  display: flex;
+  gap: clamp(18px, 3.6vw, 34px);
+}
+
+.pw-intro-bolt {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #6b6b6e, #1a1a1b 70%);
+  box-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.15);
+}
+
+.pw-intro-bolt-tl { top: 7px; left: 9px; }
+.pw-intro-bolt-tr { top: 7px; right: 9px; }
+.pw-intro-bolt-bl { bottom: 7px; left: 9px; }
+.pw-intro-bolt-br { bottom: 7px; right: 9px; }
 
 .pw-intro-column {
   display: flex;
   flex-direction: column;
-  gap: clamp(5px, 1.2vw, 10px);
+  gap: clamp(7px, 1.6vw, 13px);
 }
 
 .pw-intro-dot {
-  width: clamp(8px, 2.4vw, 16px);
-  height: clamp(8px, 2.4vw, 16px);
+  position: relative;
+  width: clamp(11px, 3vw, 20px);
+  height: clamp(11px, 3vw, 20px);
   border-radius: 50%;
-  background-color: #3a2222;
-  transition: background-color 0.08s linear;
+  display: block;
 }
 
-.pw-intro-dot-lit {
-  background-color: #ff0000;
-  box-shadow: 0 0 8px 1px rgba(255, 0, 0, 0.7);
+.pw-intro-dot-bloom,
+.pw-intro-dot-bulb,
+.pw-intro-dot-hotspot {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transition: opacity 0.1s linear, box-shadow 0.1s linear, background 0.1s linear;
+}
+
+/* Unlit: dark glass bulb sitting in its housing recess */
+.pw-intro-dot-bloom {
+  opacity: 0;
+  background: radial-gradient(circle, rgba(255, 40, 30, 0.95) 0%, rgba(255, 20, 10, 0.45) 45%, rgba(255, 0, 0, 0) 75%);
+  transform: scale(2.6);
+  filter: blur(1px);
+}
+
+.pw-intro-dot-bulb {
+  background: radial-gradient(circle at 38% 32%, #4a2424 0%, #2a1414 55%, #190b0b 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 1px 1px rgba(255, 255, 255, 0.05) inset,
+    0 -1px 2px rgba(0, 0, 0, 0.6) inset;
+}
+
+.pw-intro-dot-hotspot {
+  opacity: 0;
+  background: radial-gradient(circle at 38% 32%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 40%);
+}
+
+/* Lit: bright bloom + graduated bulb + hot specular point, not a flat disc */
+.pw-intro-dot-lit .pw-intro-dot-bloom {
+  opacity: 1;
+}
+
+.pw-intro-dot-lit .pw-intro-dot-bulb {
+  background: radial-gradient(circle at 38% 32%, #ff8a6a 0%, #ff2a14 35%, #c40b00 70%, #7a0500 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 0 10px 3px rgba(255, 40, 20, 0.85),
+    0 0 22px 8px rgba(255, 20, 10, 0.55),
+    0 0 40px 14px rgba(255, 0, 0, 0.3);
+}
+
+.pw-intro-dot-lit .pw-intro-dot-hotspot {
+  opacity: 0.9;
+}
+
+@keyframes pw-intro-dot-pulse {
+  0% { transform: scale(0.85); }
+  35% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.pw-intro-dot-pulse .pw-intro-dot-bloom,
+.pw-intro-dot-pulse .pw-intro-dot-bulb {
+  animation: pw-intro-dot-pulse 0.22s ease-out;
 }
 
 .pw-intro-skip {
