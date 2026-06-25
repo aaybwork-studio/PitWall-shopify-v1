@@ -1389,7 +1389,7 @@ html.dark-mode .hero-title-text {
 
 /* Camera-negative video background, dark mode only */
 html.dark-mode .hero-video-bg-wrap {
-  filter: invert(1);
+  filter: invert(1) brightness(0.55) contrast(2.2);
 }
 
 /* Tagline Slogan Visibility Adjustments */
