@@ -292,27 +292,6 @@ html:not(.homepage-scrollytelling-active) body {
   letter-spacing: 0.08em;
 }
 
-.pw-footer-ghost-container {
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 24px 0 12px;
-}
-
-.pw-footer-ghost-text {
-  font-family: var(--font-branding, 'BTSE PS2', sans-serif);
-  font-weight: 800;
-  font-size: clamp(80px, 14vw, 200px);
-  line-height: 0.85;
-  text-transform: uppercase;
-  letter-spacing: -0.04em;
-  color: rgba(12, 12, 12, 0.08);
-  user-select: none;
-  white-space: nowrap;
-}
-
 @media (max-width: 767px) {
   .pw-footer-section {
     padding: 48px 20px 0;
