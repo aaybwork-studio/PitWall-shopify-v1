@@ -1363,7 +1363,16 @@ html:not(.homepage-scrollytelling-active) body {
   overflow: hidden !important;
 }
 
-/* Hero Branding Title (BTSE PS2 font, size 250px, black, blend mode difference, push up 20px, +6px letter-spacing) */
+/* Hero Branding Title Wrapper & Text (Negative overlay cutout effect) */
+.hero-title-wrapper {
+  mix-blend-mode: difference !important;
+  background-color: #ffffff !important; /* White background to invert the video behind it */
+  padding: 16px 48px !important;
+  display: inline-block !important;
+  text-align: center !important;
+  transform: translateY(-20px) !important; /* Push up 20px */
+}
+
 .hero-title-text {
   font-family: var(--font-branding), 'BTSE PS2', sans-serif !important;
   font-size: clamp(62.5px, 15vw, 312.5px) !important;
@@ -1371,9 +1380,9 @@ html:not(.homepage-scrollytelling-active) body {
   line-height: 0.9;
   letter-spacing: 6px !important; /* +6 letter spacing */
   text-transform: uppercase;
-  mix-blend-mode: difference !important; /* Blend mode */
-  color: #FFFFFF !important; /* Color white to allow difference blending to invert over car texture */
-  transform: translateY(-20px) !important; /* Push up 20px */
+  color: #000000 !important; /* Black text so it reveals the original video background */
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Tagline Slogan Visibility Adjustments */
@@ -1683,6 +1692,29 @@ html.dark-mode .menu-wordmark-text {
   transform: scale(1);
 }
 
+/* Manifesto hover: grayscale → color + subtle zoom-out */
+.manifesto-panel-img {
+  filter: grayscale(100%);
+  transition: filter 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.manifesto-panel:hover .manifesto-panel-img {
+  filter: grayscale(0%);
+  transform: scale(0.97);
+}
+
+/* Footer monogram logo */
+.pw-footer-monogram {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  height: 28px;
+  width: auto;
+  opacity: 0.18;
+  pointer-events: none;
+  user-select: none;
+  display: block;
+}
+
 /* F1 Telemetry Tech Grid Background Utility */
 .tech-grid-bg {
   background-size: 40px 40px;
@@ -1933,3 +1965,19 @@ html.dark-mode .menu-wordmark-text {
     display: none !important;
   }
 }
+
+/* Product Image Background (High contrast inverse theme prep) */
+.product-img-bg {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+html:not(.dark-mode) .product-img-bg {
+  background-color: #0c0c0c !important; /* Black in light mode */
+  color: #ffffff !important;
+}
+html.dark-mode .product-img-bg {
+  background-color: #ffffff !important; /* White in dark mode */
+  color: #000000 !important;
+}
+

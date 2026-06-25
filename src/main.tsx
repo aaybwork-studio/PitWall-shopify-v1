@@ -361,16 +361,15 @@ function bootstrap() {
       return homepageScroller ? homepageScroller.scrollTop : window.scrollY;
     };
 
-    let lastScrollY = getScrollY();
-    const handleScroll = () => {
+    const updateNavbarTheme = () => {
       const currentScrollY = getScrollY();
-
       const homepageScroller = document.querySelector('.homepage-scroll-container') as HTMLElement | null;
       const isPDP = document.querySelector('#product-scrollytelling-root') !== null;
-      
+      const isDarkMode = document.documentElement.classList.contains('dark-mode');
+
       if (homepageScroller) {
-        // Homepage dynamic behavior: dark over hero video, light everywhere else
-        if (currentScrollY >= window.innerHeight - 64) {
+        // Homepage dynamic behavior: dark over hero video, light everywhere else only in light mode
+        if (currentScrollY >= window.innerHeight - 64 && !isDarkMode) {
           nav.classList.add('nav-light-bg');
         } else {
           nav.classList.remove('nav-light-bg');
@@ -378,8 +377,19 @@ function bootstrap() {
       } else if (isPDP) {
         nav.classList.remove('nav-light-bg');
       } else {
-        nav.classList.add('nav-light-bg');
+        if (isDarkMode) {
+          nav.classList.remove('nav-light-bg');
+        } else {
+          nav.classList.add('nav-light-bg');
+        }
       }
+    };
+
+    let lastScrollY = getScrollY();
+    const handleScroll = () => {
+      const currentScrollY = getScrollY();
+
+      updateNavbarTheme();
 
       // Navbar auto-hide on scroll down, show on scroll up
       if (currentScrollY <= 100) {
@@ -398,6 +408,7 @@ function bootstrap() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
+    window.addEventListener('pitwall:theme-change' as any, updateNavbarTheme);
     handleScroll();
   }
 

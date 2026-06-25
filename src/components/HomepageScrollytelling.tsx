@@ -59,7 +59,7 @@ function HeroTicker({ offset, itemRef }: TickerProps) {
       style={{ backgroundColor: WM.gold, borderTop: '1px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)' }}
     >
       <div
-        className="flex whitespace-nowrap font-mono text-xs uppercase tracking-widest text-[#0C0C0C] font-bold"
+        className="flex whitespace-nowrap font-mono text-xs uppercase tracking-widest text-white font-bold"
         style={{ transform: `translate3d(${offset}px, 0, 0)` }}
       >
         <div ref={itemRef} className="inline-flex">
@@ -711,22 +711,24 @@ export function HomepageScrollytelling({
           <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
           <div className="relative z-20 text-center px-4 w-full h-full flex flex-col items-center justify-center">
             {/* Centered logo */}
-            <h1 className="hero-title-text select-none absolute z-10 animate-pulse-subtle" style={{ mixBlendMode: 'difference', opacity: 0.4 }}>PITWALL</h1>
+            <div className="hero-title-wrapper absolute z-10 animate-pulse-subtle">
+              <h1 className="hero-title-text select-none">PITWALL</h1>
+            </div>
           </div>
           <HeroTicker offset={tickerOffset} itemRef={tickerItemRef} />
         </section>
 
         {/* Manifesto */}
         <section className="manifesto-panel relative w-full h-[55vh] overflow-hidden reveal-active">
-          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage1} alt="" loading="lazy" />
+          <img className="absolute inset-0 w-full h-full object-cover manifesto-panel-img" src={manifestoImage1} alt="" loading="lazy" />
           <span className="font-display-strict select-none absolute uppercase top-6 left-6" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline1}</span>
         </section>
         <section className="manifesto-panel relative w-full h-[55vh] overflow-hidden reveal-active">
-          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage2} alt="" loading="lazy" />
+          <img className="absolute inset-0 w-full h-full object-cover manifesto-panel-img" src={manifestoImage2} alt="" loading="lazy" />
           <span className="font-display-strict select-none absolute uppercase top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline2}</span>
         </section>
         <section className="manifesto-panel relative w-full h-[55vh] overflow-hidden reveal-active">
-          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage3} alt="" loading="lazy" />
+          <img className="absolute inset-0 w-full h-full object-cover manifesto-panel-img" src={manifestoImage3} alt="" loading="lazy" />
           <span className="font-display-strict select-none absolute uppercase bottom-6 right-6 text-right" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline3}</span>
         </section>
         {/* Featured Product 1 */}
@@ -829,12 +831,9 @@ export function HomepageScrollytelling({
           </div>
 
           {/* Centered logo */}
-          <h1 
-            className="hero-title-text select-none absolute z-10 animate-pulse-subtle" 
-            style={{ mixBlendMode: 'difference', opacity: 0.4 }}
-          >
-            PITWALL
-          </h1>
+          <div className="hero-title-wrapper absolute z-10 animate-pulse-subtle">
+            <h1 className="hero-title-text select-none">PITWALL</h1>
+          </div>
           
           {/* Bottom buttons */}
           <div className="absolute z-20 flex flex-col sm:flex-row justify-center items-center gap-4 w-full px-4 bottom-[90px]">
@@ -876,7 +875,9 @@ export function HomepageScrollytelling({
       {/* ── SECTION 1: HERO (Vertical, 100vh) ────────────────────────────── */}
       <div ref={heroRef} className="scroll-snap-section relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
         {/* Centered logo */}
-        <h1 className="hero-title-text select-none absolute z-10" style={{ mixBlendMode: 'difference', opacity: 0.4 }}>PITWALL</h1>
+        <div className="hero-title-wrapper absolute z-10">
+          <h1 className="hero-title-text select-none">PITWALL</h1>
+        </div>
 
         <HeroTicker offset={tickerOffset} itemRef={tickerItemRef} />
       </div>
@@ -884,15 +885,15 @@ export function HomepageScrollytelling({
       {/* ── SECTION 2: MANIFESTO (Vertical, 100vh, 3-panel full-bleed reveal) ── */}
       <div ref={manifestoRef} className="scroll-snap-section relative w-full h-screen flex flex-row overflow-hidden z-10">
         <div className={`manifesto-panel relative w-[33.333vw] h-full overflow-hidden${manifestoRevealed ? ' reveal-active' : ''}`} style={{ transitionDelay: '0ms' }}>
-          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage1} alt="" loading="lazy" />
+          <img className="absolute inset-0 w-full h-full object-cover manifesto-panel-img" src={manifestoImage1} alt="" loading="lazy" />
           <span className="font-display-strict select-none absolute uppercase text-3xl md:text-5xl top-8 left-8" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline1}</span>
         </div>
         <div className={`manifesto-panel relative w-[33.333vw] h-full overflow-hidden${manifestoRevealed ? ' reveal-active' : ''}`} style={{ transitionDelay: '130ms' }}>
-          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage2} alt="" loading="lazy" />
+          <img className="absolute inset-0 w-full h-full object-cover manifesto-panel-img" src={manifestoImage2} alt="" loading="lazy" />
           <span className="font-display-strict select-none absolute uppercase text-3xl md:text-5xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline2}</span>
         </div>
         <div className={`manifesto-panel relative w-[33.333vw] h-full overflow-hidden${manifestoRevealed ? ' reveal-active' : ''}`} style={{ transitionDelay: '260ms' }}>
-          <img className="absolute inset-0 w-full h-full object-cover" src={manifestoImage3} alt="" loading="lazy" />
+          <img className="absolute inset-0 w-full h-full object-cover manifesto-panel-img" src={manifestoImage3} alt="" loading="lazy" />
           <span className="font-display-strict select-none absolute uppercase text-3xl md:text-5xl bottom-8 right-8 text-right" style={{ mixBlendMode: 'difference', color: '#FFFFFF' }}>{manifestoTagline3}</span>
         </div>
       </div>
@@ -1165,12 +1166,9 @@ export function HomepageScrollytelling({
         </div>
 
         {/* Centered logo */}
-        <h1
-          className="hero-title-text select-none absolute z-10" 
-          style={{ mixBlendMode: 'difference', opacity: 0.4 }}
-        >
-          PITWALL
-        </h1>
+        <div className="hero-title-wrapper absolute z-10">
+          <h1 className="hero-title-text select-none">PITWALL</h1>
+        </div>
 
         {/* Bottom buttons */}
         <div className="absolute z-20 flex flex-row flex-wrap justify-center items-center gap-6 bottom-[90px]">

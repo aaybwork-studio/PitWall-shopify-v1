@@ -45,10 +45,13 @@ export function Footer() {
         <span className="pw-footer-legal-text">PRIVACY · TERMS</span>
       </div>
 
-      {/* Ghost branding mark centered below legal bar */}
-      <div className="pw-footer-ghost-container">
-        <div className="pw-footer-ghost-text">PITWALL</div>
-      </div>
+      {/* Monogram logo — bottom-left corner, ghost watermark */}
+      <img
+        src="/assets/emblem.png"
+        alt=""
+        className="pw-footer-monogram"
+        aria-hidden="true"
+      />
     </footer>
   );
 }

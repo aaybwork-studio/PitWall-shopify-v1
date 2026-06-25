@@ -492,6 +492,7 @@
           isDark = document.documentElement.classList.toggle('dark-mode');
           updateThemeIcon(isDark);
           localStorage.setItem('pitwall-theme', isDark ? 'dark' : 'light');
+          window.dispatchEvent(new CustomEvent('pitwall:theme-change', { detail: { isDark: isDark } }));
         });
       }
 
