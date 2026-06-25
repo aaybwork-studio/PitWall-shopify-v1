@@ -1363,7 +1363,12 @@ html:not(.homepage-scrollytelling-active) body {
   overflow: hidden !important;
 }
 
-/* Hero Branding Title Wrapper & Text (Negative overlay cutout effect) */
+/* Hero Branding Title Wrapper & Text (Negative overlay cutout effect)
+   mix-blend-mode was tried first but browsers routinely fail to blend
+   against <video> elements (GPU decode bypasses normal blend compositing),
+   so the live invert effect is produced instead by an SVG-masked
+   backdrop-filter: invert(1) layer (see HeroWordmark.tsx + .hero-title-invert-layer
+   below) — backdrop-filter does not have that limitation. */
 .hero-title-wrapper {
   padding: 16px 48px !important;
   display: inline-block !important;
@@ -1371,17 +1376,43 @@ html:not(.homepage-scrollytelling-active) body {
   transform: translateY(-20px) !important; /* Push up 20px */
 }
 
-.hero-title-text {
+.hero-title-text,
+.hero-title-mask-text {
   font-family: var(--font-branding), 'BTSE PS2', sans-serif !important;
   font-size: clamp(62.5px, 15vw, 312.5px) !important;
   font-weight: 800;
   line-height: 0.9;
   letter-spacing: 6px !important; /* +6 letter spacing */
   text-transform: uppercase;
-  color: #ffffff !important; /* White fill; difference blend inverts whatever is behind the glyphs */
-  mix-blend-mode: difference !important; /* Apply the negative fill directly to the glyphs, not a box */
+}
+
+.hero-title-text {
+  color: transparent; /* covered by .hero-title-invert-layer in light mode */
   margin: 0 !important;
   padding: 0 !important;
+}
+
+.hero-title-invert-layer {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: invert(1);
+  -webkit-backdrop-filter: invert(1);
+  pointer-events: none;
+}
+
+/* Dark mode: skip the live invert effect, just show a plain white wordmark.
+   The video background itself gets the negative treatment instead (see
+   .hero-video-bg-wrap below), so a literal text invert would double-cancel. */
+html.dark-mode .hero-title-text {
+  color: #ffffff !important;
+}
+html.dark-mode .hero-title-invert-layer {
+  display: none;
+}
+
+/* Camera-negative video background, dark mode only */
+html.dark-mode .hero-video-bg-wrap {
+  filter: invert(1);
 }
 
 /* Tagline Slogan Visibility Adjustments */
