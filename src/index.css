@@ -1365,26 +1365,39 @@ html:not(.homepage-scrollytelling-active) body {
      which has no isolation side effect. */
 }
 
-.hero-title-text {
+.hero-title-text,
+.hero-title-mask-text {
   font-family: var(--font-branding), 'BTSE PS2', sans-serif !important;
   font-size: clamp(62.5px, 15vw, 312.5px) !important;
   font-weight: 800;
   line-height: 0.9;
   letter-spacing: 6px !important; /* +6 letter spacing */
   text-transform: uppercase;
-  color: #ffffff !important;
-  mix-blend-mode: difference !important;
+}
+
+.hero-title-text {
+  color: transparent; /* painted by .hero-title-invert-layer in light mode */
   margin: 0 !important;
   margin-top: -20px !important; /* Push up 20px, without a transform */
   padding: 0 !important;
+}
+
+.hero-title-invert-layer {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: invert(1);
+  -webkit-backdrop-filter: invert(1);
+  pointer-events: none;
 }
 
 /* Dark mode: skip the live invert effect, just show a plain white wordmark.
    The video background itself gets the negative treatment instead (see
    .hero-video-bg-wrap below), so a literal text invert would double-cancel. */
 html.dark-mode .hero-title-text {
-  mix-blend-mode: normal !important;
   color: #ffffff !important;
+}
+html.dark-mode .hero-title-invert-layer {
+  display: none;
 }
 
 /* Camera-negative video background, dark mode only */
