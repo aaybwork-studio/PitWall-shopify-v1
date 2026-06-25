@@ -1365,8 +1365,6 @@ html:not(.homepage-scrollytelling-active) body {
 
 /* Hero Branding Title Wrapper & Text (Negative overlay cutout effect) */
 .hero-title-wrapper {
-  mix-blend-mode: difference !important;
-  background-color: #ffffff !important; /* White background to invert the video behind it */
   padding: 16px 48px !important;
   display: inline-block !important;
   text-align: center !important;
@@ -1380,7 +1378,8 @@ html:not(.homepage-scrollytelling-active) body {
   line-height: 0.9;
   letter-spacing: 6px !important; /* +6 letter spacing */
   text-transform: uppercase;
-  color: #000000 !important; /* Black text so it reveals the original video background */
+  color: #ffffff !important; /* White fill; difference blend inverts whatever is behind the glyphs */
+  mix-blend-mode: difference !important; /* Apply the negative fill directly to the glyphs, not a box */
   margin: 0 !important;
   padding: 0 !important;
 }
