@@ -3,20 +3,26 @@ import { useState } from 'react';
 let maskIdCounter = 0;
 
 /**
- * "PITWALL" hero wordmark with a true camera-negative fill: a
- * backdrop-filter: invert(1) layer, masked to the glyph shapes via an SVG
- * <mask>, inverts the live video behind the text. mix-blend-mode was tried
- * first but does not reliably composite against <video> elements in
- * practice; backdrop-filter samples the rendered backdrop directly and
- * does not have that limitation.
+ * "PITWALL" hero wordmark with a true camera-negative fill: a masked SVG
+ * <rect> with backdrop-filter: invert(1), revealing a live inverted view
+ * of the video only inside the glyph shapes.
  *
- * Deliberately has NO JS-measured sizing (no ResizeObserver / size gate) —
- * a prior version gated the entire invert layer behind a JS-measured size
- * state that likely never resolved, leaving .hero-title-text (color:
- * transparent) with nothing painted on top of it, i.e. fully invisible.
- * This version sizes purely via CSS (inset: 0) and positions the mask's
- * <text> via percentages, which resolve against the masked element's own
- * box per the CSS Masking spec — no JS required.
+ * Two earlier approaches failed:
+ * 1. mix-blend-mode: difference directly on the text — does not reliably
+ *    composite against <video> elements in practice.
+ * 2. An HTML <div> masked via the CSS `mask-image` property, referencing
+ *    an SVG <mask> defined in a separate sibling <svg>. This specific
+ *    combination (HTML element + CSS mask-image + cross-context SVG
+ *    fragment reference) has a confirmed Firefox bug (bugzilla 1535822)
+ *    and is widely reported as unreliable across browsers.
+ *
+ * This version follows the pattern used by working production references
+ * (CSS-Tricks' "Responsive Knockout Text with Video", Dudley Storey's SVG
+ * text-mask-over-video demo): the masked element and the mask definition
+ * both live inside the *same* <svg>, and the mask is applied via the
+ * native SVG `mask="url(#id)"` attribute rather than the CSS `mask-image`
+ * property — same-document, SVG-native masking is the well-supported case;
+ * masking an arbitrary HTML element from CSS is the flaky one.
  */
 export function HeroWordmark({ className = '' }: { className?: string }) {
   const [maskId] = useState(() => `pw-hero-mask-${maskIdCounter++}`);
@@ -24,11 +30,7 @@ export function HeroWordmark({ className = '' }: { className?: string }) {
   return (
     <div className={`hero-title-wrapper relative ${className}`}>
       <h1 className="hero-title-text select-none">PITWALL</h1>
-      <div
-        className="hero-title-invert-layer"
-        style={{ maskImage: `url(#${maskId})`, WebkitMaskImage: `url(#${maskId})` }}
-      />
-      <svg width="0" height="0" style={{ position: 'absolute' }}>
+      <svg className="hero-title-invert-svg" preserveAspectRatio="none">
         <defs>
           <mask id={maskId}>
             <text
@@ -43,6 +45,7 @@ export function HeroWordmark({ className = '' }: { className?: string }) {
             </text>
           </mask>
         </defs>
+        <rect x="0" y="0" width="100%" height="100%" mask={`url(#${maskId})`} className="hero-title-invert-rect" />
       </svg>
     </div>
   );

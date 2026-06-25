@@ -34,7 +34,7 @@
   /* Homepage Scrollytelling Custom Variables */
   --pw-bg: #EDEBE5;
   --pw-bg2: #E5E3DD;
-  --pw-gold: #B0B0B0;
+  --pw-gold: #E8B93B;
   --pw-text: #0C0C0C;
   --pw-border: rgba(12, 12, 12, 0.12);
 }
@@ -58,7 +58,7 @@ html.dark-mode {
   /* Homepage Scrollytelling Custom Variables */
   --pw-bg: #0F0C09;
   --pw-bg2: #140F0B;
-  --pw-gold: #B0B0B0;
+  --pw-gold: #E8B93B;
   --pw-text: #EDE8E0;
   --pw-border: rgba(237, 235, 229, 0.12);
 }
@@ -840,6 +840,41 @@ html:not(.homepage-scrollytelling-active) body {
   color: var(--fg, #0C0C0C);
 }
 
+/* Dark mode: the header's "transparent" state (i.e. NOT .nav-light-bg) used
+   var(--bg) for its text color, banking on --bg happening to be the light
+   cream color in light mode. In dark mode --bg flips to black, making the
+   header text invisible against a dark page. Force it white explicitly
+   instead of relying on that coincidental mapping. .nav-light-bg itself
+   never co-occurs with dark mode in this app (see main.tsx), but scope with
+   :not() anyway so this stays correct if that ever changes. */
+html.dark-mode .nav-header:not(.nav-light-bg) .nav-logo-text-new,
+html.dark-mode .nav-header:not(.nav-light-bg) .nav-menu-link,
+html.dark-mode .nav-header:not(.nav-light-bg) .nav-icon-btn,
+html.dark-mode .nav-header:not(.nav-light-bg) .nav-cart-btn-new,
+html.dark-mode .nav-header:not(.nav-light-bg) .menu-trigger-btn-mobile,
+html.dark-mode .nav-header:not(.nav-light-bg) .team-card-name {
+  color: #EDEBE5 !important;
+}
+
+/* Same var(--bg)-as-text-color bug, but inside the mobile menu takeover
+   overlay (#full-menu-overlay / .menu-overlay-new), which has its own
+   always-dark fixed background (rgba(12,12,12,0.98)) independent of the
+   site theme — so this needs an unconditional override, not one scoped to
+   .nav-light-bg (there is no light variant of this overlay). */
+html.dark-mode .mobile-menu-close-btn,
+html.dark-mode .mobile-menu-link,
+html.dark-mode .mobile-accordion-trigger {
+  color: #EDEBE5 !important;
+}
+
+/* "All buttons" white text in dark mode: the dropdown cart's checkout
+   button keeps a fixed grey background (var(--accent), theme-invariant)
+   but had fixed dark text — flip to white for the requested dark-mode
+   button treatment. */
+html.dark-mode .dropdown-cart-btn-checkout {
+  color: #ffffff !important;
+}
+
 @media (max-width: 1023px) {
   .nav-header {
     padding: 0 24px;
@@ -1343,17 +1378,11 @@ html:not(.homepage-scrollytelling-active) body {
 }
 
 /* Hero Branding Title Wrapper & Text (Negative overlay cutout effect)
-   Two earlier approaches both failed to render reliably: (1) mix-blend-mode
-   on a white box behind black text never read as "negative" because the
-   blend had nothing to invert against; (2) an SVG-masked backdrop-filter
-   layer, gated behind a JS-measured size and a same-document SVG <mask>
-   reference, silently rendered nothing in practice (likely the mask never
-   registering on a 0x0 SVG, or the size gate never flipping) — leaving the
-   text fully invisible. This is the simplest version that can't fail that
-   way: mix-blend-mode: difference applied directly to white text glyphs,
-   no box, no JS, no SVG. Worst case in a browser that won't blend against
-   <video> is plain white text (still visible); best case (current
-   evergreen browsers) is a true live invert of the video behind it. */
+   See HeroWordmark.tsx for the full history of failed approaches. Current
+   technique: an SVG-native <rect> masked via the native `mask` attribute
+   (mask defined in the same <svg>), with backdrop-filter: invert(1) on
+   that rect — same-document SVG-native masking is the well-supported
+   case; masking an arbitrary HTML element from CSS was the flaky one. */
 .hero-title-wrapper {
   padding: 16px 48px !important;
   display: inline-block !important;
@@ -1376,18 +1405,23 @@ html:not(.homepage-scrollytelling-active) body {
 }
 
 .hero-title-text {
-  color: transparent; /* painted by .hero-title-invert-layer in light mode */
+  color: transparent; /* painted by .hero-title-invert-svg's masked rect in light mode */
   margin: 0 !important;
   margin-top: -20px !important; /* Push up 20px, without a transform */
   padding: 0 !important;
 }
 
-.hero-title-invert-layer {
+.hero-title-invert-svg {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero-title-invert-rect {
   backdrop-filter: invert(1);
   -webkit-backdrop-filter: invert(1);
-  pointer-events: none;
 }
 
 /* Dark mode: skip the live invert effect, just show a plain white wordmark.
@@ -1396,13 +1430,13 @@ html:not(.homepage-scrollytelling-active) body {
 html.dark-mode .hero-title-text {
   color: #ffffff !important;
 }
-html.dark-mode .hero-title-invert-layer {
+html.dark-mode .hero-title-invert-svg {
   display: none;
 }
 
 /* Camera-negative video background, dark mode only */
 html.dark-mode .hero-video-bg-wrap {
-  filter: invert(1) brightness(0.55) contrast(2.2);
+  filter: invert(1) brightness(0.55) contrast(1.5);
 }
 
 /* Tagline Slogan Visibility Adjustments */
