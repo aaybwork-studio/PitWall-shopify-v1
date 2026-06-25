@@ -40,27 +40,29 @@
 }
 
 html.dark-mode {
-  --background: #0C0C0C;
+  --background: #1A1A1A;
   --foreground: #EDEBE5;
   --brand-black: #EDEBE5;
-  --brand-white: #0C0C0C;
+  --brand-white: #1A1A1A;
   --brand-red: #7A7A7A;
   --brand-surface: #1A1A1A;
 
-  --bg: #0C0C0C;
+  --bg: #1A1A1A;
   --fg: #EDEBE5;
   --accent: #7A7A7A;
   --surface: #1A1A1A;
   --surface-2: #242424;
-  --border: rgba(237, 235, 229, 0.10);
-  --muted: rgba(237, 235, 229, 0.50);
+  --border: rgba(237, 235, 229, 0.12);
+  --muted: rgba(237, 235, 229, 0.55);
 
-  /* Homepage Scrollytelling Custom Variables */
-  --pw-bg: #0F0C09;
-  --pw-bg2: #140F0B;
+  /* Homepage Scrollytelling Custom Variables — very dark neutral grey,
+     not near-black, per request. Matches --surface/--surface-2 above for
+     consistency with the rest of the site's dark mode. */
+  --pw-bg: #1A1A1A;
+  --pw-bg2: #242424;
   --pw-gold: #E8B93B;
-  --pw-text: #EDE8E0;
-  --pw-border: rgba(237, 235, 229, 0.12);
+  --pw-text: #F2F0EC;
+  --pw-border: rgba(237, 235, 229, 0.14);
 }
 
 /* Smooth light/dark theme switch: the toggle just adds/removes .dark-mode
@@ -1423,6 +1425,17 @@ html.dark-mode .hero-title-text {
 /* Camera-negative video background, dark mode only */
 html.dark-mode .hero-video-bg-wrap {
   filter: invert(1) brightness(0.55) contrast(1.5);
+}
+
+/* Glass panel sitting directly on the page background (not over video) —
+   a black tint barely shows against the dark-grey dark-mode background,
+   so flip to a light tint there instead for visible panel definition in
+   both themes. */
+.pw-glass-panel {
+  background-color: rgba(12, 12, 12, 0.05);
+}
+html.dark-mode .pw-glass-panel {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* Tagline Slogan Visibility Adjustments */

@@ -799,7 +799,7 @@ export function HomepageScrollytelling({
           style={{ backgroundColor: WM.bg, zIndex: 20 }}
         >
           
-          <div className="relative z-10 w-full max-w-md border border-[var(--pw-border)] p-8 relative overflow-hidden backdrop-blur-md bg-black/5 flex flex-col items-center gap-6">
+          <div className="pw-glass-panel relative z-10 w-full max-w-md border border-[var(--pw-border)] p-8 relative overflow-hidden backdrop-blur-md flex flex-col items-center gap-6">
             <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[var(--pw-gold)]" />
             <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[var(--pw-gold)]" />
             <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[var(--pw-gold)]" />
