@@ -628,7 +628,7 @@ export function ProductScrollytelling({
 
   return (
     <div 
-      className="relative w-full min-h-screen bg-[#EDEBE5] text-[#0C0C0C]"
+      className="relative w-full min-h-screen bg-brand-white text-brand-black"
       style={{
         '--team-accent': teamInfo.accentColor,
         '--team-accent-text': '#FFFFFF'
@@ -704,8 +704,8 @@ export function ProductScrollytelling({
                   onClick={() => handleOptionSwitch(opt.handle)}
                   className={`px-5 py-2.5 border font-mono text-[11px] uppercase transition-all flex items-center justify-between gap-3 backdrop-blur-md whitespace-nowrap ${
                     currentProduct.handle === opt.handle || (opt.handle.includes('mclaren') && currentProduct.handle.includes('mclaren')) || (opt.handle.includes('red-bull') && currentProduct.handle.includes('red-bull'))
-                      ? 'border-brand-black bg-[#0C0C0C]/85 text-[#EDEBE5] font-semibold'
-                      : 'border-brand-black/20 hover:border-brand-black/45 text-brand-black/75 bg-[#EDEBE5]/45'
+                      ? 'border-brand-black bg-brand-black/85 text-brand-white font-semibold'
+                      : 'border-brand-black/20 hover:border-brand-black/45 text-brand-black/75 bg-brand-white/45'
                   }`}
                 >
                   <span>{opt.label}</span>
@@ -751,7 +751,7 @@ export function ProductScrollytelling({
               pointerEvents: scrolledPast ? 'auto' : 'none'
             }}
           >
-            <div className="border border-brand-black/10 bg-[#EDEBE5] p-6 flex flex-col gap-6">
+            <div className="border border-brand-black/10 bg-brand-white p-6 flex flex-col gap-6">
               <span className="font-mono text-xs uppercase font-semibold text-brand-red block border-b border-brand-black/10 pb-2">
                 {isCarOrHelmet ? 'Chassis Calibration' : 'Product Calibration'}
               </span>
@@ -769,8 +769,8 @@ export function ProductScrollytelling({
                           onClick={() => setActiveScale(scale as keyof typeof SCALES_DATA)}
                           className={`py-3 border font-mono text-xs uppercase transition-all flex flex-col items-center justify-center gap-0.5 backdrop-blur-md ${
                             activeScale === scale
-                              ? 'border-brand-black bg-[#0C0C0C]/85 text-[#EDEBE5] font-semibold'
-                              : 'border-brand-black/15 hover:border-brand-black/40 text-brand-black/75 bg-[#EDEBE5]/40'
+                              ? 'border-brand-black bg-brand-black/85 text-brand-white font-semibold'
+                              : 'border-brand-black/15 hover:border-brand-black/40 text-brand-black/75 bg-brand-white/40'
                           }`}
                         >
                           <span className="text-sm font-bold">{scale}</span>
@@ -816,7 +816,7 @@ export function ProductScrollytelling({
         <button
           onClick={handleBuyNow}
           disabled={isCheckingOut}
-          className="flex-1 h-11 hover:bg-brand-black/90 hover:text-[#EDEBE5] backdrop-blur-md border border-brand-black/30 text-brand-black font-mono text-xs uppercase tracking-widest font-semibold transition-colors duration-200 cursor-pointer focus:outline-none flex items-center justify-center disabled:opacity-60 disabled:cursor-wait"
+          className="flex-1 h-11 hover:bg-brand-black/90 hover:text-brand-white backdrop-blur-md border border-brand-black/30 text-brand-black font-mono text-xs uppercase tracking-widest font-semibold transition-colors duration-200 cursor-pointer focus:outline-none flex items-center justify-center disabled:opacity-60 disabled:cursor-wait"
           style={{ backgroundColor: 'var(--team-accent)', color: '#FFFFFF' }}
         >
           {isCheckingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Buy now'}
@@ -826,7 +826,7 @@ export function ProductScrollytelling({
           className={`flex-1 h-11 border font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-200 cursor-pointer focus:outline-none flex items-center justify-center backdrop-blur-md ${
             justAdded 
               ? 'text-brand-black font-bold' 
-              : 'border-brand-black/30 bg-[#EDEBE5]/50 hover:bg-brand-black/90 hover:text-[#EDEBE5] text-brand-black'
+              : 'border-brand-black/30 bg-brand-white/50 hover:bg-brand-black/90 hover:text-brand-white text-brand-black'
           }`}
           style={justAdded ? { backgroundColor: 'var(--team-accent)', borderColor: 'var(--team-accent)' } : {}}
         >

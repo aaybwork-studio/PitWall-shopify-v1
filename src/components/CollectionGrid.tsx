@@ -25,8 +25,8 @@ export function CollectionCard({ product, style, className }: CollectionCardProp
   return (
     <a
       href={product.url}
-      className={`group relative flex flex-col justify-end overflow-hidden bg-white text-[#0C0C0C] border border-[#0C0C0C]/10 transition-all duration-300 w-full h-full ${className || ''}`}
-      style={style}
+      className={`group relative flex flex-col justify-end overflow-hidden border transition-all duration-300 w-full h-full ${className || ''}`}
+      style={{ backgroundColor: 'var(--surface)', color: 'var(--fg)', borderColor: 'var(--border)', ...style }}
     >
       {/* Full-bleed background image */}
       <div className="absolute inset-0 w-full h-full overflow-hidden bg-[#1a1a1a]">
@@ -44,27 +44,36 @@ export function CollectionCard({ product, style, className }: CollectionCardProp
       </div>
 
       {/* Baseline footer — visible at rest */}
-      <div className="relative z-10 p-3 border-t border-[#0C0C0C]/10 flex justify-between items-center bg-white/90 backdrop-blur-sm w-full transition-transform duration-300 group-hover:translate-y-full">
-        <span className="font-mono text-[10px] uppercase tracking-wider truncate max-w-[70%] text-[#0C0C0C] font-semibold">
+      <div
+        className="relative z-10 p-3 border-t flex justify-between items-center backdrop-blur-sm w-full transition-transform duration-300 group-hover:translate-y-full"
+        style={{ borderColor: 'var(--border)', backgroundColor: 'color-mix(in srgb, var(--surface) 90%, transparent)' }}
+      >
+        <span className="font-mono text-[10px] uppercase tracking-wider truncate max-w-[70%] font-semibold" style={{ color: 'var(--fg)' }}>
           {product.title}
         </span>
-        <span className="font-mono text-[10px] font-bold text-[#0C0C0C]">{product.price}</span>
+        <span className="font-mono text-[10px] font-bold" style={{ color: 'var(--fg)' }}>{product.price}</span>
       </div>
 
       {/* Slide-up hover overlay with VIEW button (1/3 of the card) */}
-      <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-white p-3 flex flex-col justify-between translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-20 border-t border-[#0C0C0C]/10">
+      <div
+        className="absolute bottom-0 left-0 right-0 h-[40%] p-3 flex flex-col justify-between translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-20 border-t"
+        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+      >
         <div className="flex flex-col gap-2.5">
           <div className="flex justify-between items-center">
             <span className="font-mono text-[8px] uppercase tracking-widest text-[#7A7A7A] font-bold">
               SPECIFICATIONS
             </span>
-            <span className="font-mono text-[10px] font-bold text-[#0C0C0C]">{product.price}</span>
+            <span className="font-mono text-[10px] font-bold" style={{ color: 'var(--fg)' }}>{product.price}</span>
           </div>
-          <h4 className="font-display-strict text-sm uppercase tracking-tighter text-[#0C0C0C] font-extrabold leading-none truncate">
+          <h4 className="font-display-strict text-sm uppercase tracking-tighter font-extrabold leading-none truncate" style={{ color: 'var(--fg)' }}>
             {product.title}
           </h4>
         </div>
-        <div className="w-full h-8 border border-[#0C0C0C] bg-[#0C0C0C] text-[#EDEBE5] hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] font-mono text-[9px] uppercase tracking-wider font-bold transition-all duration-200 flex items-center justify-center gap-1 cursor-pointer">
+        <div
+          className="w-full h-8 border hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] font-mono text-[9px] uppercase tracking-wider font-bold transition-all duration-200 flex items-center justify-center gap-1 cursor-pointer"
+          style={{ backgroundColor: 'var(--fg)', color: 'var(--bg)', borderColor: 'var(--fg)' }}
+        >
           VIEW
         </div>
       </div>
@@ -156,7 +165,8 @@ export function CategoryCard({ category, description, onClick }: CategoryCardPro
   return (
     <div
       onClick={onClick}
-      className="flex-shrink-0 w-[320px] h-[380px] p-6 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex flex-col justify-between cursor-pointer hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] dark:hover:bg-[#7A7A7A] dark:hover:text-[#0C0C0C] dark:hover:border-[#7A7A7A] transition-all duration-300"
+      className="flex-shrink-0 w-[320px] h-[380px] p-6 border flex flex-col justify-between cursor-pointer hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] transition-all duration-300"
+      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--fg)', color: 'var(--fg)' }}
     >
       <div className="flex flex-col gap-1">
         <span className="font-mono text-[9px] uppercase tracking-widest text-[#7A7A7A] hover:text-[#0C0C0C] font-bold">
@@ -247,14 +257,15 @@ export function CollectionRow({ category, products, rowIdx, onCategoryClick }: C
   const description = CATEGORY_DESCRIPTIONS[category] || 'Racing apparel and gear. Designed for performance.';
 
   return (
-    <div 
-      className="relative w-full py-8 border-b border-[#0C0C0C]/10 dark:border-white/10"
+    <div
+      className="relative w-full py-8 border-b"
+      style={{ borderColor: 'var(--border)' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Category Header */}
       <div className="px-5 md:px-[100px] mb-4 flex justify-between items-end">
-        <span className="font-mono text-xs uppercase tracking-widest text-[#0C0C0C]/40 dark:text-[#EDEBE5]/40 font-bold">
+        <span className="font-mono text-xs uppercase tracking-widest font-bold" style={{ color: 'var(--muted)' }}>
           {category}
         </span>
       </div>
@@ -265,10 +276,10 @@ export function CollectionRow({ category, products, rowIdx, onCategoryClick }: C
         {canScrollLeft && (
           <button
             onClick={() => handleScroll('left')}
-            className={`absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex items-center justify-center font-mono text-lg font-bold text-[#0C0C0C] dark:text-[#EDEBE5] hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] transition-all duration-200 shadow-md ${
+            className={`absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 border flex items-center justify-center font-mono text-lg font-bold hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] transition-all duration-200 shadow-md ${
               isHovered ? 'opacity-100' : 'opacity-0 md:opacity-0'
             }`}
-            style={{ transition: 'opacity 200ms ease, background 200ms, color 200ms' }}
+            style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--fg)', color: 'var(--fg)', transition: 'opacity 200ms ease, background 200ms, color 200ms' }}
           >
             ←
           </button>
@@ -278,10 +289,10 @@ export function CollectionRow({ category, products, rowIdx, onCategoryClick }: C
         {canScrollRight && (
           <button
             onClick={() => handleScroll('right')}
-            className={`absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex items-center justify-center font-mono text-lg font-bold text-[#0C0C0C] dark:text-[#EDEBE5] hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] transition-all duration-200 shadow-md ${
+            className={`absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 border flex items-center justify-center font-mono text-lg font-bold hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] transition-all duration-200 shadow-md ${
               isHovered ? 'opacity-100' : 'opacity-0 md:opacity-0'
             }`}
-            style={{ transition: 'opacity 200ms ease, background 200ms, color 200ms' }}
+            style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--fg)', color: 'var(--fg)', transition: 'opacity 200ms ease, background 200ms, color 200ms' }}
           >
             →
           </button>
@@ -481,8 +492,8 @@ export function CollectionGrid({ products = [], title = 'Our Products' }: Collec
       }}
     >
       {/* ── Page Header Area (Replaces Video Hero Banner) ────────────────── */}
-      <div className="px-5 md:px-[100px] pt-24 pb-8 flex flex-col bg-[#EDEBE5] dark:bg-[#0C0C0C]">
-        <h1 className="font-display-strict text-5xl md:text-7xl uppercase tracking-tighter text-[#0C0C0C] dark:text-[#EDEBE5] leading-none m-0">
+      <div className="px-5 md:px-[100px] pt-24 pb-8 flex flex-col" style={{ backgroundColor: 'var(--bg)' }}>
+        <h1 className="font-display-strict text-5xl md:text-7xl uppercase tracking-tighter leading-none m-0" style={{ color: 'var(--fg)' }}>
           {title}
         </h1>
       </div>
@@ -609,7 +620,7 @@ export function CollectionGrid({ products = [], title = 'Our Products' }: Collec
       </div>
 
       {/* ── Category Scrolling Rows ───────────────────────────────────── */}
-      <div className="w-full py-8 flex flex-col bg-[#EDEBE5] dark:bg-[#0C0C0C] box-sizing-border">
+      <div className="w-full py-8 flex flex-col box-sizing-border" style={{ backgroundColor: 'var(--bg)' }}>
         {categoriesWithProducts.length === 0 ? (
           <div
             style={{
