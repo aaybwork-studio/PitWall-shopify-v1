@@ -19,10 +19,10 @@ function getImmersivePDPUrl(product: Product): string {
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 const WM = {
-  bg:   'var(--pw-bg, #0F0C09)',
-  bg2:  'var(--pw-bg2, #140F0B)',
+  bg:   'var(--pw-bg, #EDEBE5)',
+  bg2:  'var(--pw-bg2, #E5E3DD)',
   gold: 'var(--pw-gold, #B0B0B0)',
-  text: 'var(--pw-text, #EDE8E0)',
+  text: 'var(--pw-text, #0C0C0C)',
 };
 
 // ─── Animated Price ───────────────────────────────────────────────────────────
