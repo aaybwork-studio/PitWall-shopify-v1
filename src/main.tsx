@@ -2,14 +2,15 @@ import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
+import { CarCanvas } from './components/CarCanvas';
+import { VideoBackground } from './components/VideoBackground';
+import { ProductScrollytelling } from './components/ProductScrollytelling';
+import { CollectionGrid } from './components/CollectionGrid';
+import { HomepageScrollytelling } from './components/HomepageScrollytelling';
 import { Logger } from './utils/logger';
 
 // ─── Bootstrap Integration on DOM Load ──────────────────────────────────────
-// Each interactive component is dynamically imported only when its mount
-// point is present in the DOM, so e.g. Three.js (CarCanvas) never loads on
-// pages that don't have the 3D viewer, instead of every page paying for
-// every component's bundle weight.
-async function bootstrap() {
+function bootstrap() {
   // 0. Mount Homepage Interactive Scrollytelling (Takeover)
   const homepageRoot = document.getElementById('homepage-interactive-root');
 
@@ -75,7 +76,6 @@ async function bootstrap() {
     const videoPlaylist = homepageRoot.getAttribute('data-video-playlist') || '[]';
 
     try {
-      const { HomepageScrollytelling } = await import('./components/HomepageScrollytelling');
       const root = ReactDOM.createRoot(homepageRoot);
       root.render(
         <React.StrictMode>
@@ -114,8 +114,7 @@ async function bootstrap() {
   if (canvasRoot) {
     const modelName = canvasRoot.getAttribute('data-model-name') || 'mclaren';
     const modelUrl = canvasRoot.getAttribute('data-model-url') || '';
-
-    const { CarCanvas } = await import('./components/CarCanvas');
+    
     const root = ReactDOM.createRoot(canvasRoot);
     root.render(
       <React.StrictMode>
@@ -142,7 +141,6 @@ async function bootstrap() {
     const schumacherHelmetUrl = pdpRoot.getAttribute('data-schumacher-helmet-url') || '';
     const verstappenHelmetUrl = pdpRoot.getAttribute('data-verstappen-helmet-url') || '';
 
-    const { ProductScrollytelling } = await import('./components/ProductScrollytelling');
     const root = ReactDOM.createRoot(pdpRoot);
     root.render(
       <React.StrictMode>
@@ -186,7 +184,6 @@ async function bootstrap() {
         ];
       }
 
-      const { VideoBackground } = await import('./components/VideoBackground');
       const root = ReactDOM.createRoot(videoRoot);
       root.render(<VideoBackground playlist={playlist} />);
     }
@@ -209,7 +206,6 @@ async function bootstrap() {
         ];
       }
 
-      const { VideoBackground } = await import('./components/VideoBackground');
       const root = ReactDOM.createRoot(separatorVideoRoot);
       root.render(<VideoBackground playlist={playlist} />);
     }
@@ -228,7 +224,6 @@ async function bootstrap() {
           Logger.error('Failed to parse collection product data JSON in main.tsx', err);
         }
       }
-      const { CollectionGrid } = await import('./components/CollectionGrid');
       const root = ReactDOM.createRoot(collectionRoot);
       root.render(
         <React.StrictMode>
