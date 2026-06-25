@@ -62,7 +62,7 @@ export function Technical({
   className = "",
   ...props
 }: TechnicalProps) {
-  const colorClass = highlight ? "text-[color:var(--team-accent,var(--brand-red,#F6C917))] font-medium" : "text-brand-black/80";
+  const colorClass = highlight ? "text-[color:var(--team-accent,var(--brand-red,#7A7A7A))] font-medium" : "text-brand-black/80";
   return (
     <Component
       className={`font-technical-strict uppercase ${colorClass} ${className}`.trim()}

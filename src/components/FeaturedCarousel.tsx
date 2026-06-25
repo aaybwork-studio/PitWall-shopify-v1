@@ -112,7 +112,7 @@ export function FeaturedCarousel() {
       <style dangerouslySetInnerHTML={{ __html: `
         /* ─── Carousel Ticker Styles ─────────────────────────────────────── */
         .pw-carousel-ticker {
-          background-color: #F6C917; /* brand color yellow/red */
+          background-color: #7A7A7A; /* brand color grey/red */
           border-top: 1px solid rgba(12, 12, 12, 0.15);
           border-bottom: 1px solid rgba(12, 12, 12, 0.15);
           padding: 14px 0;

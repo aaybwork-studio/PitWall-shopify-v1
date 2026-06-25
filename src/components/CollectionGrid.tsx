@@ -55,7 +55,7 @@ export function CollectionCard({ product, style, className }: CollectionCardProp
       <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-white p-3 flex flex-col justify-between translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-20 border-t border-[#0C0C0C]/10">
         <div className="flex flex-col gap-2.5">
           <div className="flex justify-between items-center">
-            <span className="font-mono text-[8px] uppercase tracking-widest text-[#F6C917] font-bold">
+            <span className="font-mono text-[8px] uppercase tracking-widest text-[#7A7A7A] font-bold">
               SPECIFICATIONS
             </span>
             <span className="font-mono text-[10px] font-bold text-[#0C0C0C]">{product.price}</span>
@@ -64,7 +64,7 @@ export function CollectionCard({ product, style, className }: CollectionCardProp
             {product.title}
           </h4>
         </div>
-        <div className="w-full h-8 border border-[#0C0C0C] bg-[#0C0C0C] text-[#EDEBE5] hover:bg-[#F6C917] hover:text-[#0C0C0C] hover:border-[#F6C917] font-mono text-[9px] uppercase tracking-wider font-bold transition-all duration-200 flex items-center justify-center gap-1 cursor-pointer">
+        <div className="w-full h-8 border border-[#0C0C0C] bg-[#0C0C0C] text-[#EDEBE5] hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] font-mono text-[9px] uppercase tracking-wider font-bold transition-all duration-200 flex items-center justify-center gap-1 cursor-pointer">
           VIEW
         </div>
       </div>
@@ -156,10 +156,10 @@ export function CategoryCard({ category, description, onClick }: CategoryCardPro
   return (
     <div
       onClick={onClick}
-      className="flex-shrink-0 w-[320px] h-[380px] p-6 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex flex-col justify-between cursor-pointer hover:bg-[#F6C917] hover:text-[#0C0C0C] hover:border-[#F6C917] dark:hover:bg-[#F6C917] dark:hover:text-[#0C0C0C] dark:hover:border-[#F6C917] transition-all duration-300"
+      className="flex-shrink-0 w-[320px] h-[380px] p-6 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex flex-col justify-between cursor-pointer hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] dark:hover:bg-[#7A7A7A] dark:hover:text-[#0C0C0C] dark:hover:border-[#7A7A7A] transition-all duration-300"
     >
       <div className="flex flex-col gap-1">
-        <span className="font-mono text-[9px] uppercase tracking-widest text-[#F6C917] hover:text-[#0C0C0C] font-bold">
+        <span className="font-mono text-[9px] uppercase tracking-widest text-[#7A7A7A] hover:text-[#0C0C0C] font-bold">
           → VIEW ALL
         </span>
       </div>
@@ -265,7 +265,7 @@ export function CollectionRow({ category, products, rowIdx, onCategoryClick }: C
         {canScrollLeft && (
           <button
             onClick={() => handleScroll('left')}
-            className={`absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex items-center justify-center font-mono text-lg font-bold text-[#0C0C0C] dark:text-[#EDEBE5] hover:bg-[#F6C917] hover:text-[#0C0C0C] hover:border-[#F6C917] transition-all duration-200 shadow-md ${
+            className={`absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex items-center justify-center font-mono text-lg font-bold text-[#0C0C0C] dark:text-[#EDEBE5] hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] transition-all duration-200 shadow-md ${
               isHovered ? 'opacity-100' : 'opacity-0 md:opacity-0'
             }`}
             style={{ transition: 'opacity 200ms ease, background 200ms, color 200ms' }}
@@ -278,7 +278,7 @@ export function CollectionRow({ category, products, rowIdx, onCategoryClick }: C
         {canScrollRight && (
           <button
             onClick={() => handleScroll('right')}
-            className={`absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex items-center justify-center font-mono text-lg font-bold text-[#0C0C0C] dark:text-[#EDEBE5] hover:bg-[#F6C917] hover:text-[#0C0C0C] hover:border-[#F6C917] transition-all duration-200 shadow-md ${
+            className={`absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-white dark:bg-[#1A1A1A] border border-[#0C0C0C] dark:border-[#EDEBE5] flex items-center justify-center font-mono text-lg font-bold text-[#0C0C0C] dark:text-[#EDEBE5] hover:bg-[#7A7A7A] hover:text-[#0C0C0C] hover:border-[#7A7A7A] transition-all duration-200 shadow-md ${
               isHovered ? 'opacity-100' : 'opacity-0 md:opacity-0'
             }`}
             style={{ transition: 'opacity 200ms ease, background 200ms, color 200ms' }}
@@ -491,7 +491,7 @@ export function CollectionGrid({ products = [], title = 'Our Products' }: Collec
       <div
         className="px-5 md:px-[100px]"
         style={{
-          backgroundColor: '#F6C917',
+          backgroundColor: '#7A7A7A',
           color: '#0C0C0C',
           borderBottom: '1px solid #0C0C0C',
           paddingTop: '6px',
@@ -579,7 +579,7 @@ export function CollectionGrid({ products = [], title = 'Our Products' }: Collec
                     fontWeight: 700,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    background: selectedSort === srt ? '#F6C917' : 'transparent',
+                    background: selectedSort === srt ? '#7A7A7A' : 'transparent',
                     color:      selectedSort === srt ? '#0C0C0C' : '#EDEBE5',
                     border: 'none',
                     padding: '8px 14px',
@@ -589,7 +589,7 @@ export function CollectionGrid({ products = [], title = 'Our Products' }: Collec
                   }}
                   onMouseEnter={e => {
                     if (selectedSort !== srt) {
-                      (e.currentTarget as HTMLButtonElement).style.background = '#F6C917';
+                      (e.currentTarget as HTMLButtonElement).style.background = '#7A7A7A';
                       (e.currentTarget as HTMLButtonElement).style.color = '#0C0C0C';
                     }
                   }}

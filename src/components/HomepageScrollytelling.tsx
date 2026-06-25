@@ -20,7 +20,7 @@ function getImmersivePDPUrl(product: Product): string {
 const WM = {
   bg:   'var(--pw-bg, #0F0C09)',
   bg2:  'var(--pw-bg2, #140F0B)',
-  gold: 'var(--pw-gold, #E8B93B)',
+  gold: 'var(--pw-gold, #B0B0B0)',
   text: 'var(--pw-text, #EDE8E0)',
 };
 
@@ -83,7 +83,7 @@ function AboutUsMarqueeTicker({ style = {} }: AboutUsMarqueeTickerProps) {
     <div
       className="animate-marquee-container ticker-bar w-full py-3"
       style={{
-        backgroundColor: 'var(--pw-gold, #E8B93B)',
+        backgroundColor: 'var(--pw-gold, #B0B0B0)',
         borderTop: '1px solid var(--pw-border, rgba(12,12,12,0.12))',
         borderBottom: '1px solid var(--pw-border, rgba(12,12,12,0.12))',
         ...style
@@ -840,7 +840,7 @@ export function HomepageScrollytelling({
           <div className="absolute z-20 flex flex-col sm:flex-row justify-center items-center gap-4 w-full px-4 bottom-[90px]">
             <a
               href="/collections/all"
-              className="px-6 py-3 border border-[#F6C917]/30 bg-[#F6C917]/10 backdrop-blur-md text-[#F6C917] font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-[#F6C917]/25 hover:border-[#F6C917]/60 flex items-center justify-center cursor-pointer"
+              className="px-6 py-3 border border-[#7A7A7A]/30 bg-[#7A7A7A]/10 backdrop-blur-md text-[#7A7A7A] font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-[#7A7A7A]/25 hover:border-[#7A7A7A]/60 flex items-center justify-center cursor-pointer"
               style={{ width: '100%', maxWidth: '200px' }}
             >
               Collections
@@ -1176,7 +1176,7 @@ export function HomepageScrollytelling({
         <div className="absolute z-20 flex flex-row flex-wrap justify-center items-center gap-6 bottom-[90px]">
           <a
             href="/collections/all"
-            className="px-8 py-3.5 border border-[#F6C917]/30 bg-[#F6C917]/10 backdrop-blur-md text-[#F6C917] font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-[#F6C917]/25 hover:border-[#F6C917]/60 flex items-center justify-center cursor-pointer"
+            className="px-8 py-3.5 border border-[#7A7A7A]/30 bg-[#7A7A7A]/10 backdrop-blur-md text-[#7A7A7A] font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:bg-[#7A7A7A]/25 hover:border-[#7A7A7A]/60 flex items-center justify-center cursor-pointer"
           >
             Collections
           </a>

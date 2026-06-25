@@ -405,7 +405,7 @@ export function ProductScrollytelling({
     name: currentProduct.title,
     basePrice: 5499,
     referenceCode: 'PW-' + currentProduct.handle.toUpperCase(),
-    accentColor: '#F6C917',
+    accentColor: '#7A7A7A',
     specs: {
       parts: 'N/A',
       material: 'Brutalist Premium Composite',
@@ -712,7 +712,7 @@ export function ProductScrollytelling({
                   {(currentProduct.handle === opt.handle || (opt.handle.includes('mclaren') && currentProduct.handle.includes('mclaren')) || (opt.handle.includes('red-bull') && currentProduct.handle.includes('red-bull'))) && (
                     <div 
                       className="w-1.5 h-1.5 rounded-none" 
-                      style={{ backgroundColor: teamInfo.accentColor || '#F6C917' }}
+                      style={{ backgroundColor: teamInfo.accentColor || '#7A7A7A' }}
                     />
                   )}
                 </button>

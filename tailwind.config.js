@@ -11,8 +11,8 @@ module.exports = {
         background: "#EDEBE5", // Warm Off-White as main canvas bg
         foreground: "#0C0C0C", // Carbon Black as primary text
         brand: {
-          red: "#F6C917",     // Racing Yellow accent
-          darkRed: "#D5A706", // Footer brand mark yellow
+          red: "#7A7A7A",     // Racing Grey accent
+          darkRed: "#D5A706", // Footer brand mark grey
           black: "#0C0C0C",   // Carbon Black
           white: "#EDEBE5",   // Warm Off-White
           surface: "#F5F4F0", // Light Surface tone
