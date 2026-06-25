@@ -13,7 +13,7 @@
   --font-mono: 'IBM Plex Mono', monospace;
   --font-display: 'Syne', sans-serif;
   --font-body: 'Inter', sans-serif;
-  --font-branding: 'BTSE PS2', 'btseps2', sans-serif;
+  --font-branding: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-manifesto: 'Malbonte Blackwell', 'Alex Brush', 'Dancing Script', 'Cormorant Garamond', Georgia, serif;
 
   --background: #EDEBE5;
@@ -302,12 +302,12 @@ html:not(.homepage-scrollytelling-active) body {
 }
 
 .pw-footer-ghost-text {
-  font-family: var(--font-branding, 'BTSE PS2', sans-serif);
-  font-weight: 800;
+  font-family: var(--font-branding, 'Helvetica Neue', Arial, sans-serif);
+  font-weight: 900;
   font-size: clamp(80px, 14vw, 200px);
   line-height: 0.85;
   text-transform: uppercase;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   color: rgba(12, 12, 12, 0.08);
   user-select: none;
   white-space: nowrap;
@@ -398,10 +398,10 @@ html:not(.homepage-scrollytelling-active) body {
 }
 
 .nav-logo-text-new {
-  font-family: var(--font-branding, "BTSE PS2", sans-serif);
+  font-family: var(--font-branding, 'Helvetica Neue', Arial, sans-serif);
   font-size: 14px;
-  letter-spacing: 0.15em;
-  font-weight: 600;
+  letter-spacing: 0.05em;
+  font-weight: 800;
   color: var(--bg, #EDEBE5);
   transition: color 300ms ease;
 }
@@ -1043,9 +1043,9 @@ html:not(.homepage-scrollytelling-active) body {
 }
 
 .mobile-menu-wordmark {
-  font-family: var(--font-branding, sans-serif);
+  font-family: var(--font-branding, 'Helvetica Neue', Arial, sans-serif);
   font-size: 24px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.08em;
   font-weight: 900;
   color: rgba(255, 255, 255, 0.05);
 }
@@ -1378,11 +1378,11 @@ html:not(.homepage-scrollytelling-active) body {
 
 .hero-title-text,
 .hero-title-mask-text {
-  font-family: var(--font-branding), 'BTSE PS2', sans-serif !important;
+  font-family: var(--font-branding), 'Helvetica Neue', Arial, sans-serif !important;
   font-size: clamp(62.5px, 15vw, 312.5px) !important;
-  font-weight: 800;
+  font-weight: 900;
   line-height: 0.9;
-  letter-spacing: 6px !important; /* +6 letter spacing */
+  letter-spacing: -0.02em !important;
   text-transform: uppercase;
 }
 
@@ -1539,12 +1539,12 @@ html.dark-mode .hero-video-bg-wrap {
   padding-left: 8px !important;
 }
 
-/* Bottom Dropdown Wordmark Logo Text (using BTSE PS2 font, centered, size reduced, color inverted dynamically) */
+/* Bottom Dropdown Wordmark Logo Text (centered, size reduced, color inverted dynamically) */
 .menu-wordmark-text {
-  font-family: var(--font-branding), 'BTSE PS2', sans-serif !important;
+  font-family: var(--font-branding), 'Helvetica Neue', Arial, sans-serif !important;
   font-size: 20px !important; /* Reduced size per user request */
-  font-weight: 800 !important;
-  letter-spacing: 0.18em !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.05em !important;
   text-align: center !important;
   display: block !important;
   margin: 0 auto !important;
