@@ -307,7 +307,7 @@ export function HomepageScrollytelling({
   const manifestoPanelScale = useTransform(manifestoProgressMV, [0, 0.6], [0.88, 1]);
   void manifestoPanelOpacity; void manifestoPanelScale;
   const [manifestoRevealed, setManifestoRevealed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   const [tickerOffset, setTickerOffset] = useState(0);
   const tickerVelocity = useRef(1.0);
   const tickerDirection = useRef(1);

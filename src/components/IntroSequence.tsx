@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const SESSION_KEY = 'pw-intro-seen';
 const COLUMN_COUNT = 5;
@@ -45,46 +45,59 @@ export function IntroSequence({ videoSrc }: IntroSequenceProps = {}) {
 
   const useVideo = Boolean(videoSrc) && !videoFailed;
 
+  // Shared across the lighting sequence and the skip/video-ended handlers so
+  // any of them can cancel every pending timer — otherwise skipping mid-
+  // sequence leaves the original timers queued, which later overwrite
+  // phase back to 'holding'/'out'/'fading' and make the overlay reappear.
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const clearAllTimers = () => {
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+  };
+
   useEffect(() => {
     if (skip) return;
     // The video element drives its own `onEnded` -> markIntroSeen/fade; the
     // CSS rig timeline below only needs to run when we're using the rig.
     if (useVideo) return;
 
-    const timers: ReturnType<typeof setTimeout>[] = [];
-
     for (let col = 1; col <= COLUMN_COUNT; col++) {
-      timers.push(setTimeout(() => setLitColumns(col), col * COLUMN_STEP_MS));
+      timersRef.current.push(setTimeout(() => setLitColumns(col), col * COLUMN_STEP_MS));
     }
 
     const allLitAt = COLUMN_COUNT * COLUMN_STEP_MS;
-    timers.push(setTimeout(() => setPhase('holding'), allLitAt));
-    timers.push(setTimeout(() => {
+    timersRef.current.push(setTimeout(() => setPhase('holding'), allLitAt));
+    timersRef.current.push(setTimeout(() => {
       setPhase('out');
       setLitColumns(0);
     }, allLitAt + HOLD_MS));
-    timers.push(setTimeout(() => setPhase('fading'), allLitAt + HOLD_MS + 120));
-    timers.push(setTimeout(() => {
+    timersRef.current.push(setTimeout(() => setPhase('fading'), allLitAt + HOLD_MS + 120));
+    timersRef.current.push(setTimeout(() => {
       setPhase('done');
       markIntroSeen();
     }, allLitAt + HOLD_MS + 120 + FADE_MS));
 
-    return () => timers.forEach(clearTimeout);
+    return clearAllTimers;
   }, [skip, useVideo]);
 
   const handleSkip = () => {
+    clearAllTimers();
     markIntroSeen();
     setPhase('fading');
-    setTimeout(() => setPhase('done'), FADE_MS);
+    timersRef.current.push(setTimeout(() => setPhase('done'), FADE_MS));
   };
 
   const handleVideoEnded = () => {
+    clearAllTimers();
     setPhase('fading');
-    setTimeout(() => {
+    timersRef.current.push(setTimeout(() => {
       setPhase('done');
       markIntroSeen();
-    }, FADE_MS);
+    }, FADE_MS));
   };
+
+  useEffect(() => clearAllTimers, []);
 
   if (skip || phase === 'done') return null;
 
