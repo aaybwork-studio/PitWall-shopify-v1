@@ -108,7 +108,7 @@ export function FeaturedCarousel() {
   };
 
   return (
-    <section className="w-full h-screen bg-[#EDEBE5] border-t border-brand-black/15 select-none relative z-30 flex flex-col overflow-hidden">
+    <section className="w-full h-screen bg-brand-white border-t border-brand-black/15 select-none relative z-30 flex flex-col overflow-hidden">
       <style dangerouslySetInnerHTML={{ __html: `
         /* ─── Carousel Ticker Styles ─────────────────────────────────────── */
         .pw-carousel-ticker {
@@ -316,7 +316,7 @@ export function FeaturedCarousel() {
 
           {/* Brand Slide-Over Details Card */}
           <div 
-            className={`absolute top-0 right-0 h-full bg-[#EDEBE5] border-l border-brand-black/20 flex flex-col justify-between p-8 md:p-12 transition-all duration-500 ease-out z-10 ${
+            className={`absolute top-0 right-0 h-full bg-brand-white border-l border-brand-black/20 flex flex-col justify-between p-8 md:p-12 transition-all duration-500 ease-out z-10 ${
               hoveredCard === activeIndex 
                 ? 'w-full md:w-1/2 translate-x-0 opacity-100' 
                 : 'w-full md:w-1/2 translate-x-full opacity-0 pointer-events-none'
@@ -340,7 +340,7 @@ export function FeaturedCarousel() {
 
             {/* Center Section: Specs Outline Box */}
             <div className="my-6">
-              <div className="border border-brand-black/20 bg-[#EDEBE5]/40 p-4 font-technical-strict text-[11px] space-y-2 uppercase">
+              <div className="border border-brand-black/20 bg-brand-white/40 p-4 font-technical-strict text-[11px] space-y-2 uppercase">
                 {activeItem.specs.map((spec, idx) => (
                   <div key={idx} className="flex justify-between border-b border-brand-black/10 pb-1.5 last:border-0 last:pb-0">
                     <span className="text-brand-black/45">{spec.label}</span>
@@ -359,7 +359,7 @@ export function FeaturedCarousel() {
                 onClick={() => {
                   window.location.href = `/product?model=${activeItem.id === 1 ? 'verstappen' : activeItem.id === 2 ? 'norris' : 'schumacher'}`;
                 }}
-                className="w-full max-w-[220px] h-11 border border-brand-black bg-brand-white hover:bg-brand-black hover:text-[#EDEBE5] text-brand-black font-technical-strict text-xs uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5"
+                className="w-full max-w-[220px] h-11 border border-brand-black bg-brand-white hover:bg-brand-black hover:text-brand-white text-brand-black font-technical-strict text-xs uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5"
                 style={{ borderLeft: `4px solid ${activeItem.accentColor}` }}
               >
                 CALIBRATE NOW <ArrowUpRight size={14} />
@@ -373,7 +373,7 @@ export function FeaturedCarousel() {
         {/* Left Arrow Trigger */}
         <button 
           onClick={handlePrev}
-          className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 w-12 h-12 bg-brand-white hover:bg-brand-black hover:text-[#EDEBE5] border border-brand-black flex items-center justify-center text-brand-black transition-colors duration-200 cursor-pointer z-20"
+          className="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 w-12 h-12 bg-brand-white hover:bg-brand-black hover:text-brand-white border border-brand-black flex items-center justify-center text-brand-black transition-colors duration-200 cursor-pointer z-20"
         >
           <ChevronLeft size={20} />
         </button>
@@ -381,7 +381,7 @@ export function FeaturedCarousel() {
         {/* Right Arrow Trigger */}
         <button 
           onClick={handleNext}
-          className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 w-12 h-12 bg-brand-white hover:bg-brand-black hover:text-[#EDEBE5] border border-brand-black flex items-center justify-center text-brand-black transition-colors duration-200 cursor-pointer z-20"
+          className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 w-12 h-12 bg-brand-white hover:bg-brand-black hover:text-brand-white border border-brand-black flex items-center justify-center text-brand-black transition-colors duration-200 cursor-pointer z-20"
         >
           <ChevronRight size={20} />
         </button>
