@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { VideoBackground } from './VideoBackground';
 import { IntroSequence } from './IntroSequence';
-import { HeroWordmark } from './HeroWordmark';
 import { CollectionCard, Product } from './CollectionGrid';
 import { ArrowUpRight, ChevronRight } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'motion/react';
@@ -714,7 +713,9 @@ export function HomepageScrollytelling({
           <div className="hero-video-bg-wrap absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
           <div className="relative z-20 text-center px-4 w-full h-full flex flex-col items-center justify-center">
             {/* Centered logo */}
-            <HeroWordmark className="absolute z-10 animate-pulse-subtle" />
+            <div className="hero-title-wrapper absolute z-10 animate-pulse-subtle">
+              <h1 className="hero-title-text select-none">PITWALL</h1>
+            </div>
           </div>
           <HeroTicker offset={tickerOffset} itemRef={tickerItemRef} />
         </section>
@@ -832,7 +833,9 @@ export function HomepageScrollytelling({
           </div>
 
           {/* Centered logo */}
-          <HeroWordmark className="absolute z-10 animate-pulse-subtle" />
+          <div className="hero-title-wrapper absolute z-10 animate-pulse-subtle">
+            <h1 className="hero-title-text select-none">PITWALL</h1>
+          </div>
 
           {/* Bottom buttons */}
           <div className="absolute z-20 flex flex-col sm:flex-row justify-center items-center gap-4 w-full px-4 bottom-[90px]">
@@ -875,7 +878,9 @@ export function HomepageScrollytelling({
       {/* ── SECTION 1: HERO (Vertical, 100vh) ────────────────────────────── */}
       <div ref={heroRef} className="scroll-snap-section relative w-full h-screen flex flex-col items-center justify-center overflow-hidden z-10">
         {/* Centered logo */}
-        <HeroWordmark className="absolute z-10" />
+        <div className="hero-title-wrapper absolute z-10">
+          <h1 className="hero-title-text select-none">PITWALL</h1>
+        </div>
 
         <HeroTicker offset={tickerOffset} itemRef={tickerItemRef} />
       </div>
@@ -1164,7 +1169,9 @@ export function HomepageScrollytelling({
         </div>
 
         {/* Centered logo */}
-        <HeroWordmark className="absolute z-10" />
+        <div className="hero-title-wrapper absolute z-10">
+          <h1 className="hero-title-text select-none">PITWALL</h1>
+        </div>
 
         {/* Bottom buttons */}
         <div className="absolute z-20 flex flex-row flex-wrap justify-center items-center gap-6 bottom-[90px]">

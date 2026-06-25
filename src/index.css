@@ -34,7 +34,7 @@
   /* Homepage Scrollytelling Custom Variables */
   --pw-bg: #EDEBE5;
   --pw-bg2: #E5E3DD;
-  --pw-gold: #E8B93B;
+  --pw-gold: #B0B0B0;
   --pw-text: #0C0C0C;
   --pw-border: rgba(12, 12, 12, 0.12);
 }
@@ -1377,61 +1377,31 @@ html.dark-mode .dropdown-cart-btn-checkout {
   overflow: hidden !important;
 }
 
-/* Hero Branding Title Wrapper & Text (Negative overlay cutout effect)
-   See HeroWordmark.tsx for the full history of failed approaches. Current
-   technique: an SVG-native <rect> masked via the native `mask` attribute
-   (mask defined in the same <svg>), with backdrop-filter: invert(1) on
-   that rect — same-document SVG-native masking is the well-supported
-   case; masking an arbitrary HTML element from CSS was the flaky one. */
+/* Hero Branding Title Wrapper & Text
+   Dropped the live video-invert effect after repeated cross-browser
+   compositing/masking failures — simple flat color instead: white in
+   light mode, dark in dark mode. */
 .hero-title-wrapper {
   padding: 16px 48px !important;
   display: inline-block !important;
   text-align: center !important;
-  /* No transform here: a non-none transform on this element would create a
-     new stacking context that isolates blend compositing, preventing
-     .hero-title-text's mix-blend-mode below from ever reaching the video
-     behind it. The -20px nudge is done via margin-top on the text instead,
-     which has no isolation side effect. */
 }
 
-.hero-title-text,
-.hero-title-mask-text {
+.hero-title-text {
   font-family: var(--font-branding), 'BTSE PS2', sans-serif !important;
   font-size: clamp(62.5px, 15vw, 312.5px) !important;
   font-weight: 800;
   line-height: 0.9;
   letter-spacing: 6px !important; /* +6 letter spacing */
   text-transform: uppercase;
-}
-
-.hero-title-text {
-  color: transparent; /* painted by .hero-title-invert-svg's masked rect in light mode */
+  color: #ffffff !important;
   margin: 0 !important;
-  margin-top: -20px !important; /* Push up 20px, without a transform */
+  margin-top: -20px !important; /* Push up 20px */
   padding: 0 !important;
 }
 
-.hero-title-invert-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.hero-title-invert-rect {
-  backdrop-filter: invert(1);
-  -webkit-backdrop-filter: invert(1);
-}
-
-/* Dark mode: skip the live invert effect, just show a plain white wordmark.
-   The video background itself gets the negative treatment instead (see
-   .hero-video-bg-wrap below), so a literal text invert would double-cancel. */
 html.dark-mode .hero-title-text {
-  color: #ffffff !important;
-}
-html.dark-mode .hero-title-invert-svg {
-  display: none;
+  color: #0C0C0C !important;
 }
 
 /* Camera-negative video background, dark mode only */
