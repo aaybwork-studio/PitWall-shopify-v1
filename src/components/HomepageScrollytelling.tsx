@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { VideoBackground } from './VideoBackground';
+import { IntroSequence } from './IntroSequence';
 import { CollectionCard, Product } from './CollectionGrid';
 import { ArrowUpRight, ChevronRight } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'motion/react';
@@ -706,6 +707,7 @@ export function HomepageScrollytelling({
   if (isMobile) {
     return (
       <div className="w-full flex flex-col overflow-x-hidden" style={{ backgroundColor: WM.bg, color: WM.text }}>
+        <IntroSequence />
         {/* Hero */}
         <section className="h-screen w-full relative flex items-center justify-center border-b border-[var(--pw-border)]">
           <div className="absolute inset-0 z-0"><VideoBackground playlist={playlist} /></div>
@@ -864,6 +866,7 @@ export function HomepageScrollytelling({
   // ═══════════════════════════════════════════════════════════════════════════
   return (
     <div ref={containerRef} className="homepage-scroll-container">
+      <IntroSequence />
 
       {/* ── Fixed Video Background (For Hero & Manifesto scroll zone) ────────── */}
       {scrollTop < (vh * 1) && (

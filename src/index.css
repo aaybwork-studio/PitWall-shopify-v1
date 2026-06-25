@@ -1980,3 +1980,61 @@ html.dark-mode .product-img-bg {
   color: #000000 !important;
 }
 
+/* ── Intro Sequence (F1 grid start lights, once per session) ────────────── */
+.pw-intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 4vh, 36px);
+  transition: opacity 0.45s ease;
+}
+
+.pw-intro-rig {
+  display: flex;
+  gap: clamp(8px, 2vw, 18px);
+  padding: clamp(10px, 2vw, 18px) clamp(14px, 3vw, 28px);
+  background-color: #161616;
+  border-radius: 4px;
+}
+
+.pw-intro-column {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(5px, 1.2vw, 10px);
+}
+
+.pw-intro-dot {
+  width: clamp(8px, 2.4vw, 16px);
+  height: clamp(8px, 2.4vw, 16px);
+  border-radius: 50%;
+  background-color: #3a2222;
+  transition: background-color 0.08s linear;
+}
+
+.pw-intro-dot-lit {
+  background-color: #ff0000;
+  box-shadow: 0 0 8px 1px rgba(255, 0, 0, 0.7);
+}
+
+.pw-intro-skip {
+  appearance: none;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #000000;
+  padding: 6px 2px;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #000000;
+  cursor: pointer;
+  min-height: 40px;
+  min-width: 40px;
+}
+
