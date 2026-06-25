@@ -63,6 +63,22 @@ html.dark-mode {
   --pw-border: rgba(237, 235, 229, 0.12);
 }
 
+/* Smooth light/dark theme switch: the toggle just adds/removes .dark-mode
+   on <html>, which snaps every CSS-variable-driven color instantly. This
+   transitions the actual computed properties that those variables feed
+   (background-color, color, border-color, fill/stroke for inline SVGs,
+   box-shadow) on every element, so the whole page crossfades instead of
+   flashing. Scoped to color-only properties (no transform/opacity) so it
+   can't introduce layout jank or fight with existing motion/animation.
+   More specific component rules that already declare their own
+   `transition` (e.g. .nav-header) still win via normal CSS specificity —
+   this only fills the gap for everything that doesn't. */
+*,
+*::before,
+*::after {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, fill 0.35s ease, stroke 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
+}
+
 /* Force all Shopify parent wrappers to be 100% full-bleed and full-width */
 #MainContent, 
 .content-for-layout,
