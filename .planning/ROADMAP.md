@@ -192,13 +192,16 @@ Plans:
 
 ### Phase 5: Navbar Redesign — Team/Driver Visual Dropdowns & Landing Pages
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Replace the hardcoded, non-editable navbar megamenu with a Shopify-editable Teams/Drivers visual dropdown system (livery images, driver headshots, grouped columns), and ship 6 team + 6 driver landing pages (hero, bio, filter bar, product grid) backed by real Collections — so merchants can manage the roster without code changes and no navbar entry is a dead link.
+**Requirements**: (none mapped — no REQ-IDs assigned to this phase; locked decisions sourced from session CONTEXT)
 **Depends on:** Phase 4
-**Plans:** 0 plans
+**Plans:** 4 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 5 to break down)
+- [ ] 05-01-PLAN.md — header-nav.liquid section with team_item/driver_item/nav_group theme blocks + theme.liquid wiring + new driver-card/headshot CSS
+- [ ] 05-02-PLAN.md — collection-team.liquid / collection-driver.liquid sections + collection.team.json / collection.driver.json alternate templates
+- [ ] 05-03-PLAN.md — Extract shared filter/sort hooks from CollectionGrid.tsx; build TeamLandingPage.tsx + DriverLandingPage.tsx; mount in main.tsx
+- [ ] 05-04-PLAN.md — (checkpoint) Create 12 Collections in Shopify Admin with metafields + alternate templates assigned; verify zero dead navbar links
 
 ---
 
