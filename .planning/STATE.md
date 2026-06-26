@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-last_updated: "2026-06-26T09:51:10.680Z"
+last_updated: "2026-06-26T09:54:44.949Z"
 progress:
   total_phases: 10
   completed_phases: 3
@@ -23,14 +23,14 @@ progress:
 
 **Core Value:** The homepage redesign and new pages must look unmistakably Pitwall (brutalist F1 aesthetic + existing tokens) while delivering the editorial structure of the reference designs.
 
-**Current Focus:** Phase 3 — Helmets PDP & Dynamic Routing
+**Current Focus:** Phase 5 — Navbar Redesign — Team/Driver Visual Dropdowns & Landing Pages
 
 ---
 
 ## Current Position
 
-Phase: 03
-Plan: Not started
+Phase: 5 (Navbar Redesign — Team/Driver Visual Dropdowns & Landing Pages) — EXECUTING
+Plan: 1 of 4
 | Field | Value |
 |-------|-------|
 | Phase | 04 — Redesign Collections Page (Horizontal Scroll) |
