@@ -6,6 +6,8 @@ import { CarCanvas } from './components/CarCanvas';
 import { VideoBackground } from './components/VideoBackground';
 import { ProductScrollytelling } from './components/ProductScrollytelling';
 import { CollectionGrid } from './components/CollectionGrid';
+import { TeamLandingPage } from './components/TeamLandingPage';
+import { DriverLandingPage } from './components/DriverLandingPage';
 import { HomepageScrollytelling } from './components/HomepageScrollytelling';
 import { Logger } from './utils/logger';
 
@@ -228,6 +230,55 @@ function bootstrap() {
       root.render(
         <React.StrictMode>
           <CollectionGrid products={products} videoUrl={videoUrl} title={title} />
+        </React.StrictMode>
+      );
+    }
+
+    // 3.5 Mount Team Landing Page
+    const teamLandingRoot = document.getElementById('team-landing-root');
+    if (teamLandingRoot) {
+      const title = teamLandingRoot.getAttribute('data-title') || '';
+      const heroImage = teamLandingRoot.getAttribute('data-hero-image') || '';
+      const bio = teamLandingRoot.getAttribute('data-bio') || '';
+      const logo = teamLandingRoot.getAttribute('data-logo') || '';
+      let products = [];
+      const productsScript = document.getElementById('collection-products-data');
+      if (productsScript) {
+        try {
+          products = JSON.parse(productsScript.textContent || '[]');
+        } catch (err) {
+          Logger.error('Failed to parse collection product data JSON in main.tsx', err);
+        }
+      }
+      const root = ReactDOM.createRoot(teamLandingRoot);
+      root.render(
+        <React.StrictMode>
+          <TeamLandingPage products={products} title={title} heroImage={heroImage} bio={bio} logo={logo} />
+        </React.StrictMode>
+      );
+    }
+
+    // 3.6 Mount Driver Landing Page
+    const driverLandingRoot = document.getElementById('driver-landing-root');
+    if (driverLandingRoot) {
+      const title = driverLandingRoot.getAttribute('data-title') || '';
+      const heroImage = driverLandingRoot.getAttribute('data-hero-image') || '';
+      const bio = driverLandingRoot.getAttribute('data-bio') || '';
+      const teamName = driverLandingRoot.getAttribute('data-team-name') || '';
+      const teamLink = driverLandingRoot.getAttribute('data-team-link') || '';
+      let products = [];
+      const productsScript = document.getElementById('collection-products-data');
+      if (productsScript) {
+        try {
+          products = JSON.parse(productsScript.textContent || '[]');
+        } catch (err) {
+          Logger.error('Failed to parse collection product data JSON in main.tsx', err);
+        }
+      }
+      const root = ReactDOM.createRoot(driverLandingRoot);
+      root.render(
+        <React.StrictMode>
+          <DriverLandingPage products={products} title={title} heroImage={heroImage} bio={bio} teamName={teamName} teamLink={teamLink} />
         </React.StrictMode>
       );
     }
