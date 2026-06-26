@@ -1,0 +1,38 @@
+<div
+  id="team-landing-root"
+  class="w-full bg-[#EDEBE5] text-[#0C0C0C] dark:bg-[#0C0C0C] dark:text-[#EDEBE5]"
+  data-title="{{ collection.title }}"
+  data-hero-image="{{ collection.metafields.custom.hero_image.value | image_url: width: 1600 }}"
+  data-bio="{{ collection.metafields.custom.bio.value | escape }}"
+  data-logo="{{ collection.metafields.custom.logo.value | image_url: width: 400 }}"
+></div>
+
+<script id="collection-products-data" type="application/json">
+  [
+    {%- assign target_collection = collection | default: collections.all -%}
+    {%- paginate target_collection.products by 1000 -%}
+      {%- for product in target_collection.products -%}
+        {
+          "title": {{ product.title | json }},
+          "url": {{ product.url | json }},
+          "price": {{ product.price | money | json }},
+          "image": {{ product.featured_image | img_url: '600x' | json }},
+          "specs": {{ product.metafields.custom.specs | default: "1:18 SCALE / PRECISION DETAIL" | json }},
+          "category": {{ product.type | default: "WLED Light Boxes" | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    {%- endpaginate -%}
+  ]
+</script>
+
+{% schema %}
+{
+  "name": "Team Landing Page",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Team Landing Page"
+    }
+  ]
+}
+{% endschema %}
