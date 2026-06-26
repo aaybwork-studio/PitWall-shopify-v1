@@ -92,6 +92,7 @@ Overall: 8/9 phases complete
 
 - [ ] Plan Phase 3 (run `/gsd-plan-phase 3`)
 - [ ] Source and add 3D GLB model files for Helmet PDP Configurator (already available under `assets/`)
+- [ ] Redesign navbar team/driver dropdowns with visual selectors (see `.planning/todos/pending/2026-06-26-redesign-navbar-team-driver-dropdowns-with-visual-selectors.md`)
 
 ### Blockers
 
