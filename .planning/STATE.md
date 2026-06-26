@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-last_updated: "2026-06-26T10:01:27.901Z"
+last_updated: "2026-06-26T10:05:35.809Z"
 progress:
   total_phases: 10
   completed_phases: 3
   total_plans: 14
-  completed_plans: 11
-  percent: 79
+  completed_plans: 12
+  percent: 86
 ---
 
 # Project State
@@ -30,7 +30,7 @@ progress:
 ## Current Position
 
 Phase: 5 (Navbar Redesign — Team/Driver Visual Dropdowns & Landing Pages) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 | Field | Value |
 |-------|-------|
 | Phase | 04 — Redesign Collections Page (Horizontal Scroll) |
@@ -40,7 +40,7 @@ Plan: 2 of 4
 
 **Progress:**
 
-[████████░░] 79%
+[█████████░] 86%
 [ Phase 1: About Page     ] █▓▓▓▓▓▓▓▓▓ 100%
 [ Phase 2: All Products   ] █▓▓▓▓▓▓▓▓▓ 100%
 [ Phase 02.1: Hero Page   ] █▓▓▓▓▓▓▓▓▓ 100%
@@ -66,6 +66,7 @@ Overall: 8/9 phases complete
 
 ---
 | Phase 05 P01 | 25m | 2 tasks | 3 files |
+| Phase 05 P02 | 10m | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,7 @@ Overall: 8/9 phases complete
 | AJAX Cart dropdown hover overlay | Cart button triggers a dropdown panel listing cart line items, pricing, subtotal, and remove triggers communicating with Shopify AJAX Cart API. |
 | Manifesto staggered image panels | Desktop displays a 3-panel side-by-side reveal with taglines difference-blended; mobile stacks them vertically. |
 | Redesign Collections horizontal rows | Group products by category in horizontal rows with scrollbars and hover navigation arrows to match reference design exactly. |
+| Hero/bio/logo content sourced from collection metafields (not section settings) | Team/driver landing data is per-Collection, not per-section-instance, and metafields enable Dynamic Sources compatibility. |
 
 ### Active TODOs
 
@@ -112,7 +114,8 @@ None.
 - Phase 02.5 (Manifesto 3-Panel Image Reveal) completed on 2026-06-18. Added image settings and tagline schemas in Liquid, rendered staggered reveals in `HomepageScrollytelling.tsx`.
 - Phase 04 (Redesign Collections Horizontal Scroll) completed on 2026-06-23. Replaced vertical masonry grid with horizontal rows, added alternating Category Cards, hover arrows, and customizable page title.
 - Refined navigation header and quick-view cart dropdown on desktop hover built and integrated with Shopify AJAX Cart API.
-- Next action: Plan Phase 3 (Helmets PDP & Dynamic Routing) via `/gsd-plan-phase 3`.
+- Phase 05 Plan 02 (Liquid Landing Page Infrastructure) completed on 2026-06-26: created collection-team.liquid and collection-driver.liquid sections plus collection.team.json/collection.driver.json alternate templates, with collection.json untouched.
+- Next action: Execute Phase 05 Plan 03 (React landing page components, TeamLandingPage.tsx/DriverLandingPage.tsx).
 
 ---
 
