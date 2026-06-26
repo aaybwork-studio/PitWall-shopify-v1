@@ -25,6 +25,9 @@ assets/mclaren.glb
 assets/ferrari.glb
 assets/mercedes.glb
 assets/redbull.glb
+assets/f1_helmet_lando_norris.glb
+assets/helmet_redbull_max_verstappen.glb
+assets/michael_schumacher_2002_helmet.glb
 
 # ── Misc ──────────────────────────────────────────────────────────────────────
 *.log
