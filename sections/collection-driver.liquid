@@ -5,7 +5,7 @@
   data-hero-image="{{ collection.metafields.custom.hero_image.value | image_url: width: 1600 }}"
   data-bio="{{ collection.metafields.custom.bio.value | escape }}"
   data-team-name="{{ collection.metafields.custom.team_name.value | escape }}"
-  data-team-link="{{ collection.metafields.custom.team_link.value }}"
+  data-team-link="{{ collection.metafields.custom.team_link.value | escape }}"
 ></div>
 
 <script id="collection-products-data" type="application/json">
