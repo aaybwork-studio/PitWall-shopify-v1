@@ -190,6 +190,16 @@ Plans:
 
 > Note: NAV-01 and NAV-02 are confirmation/validation requirements — NAV-02 is assigned to Phase 1 (About nav lands on the new page) and NAV-01 to Phase 2 (SHOP nav lands on the new page), since each is verified as part of delivering the respective page. There are 15 distinct requirement IDs across 16 slots in the requirements list because the instructions list 16 total (FND x3, ABT x5, APL x5, NAV x2 = 15 unique IDs). All 15 IDs are mapped.
 
+### Phase 5: Navbar Redesign — Team/Driver Visual Dropdowns & Landing Pages
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 4
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 5 to break down)
+
 ---
 
 *Roadmap generated: 2026-05-30 | Updated: 2026-06-07 (Phase 02.3 added)*

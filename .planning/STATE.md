@@ -76,6 +76,7 @@ Overall: 8/9 phases complete
 - Phase 02.4 inserted: Redesign Collections Page (completed).
 - Phase 02.5 inserted: Redesign Manifesto Section (completed 2026-06-18).
 - Phase 04 inserted: Redesign Collections Page (Horizontal Scroll) (completed 2026-06-23).
+- Phase 05 added: Navbar Redesign — Team/Driver Visual Dropdowns & Landing Pages (not planned yet).
 
 ### Key Decisions
 
