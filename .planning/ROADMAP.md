@@ -206,7 +206,7 @@ Plans:
 - [x] 05-03-PLAN.md — Extract shared filter/sort hooks from CollectionGrid.tsx; build TeamLandingPage.tsx + DriverLandingPage.tsx; mount in main.tsx
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 05-04-PLAN.md — (checkpoint) Create 12 Collections in Shopify Admin with metafields + alternate templates assigned; verify zero dead navbar links
+- [x] 05-04-PLAN.md — (checkpoint) Create 12 Collections in Shopify Admin with metafields + alternate templates assigned; verify zero dead navbar links
 
 ---
 
