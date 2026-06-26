@@ -148,6 +148,160 @@ function getCleanPrice(p: string): number {
   return parseFloat(p.replace(/[^0-9.]/g, '')) || 0;
 }
 
+// ─── Reusable URL-Synced Filter/Sort Hook (ASVS V5 allow-list pattern) ────────
+export function useUrlSyncedFilter(
+  paramName: string,
+  allowList: string[],
+  defaultValue: string
+): [string, React.Dispatch<React.SetStateAction<string>>, (value: string) => void] {
+  const [value, setValue] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const rawParam = params.get(paramName);
+      if (rawParam) {
+        const matched = allowList.find(v => v.toLowerCase() === rawParam.toLowerCase());
+        if (matched) return matched;
+      }
+    }
+    return defaultValue;
+  });
+
+  // ── Sync URL Params on PopState ──
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const rawParam = params.get(paramName);
+
+      if (rawParam) {
+        const matched = allowList.find(v => v.toLowerCase() === rawParam.toLowerCase());
+        if (matched) {
+          setValue(matched);
+          return;
+        }
+      }
+      setValue(defaultValue);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [paramName, allowList, defaultValue]);
+
+  const handleSelect = useCallback((selected: string) => {
+    setValue(selected);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (selected === defaultValue) {
+        params.delete(paramName);
+      } else {
+        params.set(paramName, selected);
+      }
+      const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+      window.history.pushState(null, '', newUrl);
+      window.dispatchEvent(new Event('popstate'));
+    }
+  }, [paramName, defaultValue]);
+
+  return [value, setValue, handleSelect];
+}
+
+// ─── Reusable Sort Dropdown UI ─────────────────────────────────────────────────
+interface SortDropdownProps {
+  options: string[];
+  selected: string;
+  onSelect: (s: string) => void;
+  open: boolean;
+  onToggle: () => void;
+}
+
+export function SortDropdown({ options, selected, onSelect, open, onToggle }: SortDropdownProps) {
+  const stopPropagation = useCallback((e: React.MouseEvent) => e.stopPropagation(), []);
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <button
+        id="collection-sort-btn"
+        onClick={(e) => { e.stopPropagation(); onToggle(); }}
+        style={{
+          fontFamily: 'var(--font-mono, "IBM Plex Mono", monospace)',
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+          color: '#0C0C0C',
+          padding: '4px 0',
+        }}
+      >
+        SORT BY:{' '}
+        <span style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>
+          {selected.toUpperCase()}
+        </span>{' '}
+        <span style={{ fontSize: 8 }}>▾</span>
+      </button>
+
+      {open && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 'calc(100% + 8px)',
+            right: 0,
+            minWidth: 180,
+            backgroundColor: 'rgba(12, 12, 12, 0.9)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            border: '1px solid rgba(237, 235, 229, 0.15)',
+            boxShadow: 'none',
+            zIndex: 50,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+          onClick={stopPropagation}
+        >
+          {options.map(opt => (
+            <button
+              key={opt}
+              onClick={() => onSelect(opt)}
+              style={{
+                fontFamily: 'var(--font-mono, "IBM Plex Mono", monospace)',
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                background: selected === opt ? '#7A7A7A' : 'transparent',
+                color:      selected === opt ? '#0C0C0C' : '#EDEBE5',
+                border: 'none',
+                padding: '8px 14px',
+                textAlign: 'left',
+                cursor: 'pointer',
+                transition: 'background 120ms',
+              }}
+              onMouseEnter={e => {
+                if (selected !== opt) {
+                  (e.currentTarget as HTMLButtonElement).style.background = '#7A7A7A';
+                  (e.currentTarget as HTMLButtonElement).style.color = '#0C0C0C';
+                }
+              }}
+              onMouseLeave={e => {
+                if (selected !== opt) {
+                  (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+                  (e.currentTarget as HTMLButtonElement).style.color = '#EDEBE5';
+                }
+              }}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Category Card Component ──────────────────────────────────────────────────
 interface CategoryCardProps {
   category: string;
@@ -339,91 +493,18 @@ interface CollectionGridProps {
 }
 
 export function CollectionGrid({ products = [], title = 'Our Products' }: CollectionGridProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const catParam = params.get('category');
-      if (catParam) {
-        const matchedCat = CATEGORIES.find(c => c.toLowerCase() === catParam.toLowerCase());
-        if (matchedCat) return matchedCat;
-      }
-    }
-    return 'All';
-  });
-
-  const [selectedSort, setSelectedSort] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const sortParam = params.get('sort');
-      if (sortParam) {
-        const matchedSort = SORTS.find(s => s.toLowerCase() === sortParam.toLowerCase());
-        if (matchedSort) return matchedSort;
-      }
-    }
-    return 'Default';
-  });
+  const [selectedCategory, , handleCategorySelectRaw] = useUrlSyncedFilter('category', CATEGORIES, 'All');
+  const [selectedSort, , handleSortSelectRaw] = useUrlSyncedFilter('sort', SORTS, 'Default');
 
   const [sortOpen, setSortOpen] = useState<boolean>(false);
 
-  // ── Sync URL Params on PopState ──
-  useEffect(() => {
-    const handlePopState = () => {
-      const params = new URLSearchParams(window.location.search);
-      const catParam = params.get('category');
-      const sortParam = params.get('sort');
-      
-      if (catParam) {
-        const matchedCat = CATEGORIES.find(c => c.toLowerCase() === catParam.toLowerCase());
-        if (matchedCat) {
-          setSelectedCategory(matchedCat);
-        }
-      } else {
-        setSelectedCategory('All');
-      }
-
-      if (sortParam) {
-        const matchedSort = SORTS.find(s => s.toLowerCase() === sortParam.toLowerCase());
-        if (matchedSort) {
-          setSelectedSort(matchedSort);
-        }
-      } else {
-        setSelectedSort('Default');
-      }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
-
   const handleCategorySelect = (cat: string) => {
-    setSelectedCategory(cat);
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      if (cat === 'All') {
-        params.delete('category');
-      } else {
-        params.set('category', cat);
-      }
-      const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
-      window.history.pushState(null, '', newUrl);
-      window.dispatchEvent(new Event('popstate'));
-    }
+    handleCategorySelectRaw(cat);
   };
 
   const handleSortSelect = (sort: string) => {
-    setSelectedSort(sort);
+    handleSortSelectRaw(sort);
     setSortOpen(false);
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      if (sort === 'Default') {
-        params.delete('sort');
-      } else {
-        params.set('sort', sort);
-      }
-      const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
-      window.history.pushState(null, '', newUrl);
-      window.dispatchEvent(new Event('popstate'));
-    }
   };
 
   // ── Ensure page can scroll (remove homepage scroll locks) ──
@@ -535,88 +616,13 @@ export function CollectionGrid({ products = [], title = 'Our Products' }: Collec
         </div>
 
         {/* Sort Dropdown (Right) */}
-        <div style={{ position: 'relative' }}>
-          <button
-            id="collection-sort-btn"
-            onClick={(e) => { e.stopPropagation(); setSortOpen(o => !o); }}
-            style={{
-              fontFamily: 'var(--font-mono, "IBM Plex Mono", monospace)',
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-              color: '#0C0C0C',
-              padding: '4px 0',
-            }}
-          >
-            SORT BY:{' '}
-            <span style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>
-              {selectedSort.toUpperCase()}
-            </span>{' '}
-            <span style={{ fontSize: 8 }}>▾</span>
-          </button>
-
-          {sortOpen && (
-            <div
-              style={{
-                position: 'absolute',
-                top: 'calc(100% + 8px)',
-                right: 0,
-                minWidth: 180,
-                backgroundColor: 'rgba(12, 12, 12, 0.9)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-                border: '1px solid rgba(237, 235, 229, 0.15)',
-                boxShadow: 'none',
-                zIndex: 50,
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-              onClick={stopPropagation}
-            >
-              {SORTS.map(srt => (
-                <button
-                  key={srt}
-                  onClick={() => handleSortSelect(srt)}
-                  style={{
-                    fontFamily: 'var(--font-mono, "IBM Plex Mono", monospace)',
-                    fontSize: 9,
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    background: selectedSort === srt ? '#7A7A7A' : 'transparent',
-                    color:      selectedSort === srt ? '#0C0C0C' : '#EDEBE5',
-                    border: 'none',
-                    padding: '8px 14px',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    transition: 'background 120ms',
-                  }}
-                  onMouseEnter={e => {
-                    if (selectedSort !== srt) {
-                      (e.currentTarget as HTMLButtonElement).style.background = '#7A7A7A';
-                      (e.currentTarget as HTMLButtonElement).style.color = '#0C0C0C';
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    if (selectedSort !== srt) {
-                      (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-                      (e.currentTarget as HTMLButtonElement).style.color = '#EDEBE5';
-                    }
-                  }}
-                >
-                  {srt}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        <SortDropdown
+          options={SORTS}
+          selected={selectedSort}
+          onSelect={handleSortSelect}
+          open={sortOpen}
+          onToggle={() => setSortOpen(o => !o)}
+        />
       </div>
 
       {/* ── Category Scrolling Rows ───────────────────────────────────── */}
